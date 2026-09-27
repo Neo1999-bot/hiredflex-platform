@@ -2,6 +2,8 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema/index.js";
 
+export type Database = ReturnType<typeof connectDatabase>["db"];
+
 export function connectDatabase(databaseUrl: string) {
   const client = postgres(databaseUrl, { max: 10, connect_timeout: 5 });
   const db = drizzle(client, { schema });

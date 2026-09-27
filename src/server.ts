@@ -6,6 +6,7 @@ async function main(): Promise<void> {
   const config = readConfig();
   const database = connectDatabase(config.databaseUrl);
   const app = buildApp({
+    db: database.db,
     checkDatabase: database.ping,
     logger: config.nodeEnv !== "test",
   });

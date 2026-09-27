@@ -2,6 +2,12 @@ import type { applicationStatus } from "../../db/schema/index.js";
 
 export type ApplicationStatus = (typeof applicationStatus.enumValues)[number];
 
+export const activeApplicationStatuses = [
+  "Applied",
+  "Reviewing",
+  "Shortlisted",
+] as const satisfies readonly ApplicationStatus[];
+
 const transitions: Readonly<
   Record<ApplicationStatus, readonly ApplicationStatus[]>
 > = {

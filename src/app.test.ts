@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { buildApp } from "./app.js";
+import type { Database } from "./db/client.js";
 
 describe("API foundation", () => {
   let closeApp: (() => Promise<void>) | undefined;
@@ -11,6 +12,7 @@ describe("API foundation", () => {
 
   it("exposes a liveness endpoint without claiming database readiness", async () => {
     const app = buildApp({
+      db: {} as Database,
       checkDatabase: async () => {
         throw new Error("database unavailable");
       },
@@ -25,6 +27,7 @@ describe("API foundation", () => {
 
   it("reports readiness only when the database check succeeds", async () => {
     const app = buildApp({
+      db: {} as Database,
       checkDatabase: async () => undefined,
       logger: false,
     });
@@ -37,6 +40,7 @@ describe("API foundation", () => {
 
   it("returns unavailable when the database check fails", async () => {
     const app = buildApp({
+      db: {} as Database,
       checkDatabase: async () => {
         throw new Error("database unavailable");
       },
