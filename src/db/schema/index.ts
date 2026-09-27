@@ -33,6 +33,13 @@ export const applicationStatus = pgEnum("application_status", [
   "Reviewing",
   "Shortlisted",
   "Rejected",
+  "Withdrawn",
+]);
+
+export const vacancyStatus = pgEnum("vacancy_status", [
+  "DRAFT",
+  "OPEN",
+  "CLOSED",
 ]);
 
 export const companies = pgTable("companies", {
@@ -127,8 +134,7 @@ export const vacancies = pgTable(
     title: text("title").notNull(),
     description: text("description"),
     location: text("location"),
-    // Vacancy state vocabulary is intentionally not constrained until its canonical lifecycle is available.
-    status: text("status").notNull(),
+    status: vacancyStatus("status").notNull(),
     closedAt: timestamp("closed_at", { withTimezone: true }),
     ...timestamps(),
   },
@@ -175,7 +181,9 @@ export const applications = pgTable(
   (table) => [
     uniqueIndex("applications_one_active_candidate_vacancy")
       .on(table.candidateId, table.vacancyId)
-      .where(sql`${table.currentStatus} in ('Applied', 'Reviewing')`),
+      .where(
+        sql`${table.currentStatus} in ('Applied', 'Reviewing', 'Shortlisted')`,
+      ),
     index("applications_candidate_idx").on(table.candidateId),
     index("applications_vacancy_idx").on(table.vacancyId),
   ],
@@ -200,7 +208,7 @@ export const applicationStatusHistory = pgTable(
   (table) => [
     check(
       "application_status_history_transition_allowed",
-      sql`(${table.fromStatus} is null and ${table.toStatus} = 'Applied') or (${table.fromStatus} = 'Applied' and ${table.toStatus} in ('Reviewing', 'Shortlisted', 'Rejected')) or (${table.fromStatus} = 'Reviewing' and ${table.toStatus} in ('Shortlisted', 'Rejected'))`,
+      sql`(${table.fromStatus} is null and ${table.toStatus} = 'Applied') or (${table.fromStatus} = 'Applied' and ${table.toStatus} in ('Reviewing', 'Shortlisted', 'Rejected', 'Withdrawn')) or (${table.fromStatus} = 'Reviewing' and ${table.toStatus} in ('Shortlisted', 'Rejected', 'Withdrawn')) or (${table.fromStatus} = 'Shortlisted' and ${table.toStatus} = 'Withdrawn')`,
     ),
     index("application_status_history_application_idx").on(
       table.applicationId,

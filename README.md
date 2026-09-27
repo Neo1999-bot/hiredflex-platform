@@ -42,11 +42,11 @@ Schema updates require a matching reviewed SQL migration in `src/db/migrations` 
 
 ### Domain boundaries
 
-- Application states are `Applied`, `Reviewing`, `Shortlisted`, and `Rejected`. The transition graph is implemented in `src/domain/application/lifecycle.ts`; the database stores a separate status-history record shape with actor and timestamp.
+- Application states are `Applied`, `Reviewing`, `Shortlisted`, `Rejected`, and `Withdrawn`. `Applied`, `Reviewing`, and `Shortlisted` are active; `Rejected` and `Withdrawn` are terminal. Every withdrawal transition is recorded in status history. The transition graph is implemented in `src/domain/application/lifecycle.ts`.
+- Vacancy states are `DRAFT`, `OPEN`, and `CLOSED`. Only `OPEN` permits application submission. This gate establishes the persisted lifecycle; candidate submission, withdrawal, and reapplication endpoints are not implemented yet.
 - Recruiter assignment is vacancy-level. No application-level assignment, recruiter takeover, or reassignment workflow is implemented.
 - Company-scoped user-role assignments represent company membership. Authentication is only an integration boundary: no login mechanism or external identity provider is configured. Protected routes must use a verified principal and default to unauthenticated when none is supplied.
-- Vacancy status vocabulary is not constrained here because the canonical vacancy lifecycle was not included in the Phase 3 approval. Matching, candidate search, and recruitment decision endpoints are not implemented.
-- Reapplication after withdrawal is deferred. The approved Phase 3 status graph has no withdrawal state, so no withdrawal/reapplication behavior is inferred from it.
+- The database's active-application unique index covers `Applied`, `Reviewing`, and `Shortlisted`; terminal applications remain available for audit and do not occupy that active slot. Matching, candidate search, and recruitment decision endpoints are not implemented.
 
 ### Current scope limits
 

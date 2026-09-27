@@ -11,8 +11,11 @@ describe("Phase 3 application lifecycle", () => {
     ["Applied", "Reviewing"],
     ["Applied", "Shortlisted"],
     ["Applied", "Rejected"],
+    ["Applied", "Withdrawn"],
     ["Reviewing", "Shortlisted"],
     ["Reviewing", "Rejected"],
+    ["Reviewing", "Withdrawn"],
+    ["Shortlisted", "Withdrawn"],
   ] as const)("allows %s → %s", (from, to) => {
     expect(isAllowedApplicationTransition(from, to)).toBe(true);
   });
@@ -22,6 +25,8 @@ describe("Phase 3 application lifecycle", () => {
     ["Reviewing", "Applied"],
     ["Shortlisted", "Rejected"],
     ["Rejected", "Reviewing"],
+    ["Withdrawn", "Applied"],
+    ["Withdrawn", "Withdrawn"],
   ] as const)("rejects %s → %s", (from, to) => {
     expect(() => transitionApplication(from, to, "actor-1")).toThrow(
       InvalidApplicationTransitionError,
@@ -48,5 +53,15 @@ describe("Phase 3 application lifecycle", () => {
       actorUserId: "candidate-1",
     });
     expect(event.occurredAt).toBeInstanceOf(Date);
+  });
+
+  it("keeps Rejected and Withdrawn terminal", () => {
+    expect(isAllowedApplicationTransition("Rejected", "Withdrawn")).toBe(false);
+    expect(isAllowedApplicationTransition("Withdrawn", "Reviewing")).toBe(
+      false,
+    );
+    expect(isAllowedApplicationTransition("Withdrawn", "Shortlisted")).toBe(
+      false,
+    );
   });
 });

@@ -8,6 +8,13 @@
       "when": 1790510400000,
       "tag": "0000_phase3_core_foundation",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790536463000,
+      "tag": "0001_canonical_vacancy_and_application_lifecycle",
+      "breakpoints": true
     }
   ]
 }

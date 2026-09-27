@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { getTableConfig } from "drizzle-orm/pg-core";
 import {
+  applicationStatus,
   applicationStatusHistory,
   applications,
   candidates,
@@ -10,6 +11,7 @@ import {
   userRoles,
   users,
   vacancies,
+  vacancyStatus,
 } from "./index.js";
 
 const migration = readFileSync(
@@ -22,6 +24,13 @@ const migrationJournal = JSON.parse(
     "utf8",
   ),
 ) as { entries: { idx: number; tag: string }[] };
+const lifecycleMigration = readFileSync(
+  new URL(
+    "../migrations/0001_canonical_vacancy_and_application_lifecycle.sql",
+    import.meta.url,
+  ),
+  "utf8",
+);
 
 function hasForeignKeyTo(
   table: Parameters<typeof getTableConfig>[0],
@@ -53,7 +62,7 @@ describe("PostgreSQL persistence schema", () => {
     expect(config.columns.filter((column) => column.primary)).toHaveLength(1);
   });
 
-  it("declares a partial unique index for the currently active application states", () => {
+  it("declares a partial unique index covering all active application states", () => {
     const activeIndex = getTableConfig(applications).indexes.find(
       (index) =>
         index.config.name === "applications_one_active_candidate_vacancy",
@@ -65,15 +74,22 @@ describe("PostgreSQL persistence schema", () => {
       ),
     ).toEqual(["candidate_id", "vacancy_id"]);
     expect(activeIndex?.config.where).toBeDefined();
-    expect(migration).toContain(
+    expect(lifecycleMigration).toContain(
       'CREATE UNIQUE INDEX "applications_one_active_candidate_vacancy"',
     );
-    expect(migration).toContain(
-      "WHERE \"applications\".\"current_status\" in ('Applied', 'Reviewing')",
+    expect(lifecycleMigration).toContain(
+      "WHERE \"applications\".\"current_status\" IN ('Applied', 'Reviewing', 'Shortlisted')",
     );
   });
 
   it("persists allowed application status history with actor and application references", () => {
+    expect(applicationStatus.enumValues).toEqual([
+      "Applied",
+      "Reviewing",
+      "Shortlisted",
+      "Rejected",
+      "Withdrawn",
+    ]);
     const config = getTableConfig(applicationStatusHistory);
     expect(config.checks.map((check) => check.name)).toContain(
       "application_status_history_transition_allowed",
@@ -94,6 +110,25 @@ describe("PostgreSQL persistence schema", () => {
     expect(migration).toContain(
       "'Reviewing' and \"application_status_history\".\"to_status\" in ('Shortlisted', 'Rejected')",
     );
+    expect(lifecycleMigration).toContain(
+      "'Applied', 'Reviewing', 'Shortlisted', 'Rejected', 'Withdrawn'",
+    );
+    expect(lifecycleMigration).toContain(
+      "'Shortlisted' AND \"application_status_history\".\"to_status\" = 'Withdrawn'",
+    );
+    expect(lifecycleMigration).toContain(
+      "'Reviewing', 'Shortlisted', 'Rejected', 'Withdrawn'",
+    );
+  });
+
+  it("limits persisted vacancy states to DRAFT, OPEN, and CLOSED", () => {
+    expect(vacancyStatus.enumValues).toEqual(["DRAFT", "OPEN", "CLOSED"]);
+    expect(lifecycleMigration).toContain(
+      "CREATE TYPE \"public\".\"vacancy_status\" AS ENUM('DRAFT', 'OPEN', 'CLOSED')",
+    );
+    expect(lifecycleMigration).toContain(
+      'ALTER COLUMN "status" TYPE "public"."vacancy_status"',
+    );
   });
 
   it("keeps recruiter ownership at vacancy level and employer membership company-scoped", () => {
@@ -112,9 +147,14 @@ describe("PostgreSQL persistence schema", () => {
     expect(hasForeignKeyTo(userRoles, "company_id", companies)).toBe(true);
   });
 
-  it("applies the checked-in migration once in the declared order", () => {
-    const [entry] = migrationJournal.entries;
-    expect(entry).toMatchObject({ idx: 0, tag: "0000_phase3_core_foundation" });
+  it("orders the checked-in lifecycle migration after the original foundation", () => {
+    expect(migrationJournal.entries).toMatchObject([
+      { idx: 0, tag: "0000_phase3_core_foundation" },
+      {
+        idx: 1,
+        tag: "0001_canonical_vacancy_and_application_lifecycle",
+      },
+    ]);
     expect(migration.indexOf('CREATE TABLE "candidates"')).toBeLessThan(
       migration.indexOf('CREATE TABLE "applications"'),
     );

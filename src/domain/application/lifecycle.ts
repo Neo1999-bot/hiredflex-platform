@@ -5,10 +5,11 @@ export type ApplicationStatus = (typeof applicationStatus.enumValues)[number];
 const transitions: Readonly<
   Record<ApplicationStatus, readonly ApplicationStatus[]>
 > = {
-  Applied: ["Reviewing", "Shortlisted", "Rejected"],
-  Reviewing: ["Shortlisted", "Rejected"],
-  Shortlisted: [],
+  Applied: ["Reviewing", "Shortlisted", "Rejected", "Withdrawn"],
+  Reviewing: ["Shortlisted", "Rejected", "Withdrawn"],
+  Shortlisted: ["Withdrawn"],
   Rejected: [],
+  Withdrawn: [],
 };
 
 export interface ApplicationStatusEvent {
