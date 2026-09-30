@@ -155,9 +155,45 @@ export const vacancyRequirements = pgTable(
     description: text("description").notNull(),
     requirementType: text("requirement_type").notNull(),
     required: boolean("required").notNull(),
+    // Existing descriptive requirements remain intact without inferred skills.
+    skillName: text("skill_name"),
     ...timestamps(),
   },
-  (table) => [index("vacancy_requirements_vacancy_idx").on(table.vacancyId)],
+  (table) => [
+    index("vacancy_requirements_vacancy_idx").on(table.vacancyId),
+    check(
+      "vacancy_requirements_skill_name_nonempty",
+      sql`${table.skillName} is null or length(public.matching_skill_name_key(${table.skillName})) > 0`,
+    ),
+    uniqueIndex("vacancy_requirements_skill_unique")
+      .on(
+        table.vacancyId,
+        sql`public.matching_skill_name_key(${table.skillName})`,
+      )
+      .where(sql`${table.skillName} is not null`),
+  ],
+);
+
+export const candidateSkills = pgTable(
+  "candidate_skills",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    candidateId: uuid("candidate_id")
+      .notNull()
+      .references(() => candidates.id, { onDelete: "restrict" }),
+    skillName: text("skill_name").notNull(),
+    ...timestamps(),
+  },
+  (table) => [
+    check(
+      "candidate_skills_skill_name_nonempty",
+      sql`length(public.matching_skill_name_key(${table.skillName})) > 0`,
+    ),
+    uniqueIndex("candidate_skills_candidate_skill_unique").on(
+      table.candidateId,
+      sql`public.matching_skill_name_key(${table.skillName})`,
+    ),
+  ],
 );
 
 export const applications = pgTable(

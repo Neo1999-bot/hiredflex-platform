@@ -148,7 +148,7 @@ describe("PostgreSQL persistence schema", () => {
   });
 
   it("orders the checked-in lifecycle migration after the original foundation", () => {
-    expect(migrationJournal.entries).toMatchObject([
+    expect(migrationJournal.entries.slice(0, 2)).toMatchObject([
       { idx: 0, tag: "0000_phase3_core_foundation" },
       {
         idx: 1,
