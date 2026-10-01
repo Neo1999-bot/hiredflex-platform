@@ -86,4 +86,26 @@ The response includes `matched`, `totalEvaluable`, `totalListed`, `notEvaluated`
 
 The canonical formula is `Math.round(matched / totalEvaluable * 100)`. Required and preferred structured requirements count equally. Four matches out of five evaluable requirements produces `80` and `80% of listed requirements matched` when all listed requirements are evaluable. Four matches out of four structured requirements plus one legacy requirement produces `100` and `100% of evaluable listed requirements matched`. Whenever `totalEvaluable === 0`, including empty and all-legacy vacancies, `percentage` is `null` and the summary is `No structured requirements available to compare`. All legacy requirements remain visible in the separate explanation array.
 
-This foundation exposes matching reads only. Skill/requirement editing APIs, data import, and UI are not implemented; reviewed database provisioning must supply explicit skill names and the existing requirement fields. Candidate skills are recorded evidence, not an independently verified proficiency assessment. No employer/recruiter matching visibility, ranking, recommendations, or hiring workflow is introduced. PostgreSQL runtime verification remains deferred when no PostgreSQL 18 environment is available; structural tests do not claim database execution.
+Phase 4A exposes matching reads only. Phase 4B supplies the structured source data through the authorized management routes below; data import and UI are not implemented. Candidate skills are recorded evidence, not an independently verified proficiency assessment. No employer/recruiter matching visibility, ranking, recommendations, or hiring workflow is introduced. PostgreSQL runtime verification remains deferred when no PostgreSQL 18 environment is available; structural tests do not claim database execution.
+
+### Phase 4B: structured skill and requirement management
+
+Candidate routes use the verified server-side principal exclusively:
+
+- `GET /candidate/skills` lists only the candidate's own records, ordered by stable ID.
+- `POST /candidate/skills` accepts only `{ "skillName": "JavaScript" }` and returns the created record with HTTP 201.
+- `DELETE /candidate/skills/:skillId` removes an owned record and returns HTTP 204. Missing and foreign-owned records both return `CANDIDATE_SKILL_NOT_FOUND` (404).
+
+Employer routes use existing company-scoped Employer role assignments:
+
+- `GET /employer/vacancies/:vacancyId/requirements` lists requirements for an authorized vacancy, including legacy rows, in any lifecycle state.
+- `POST /employer/vacancies/:vacancyId/requirements` accepts exactly `skillName`, `description`, `category`, `requirementType` (nonblank strings), and `required` (boolean). It preserves all existing requirement fields and returns the created record with HTTP 201.
+- `DELETE /employer/vacancies/:vacancyId/requirements/:requirementId` removes a requirement belonging to the authorized vacancy and returns HTTP 204. Missing or foreign-vacancy requirement IDs return `VACANCY_REQUIREMENT_NOT_FOUND` (404).
+
+Requirement POST/DELETE operations are permitted only in `DRAFT`. `OPEN` and `CLOSED` return `INVALID_VACANCY_REQUIREMENT_STATE` (409). The vacancy row is locked in the mutation transaction using the same row lock as the existing open/close operation, preventing concurrent opening from bypassing the editing rule. The vacancy lifecycle remains `DRAFT → OPEN → CLOSED`.
+
+Foreign-company and missing vacancies both return `VACANCY_NOT_FOUND` (404). Unauthenticated access fails with 401; wrong-role access fails with 403. Recruiter assignments grant no management access. Client-supplied candidate/company ownership, unknown body fields, and query parameters are rejected with `INVALID_REQUEST` (400); request schemas use `additionalProperties: false`. Blank and whitespace-only names are rejected. Display skill names have surrounding whitespace trimmed; category and requirementType remain existing text fields, with no new taxonomy or weighting.
+
+The existing PostgreSQL `public.matching_skill_name_key` expression indexes remain the final normalized uniqueness authority, including concurrent requests. Their uniqueness violations become `CANDIDATE_SKILL_EXISTS` or `VACANCY_REQUIREMENT_EXISTS` (409); no pre-insert duplicate lookup is required and no raw database errors are exposed. REQUIRED/PREFERRED remains the existing `required` boolean. Legacy requirements with NULL skill names remain valid and NOT EVALUATED; no automatic conversion is performed.
+
+Managed records feed the unchanged Phase 4A comparison. Four owned skills matching five structured requirements produce 80%; deleting one matching candidate skill makes the next comparison 60%. Match results are computed read models, not persisted. Matching remains informational and read-only, with no application changes or recruitment decisions. Skills are declared/recorded evidence, not verified proficiency. No update/replace API, import, UI, production authentication, ranking, recommendations, inference, or Phase 4C functionality is added. No schema or migration changes are required. Mock integration tests do not establish live PostgreSQL runtime behavior.
