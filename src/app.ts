@@ -13,6 +13,7 @@ import type { Database } from "./db/client.js";
 import { registerWorkflowRoutes } from "./routes.js";
 import { registerMatchingRoutes } from "./matching-routes.js";
 import { registerStructuredDataRoutes } from "./structured-data-routes.js";
+import { registerVacancyMatchDiscoveryRoutes } from "./vacancy-match-discovery-routes.js";
 import { ApiError } from "./api/errors.js";
 
 export interface AppDependencies {
@@ -40,6 +41,7 @@ export function buildApp({
   registerWorkflowRoutes(app, db);
   registerMatchingRoutes(app, db);
   registerStructuredDataRoutes(app, db);
+  registerVacancyMatchDiscoveryRoutes(app, db);
 
   app.get("/health/live", async () => ({ status: "ok" }));
   app.get("/health/ready", async (_request, reply) => {
