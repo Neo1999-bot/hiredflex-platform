@@ -125,3 +125,7 @@ Pagination happens after the complete candidate-specific ordering. `limit` defau
 Discovery uses one REPEATABLE READ, READ ONLY transaction. It batches candidate resolution, eligible vacancy reads, owned skill reads, and requirements for eligible vacancies into at most four shared queries, avoiding a query per vacancy. Results are computed on demand from that snapshot: later reads reflect changed source data. No application, status-history, match, recommendation, ranking, or analytics records are written; no score or display order is persisted. No schema/migration changes, production authentication, UI, or Phase 4D functionality are introduced.
 
 Scalability limitation: all filtered OPEN vacancies and their requirements are loaded before sorting and slicing. Responses are bounded to 100 items, but database input size, memory use, and comparison work grow with the filtered vacancy set and candidate skills. Offset pages use separate request snapshots, so source changes between requests can shift page boundaries. Database-double tests do not establish live PostgreSQL 18 execution or collation behavior.
+
+### Phase 5: PostgreSQL verification gate
+
+GitHub Actions now runs quality checks and a disposable PostgreSQL 18 smoke gate. Locally, set `TEST_DATABASE_ADMIN_URL` for a dedicated test server account with CREATEDB privilege and run `npm run db:verify`. The script creates and removes its own randomly named database; it never uses `DATABASE_URL`. See [Phase 5 delivery and deployment sequence](docs/PHASE-5.md) for coverage, limits and the next steps.
