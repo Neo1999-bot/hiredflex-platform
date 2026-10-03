@@ -17,7 +17,8 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:migrate": "node --env-file-if-exists=.env --import tsx/esm scripts/migrate.ts"
+    "db:migrate": "node --env-file-if-exists=.env --import tsx/esm scripts/migrate.ts",
+    "db:verify": "node --env-file-if-exists=.env --import tsx/esm scripts/verify-postgres.ts"
   },
   "repository": {
     "type": "git",
