@@ -9,7 +9,9 @@ import {
   type AuthenticatedPrincipal,
 } from "./auth/authorization.js";
 import { installAuthenticationBoundary } from "./auth/fastify.js";
-import type { Database } from "./db/client.js";
+import { connectDatabase, type Database } from "./db/client.js";
+import { readConfig } from "./config.js";
+import type { IncomingMessage, ServerResponse } from "node:http";
 import { registerWorkflowRoutes } from "./routes.js";
 import { registerMatchingRoutes } from "./matching-routes.js";
 import { registerStructuredDataRoutes } from "./structured-data-routes.js";
@@ -86,4 +88,33 @@ export function buildApp({
   });
 
   return app;
+}
+
+// Vercel discovers src/app.ts. Initialize lazily so importing buildApp for
+// unit tests does not require deployment credentials or open connections.
+let deployedApp: Promise<FastifyInstance> | undefined;
+
+export default async function handler(
+  request: IncomingMessage,
+  response: ServerResponse,
+): Promise<void> {
+  deployedApp ??= (async () => {
+    const config = readConfig();
+    const database = connectDatabase(config.databaseUrl);
+    const app = buildApp({
+      db: database.db,
+      checkDatabase: database.ping,
+      logger: config.nodeEnv !== "test",
+    });
+    app.addHook("onClose", database.close);
+    try {
+      await app.ready();
+      return app;
+    } catch (error) {
+      await database.close();
+      throw error;
+    }
+  })();
+  const app = await deployedApp;
+  app.server.emit("request", request, response);
 }
