@@ -129,3 +129,7 @@ Scalability limitation: all filtered OPEN vacancies and their requirements are l
 ### Phase 5: PostgreSQL verification gate
 
 GitHub Actions now runs quality checks and a disposable PostgreSQL 18 smoke gate. Locally, set `TEST_DATABASE_ADMIN_URL` for a dedicated test server account with CREATEDB privilege and run `npm run db:verify`. The script creates and removes its own randomly named database; it never uses `DATABASE_URL`. See [Phase 5 delivery and deployment sequence](docs/PHASE-5.md) for coverage, limits and the next steps.
+
+## Web interface and managed sign-in
+
+The root URL serves the HiredFlex website. Candidate, employer and recruiter screens use the existing API and database permissions. Managed Clerk authentication is configured through the Vercel integration; see [Phase 6 setup](docs/PHASE-6.md) for origins, identity migration and live release checks. Public browsing remains available when sign-in is not configured; protected endpoints stay closed.

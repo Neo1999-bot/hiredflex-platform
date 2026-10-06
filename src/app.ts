@@ -17,6 +17,12 @@ import { registerMatchingRoutes } from "./matching-routes.js";
 import { registerStructuredDataRoutes } from "./structured-data-routes.js";
 import { registerVacancyMatchDiscoveryRoutes } from "./vacancy-match-discovery-routes.js";
 import { ApiError } from "./api/errors.js";
+import {
+  readIdentityConfig,
+  registerIdentityRoutes,
+  type IdentityConfig,
+} from "./auth/identity.js";
+import { registerWebsite } from "./web/site.js";
 
 export interface AppDependencies {
   db: Database;
@@ -25,6 +31,7 @@ export interface AppDependencies {
     request: FastifyRequest,
   ) => AuthenticatedPrincipal | null | Promise<AuthenticatedPrincipal | null>;
   logger?: boolean;
+  identity?: IdentityConfig;
 }
 
 export function buildApp({
@@ -32,9 +39,16 @@ export function buildApp({
   checkDatabase,
   resolvePrincipal,
   logger = true,
+  identity,
 }: AppDependencies): FastifyInstance {
-  const app = Fastify({ logger });
+  const app = Fastify({
+    logger: logger
+      ? { redact: ["req.headers.authorization", "req.headers.cookie"] }
+      : false,
+  });
   installAuthenticationBoundary(app);
+  if (identity) registerIdentityRoutes(app, db, identity);
+  registerWebsite(app, identity);
   if (resolvePrincipal) {
     app.addHook("onRequest", async (request) => {
       request.principal = await resolvePrincipal(request);
@@ -105,6 +119,7 @@ export default async function handler(
       db: database.db,
       checkDatabase: database.ping,
       logger: config.nodeEnv !== "test",
+      ...(readIdentityConfig() ? { identity: readIdentityConfig()! } : {}),
     });
     app.addHook("onClose", database.close);
     try {
