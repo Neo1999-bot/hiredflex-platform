@@ -17,6 +17,18 @@ Prepared 25 October 2026. Nothing has been filed, paid, signed or registered by 
 - [ ] Complete the applicable POPIA/PAIA governance: information officer registration, notices, purpose/legal basis, access/correction requests, retention/legal holds, security and operator/provider agreements. A consent tick alone is not a complete compliance programme.
 - [ ] Treat WhatsApp Business/API verification as a separate provider process involving business evidence, number ownership and an approved provider/cost decision. Registration is not automatic API approval.
 
+## Service fees and legal classification — verified text, unresolved application
+
+Primary Act checked 25 October 2026: section 1 includes career advice and referrals in employment services; section 15(1) restricts work-seeker fees, section 15(2) allows specified Gazette exceptions, and Schedule 2 item 2(4) preserves specified Regulation 5(8) fees pending a notice. Section 16 requires covered registers for at least three years; section 17 covers confidentiality. [Employment Services Act, official PDF](https://www.labour.gov.za/DocumentCenter/Acts/Public%20Employment%20Services/Employment%20Services%20Act%202014.pdf).
+
+The [official commencement proclamation](https://www.gov.za/sites/default/files/gcis_document/201509/39079proc33.pdf) commenced the Act on 9 August 2015 except section 13. A current registration-route opinion must check later instruments; the original section 13 text alone is not proof of a commenced duty.
+
+Do not assume calling a service CV writing makes it exempt. Owner-reported historical R100 Job Application Service needs advice on the actual work/terms, current notices/transitional rules and registration route. No current price or fee collection is verified; this document changes no published price. Before offering/collecting candidate-paid application/referral/placement fees, obtain advice from a South African labour-law professional. Do not approve an employer-paid model automatically either; confirm its terms and obligations. No finding that HiredFlex has breached the Act, qualifies for an exception or is a registered agency is made.
+
+- [ ] Obtain service-by-service written advice and applicable instruments; keep the resulting decision/effective terms with the approved service catalogue.
+- [ ] Register the appropriate Information Officer under POPIA section 55 before those duties commence; verify actual acknowledgement rather than treating CIPC incorporation as this registration. [Regulator](https://inforegulator.org.za/).
+- [ ] Keep WhatsApp intake planned and Google Forms deferred; follow RETENTION-POLICY-DRAFT.md and WHATSAPP-INTAKE-PLAN.md before real collection.
+
 ## Private founder-details sheet — blank template
 
 | Item                                            | Owner-supplied value                           |

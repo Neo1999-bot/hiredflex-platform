@@ -32,6 +32,14 @@ Every execution report starts with a two-line status, uses tables/checklists whe
 
 Candidate qualifications, employment, achievements and graduation must trace to supplied documents or clearly labelled user statements. Do not publish "verified candidate" based only on an intake assertion. In particular, an alumni story must not assert NCV Level 4 graduation until the result/certificate supports it. Gaps should prompt a strategy, never invented experience.
 
+## Latest intake/privacy scope decision — 25 October 2026
+
+Neo confirms formal WhatsApp/Google Forms intake has not started, reports an existing vacancy community of 300+ people and requests WhatsApp preparation first. This supersedes any inference that an editor link, CRM schema or group membership proves live intake/consent. Google Forms remains deferred. WhatsApp preparation is a separate manual operational pilot (WHATSAPP-INTAKE-PLAN.md), not a platform API feature, group-roster import, bulk messaging authorisation or paid BSP approval. Keep the existing community distinct; no automated two-way CRM sync or completed request is claimed.
+
+RETENTION-POLICY-DRAFT.md v0.2 remains a draft pending actual adoption, legal/provider checks and implementation. It now includes conditional external-operation rows, restricted-data minimisation, consent/version/purpose linkage, access/offboarding and incident/officer registration preparation. REGISTRATION-PREPARATION.md records the verified fee-rule text and unresolved service-specific advice. Positive owner feedback does not automatically approve all periods or establish compliance.
+
+The dated audit tables below are historical where this decision differs. Real CV intake, attachments and consent records were not inspected; verify actual use before any statement that these contain candidate information.
+
 ## Current audit addendum — 25 October 2026
 
 The owner restated the full six-mission mandate while supplying 21 additional welcome/employer/footer screenshots. All requested deliverables and missing acceptance evidence are tracked in [MISSION-COVERAGE.md](MISSION-COVERAGE.md). This addendum supersedes the stale discovery observations in the original audit table below where specified:
