@@ -194,13 +194,49 @@ try {
       `/candidate/vacancies/${draft.id}/match`,
     );
     assert.equal(match.percentage, 100);
-    const applied = await call(
-      "Candidate",
-      "POST",
-      "/candidate/applications",
-      { vacancyId: draft.id },
-      201,
+    // Start both HTTP submissions before awaiting either response. PostgreSQL's
+    // partial unique index must protect the persisted outcome under contention.
+    const submissions = await Promise.all(
+      [0, 1].map(() =>
+        app.inject({
+          method: "POST",
+          url: "/candidate/applications",
+          headers: { "x-verification-role": "Candidate" },
+          payload: { vacancyId: draft.id },
+        }),
+      ),
     );
+    assert.deepEqual(
+      submissions.map((response) => response.statusCode).sort(),
+      [201, 409],
+      `Concurrent submissions: ${submissions.map((response) => response.body).join("; ")}`,
+    );
+    const applied = submissions
+      .find((response) => response.statusCode === 201)!
+      .json();
+    const conflict = submissions
+      .find((response) => response.statusCode === 409)!
+      .json();
+    assert.equal(conflict.error.code, "ACTIVE_APPLICATION_EXISTS");
+    const persisted = await client`
+      select id, current_status from applications
+      where candidate_id = ${candidate!.id} and vacancy_id = ${draft.id}`;
+    assert.equal(persisted.length, 1, "Only one application was persisted");
+    assert.equal(persisted[0]!.id, applied.id);
+    assert.equal(persisted[0]!.current_status, "Applied");
+    const initialHistory = await client`
+      select h.from_status, h.to_status, h.actor_user_id
+      from application_status_history h
+      join applications a on a.id = h.application_id
+      where a.candidate_id = ${candidate!.id} and a.vacancy_id = ${draft.id}`;
+    assert.equal(
+      initialHistory.length,
+      1,
+      "Only one initial event was persisted",
+    );
+    assert.equal(initialHistory[0]!.from_status, null);
+    assert.equal(initialHistory[0]!.to_status, "Applied");
+    assert.equal(initialHistory[0]!.actor_user_id, user!.id);
     await call(
       "Candidate",
       "POST",
@@ -245,7 +281,7 @@ try {
     await app.close();
   }
   console.log(
-    "PASS: PostgreSQL 18, fresh migrations, rerun, normalization, constraints, rollback, active uniqueness, reapplication, vacancy row locking, HTTP apply/review/shortlist/withdraw/reapply workflow",
+    "PASS: PostgreSQL 18, fresh migrations, rerun, normalization, constraints, rollback, active uniqueness, reapplication, vacancy row locking, concurrent HTTP submissions with single application/history, HTTP apply/review/shortlist/withdraw/reapply workflow",
   );
 } finally {
   if (client) await client.end({ timeout: 5 });
