@@ -39,6 +39,12 @@ This is the authoritative checklist after the live preview acceptance run on 25 
 - [ ] Owner approval and implementation of [candidate-data retention draft](RETENTION-POLICY-DRAFT.md), including legal scope, request handling and provider/backup deletion.
 - [ ] Final review, merge and production release after the gates above pass.
 
+## Welcome/employer follow-up (separate development branch)
+
+The owner supplied 21 additional welcome/employer/footer screenshots on 25 October 2026. Their static visual references were inspected and mapped in [EMPLOYER-SCREEN-REVIEW.md](EMPLOYER-SCREEN-REVIEW.md). This increment adds public welcome/services/how-it-works/employer-access/support destinations, grouped footer/menu links and employer overview/vacancies/applicants/read-only pipeline/company/access views using existing APIs. No interview/offer/placement state or public company-role signup was added.
+
+Local checks passed: 215 tests, typecheck, lint, build, startup and formatting. A local Chromium rendering check passed public routes/source filtering at 393px, the six employer tabs with explicit synthetic identity/API fixtures, and the welcome page at 1280px; it observed no page JavaScript errors or horizontal overflow. Skip-link keyboard focus/navigation was checked. This supersedes missing local screenshot-reference evidence for those visible states, not the remaining real-provider, independent-user, full accessibility, production or complete Figma fidelity gates. Fresh CI evidence must be attached to the reviewable PR before acceptance. No main merge, live migration or production release occurred.
+
 ## Live preview acceptance evidence
 
 The labelled test vacancy followed DRAFT → OPEN → CLOSED. Its two test applications finished Withdrawn and Rejected; a read-only database query confirmed two applications and six status-history events. A second closed vacancy in the test company had no assigned recruiter, and a closed vacancy in a separate isolation-fixture company had no company membership granted to the test user. Both isolation requests returned 404. The SQL console was restored to read-only mode. All fixtures are explicitly marked PREVIEW TEST; no external recruitment communication or real hiring decision occurred.
