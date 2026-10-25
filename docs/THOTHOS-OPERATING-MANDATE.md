@@ -5,11 +5,17 @@ Status: mission integration and prioritised delivery plan; not a claim that all 
 
 ## Latest consolidated engineering and business decision — 25 October 2026
 
-Read [CODEX-BUILD-PROMPT.md](CODEX-BUILD-PROMPT.md) for Neo's Build Prompt v1 reconciled with current evidence as v1.1. Its latest employer/partner-only revenue policy supersedes historical candidate-paid pricing/proposals. No candidate application/referral/placement/success charge or salary deduction is permitted; actual fee logic/terms remain a separate approval. This is owner policy, not a claim that every career service's legal classification has been settled.
+Read [CODEX-BUILD-PROMPT.md](CODEX-BUILD-PROMPT.md) for Neo's Build Prompt v1 reconciled with current evidence as v1.2. Its latest employer/partner-only revenue policy supersedes historical candidate-paid pricing/proposals. No candidate application/referral/placement/success charge or salary deduction is permitted; actual fee logic/terms remain a separate approval. This is owner policy, not a claim that every career service's legal classification has been settled.
 
 The expanded profile/readiness, document verification/upload, interview request, placement tracking, assessment and metrics roadmap is planned in separately gated increments. It does not rename or enlarge accepted prototype Stages 1–2, current engineering release or lifecycle. Proposed employer-only placement fees have no hard-coded percentage; a three-calendar-month guarantee is an unimplemented proposed term needing approval, not a signed promise.
 
-Neo will contact the team before concluding intake/reviewer assignments; keep them pending and do not repeat requests now. WhatsApp Business App is owner-confirmed, formal intake is not started, Google Forms deferred; group size is owner-reported context only. Airtable's audited schema is not proof of actual intake/consent/verified candidates. Proposed privacy v0.2 remains in open PR #9 until merged/adopted and implemented. Issue #2 is closed and PR #8 is merged at the dated v1.1 baseline; refresh rather than repeat their old missing-work lists. The older tables below remain historical where this section supersedes them.
+Neo will contact the team before concluding intake/reviewer assignments; keep them pending and do not repeat requests now. WhatsApp Business App is owner-confirmed, formal intake is not started, Google Forms deferred; group size is owner-reported context only. Airtable's audited schema is not proof of actual intake/consent/verified candidates. Privacy v0.2 is now merged via PR #9 but remains a draft pending adoption and implementation. Issue #2 is closed and PR #8 is merged at the dated v1.1 baseline; refresh rather than repeat their old missing-work lists. The older tables below remain historical where this section supersedes them.
+
+## Cash-gap bridge draft — 25 October 2026
+
+Neo supplied a proposed employer-upfront-fee/credit, sponsorship and free-usage-cap bridge. [CASH-GAP-BRIDGE-PLAN-DRAFT.md](CASH-GAP-BRIDGE-PLAN-DRAFT.md) preserves unset amounts and fee percentages, conditional 30-day experiments, no candidate charges, credit/refund questions, source-qualified YES leads and unknown real costs. It does not activate tariffs, payments, grants, service caps, guarantees, outreach or additional platform features. Billing/fees and production changes still need separate approval.
+
+The proposed Week 3 college meeting conflicts with the established three-real-partner-signal plus relevant-opportunities gate. Keep that gate in force pending an explicit sequencing decision; prepare research and materials now. Team contact remains deferred by Neo. All service availability, candidate verification and funding claims require actual evidence; corrective QA work cannot be discarded because a free cap was reached.
 
 ## Preserve the current mission
 

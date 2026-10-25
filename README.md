@@ -4,7 +4,7 @@ HiredFlex recruitment and career services platform in development. The current r
 
 ## Engineering execution mandate
 
-Use [Codex Build Prompt v1.1](docs/CODEX-BUILD-PROMPT.md) with AGENTS.md and the current release checklist. It reconciles the owner's business/privacy rules, dated evidence and separately gated roadmap; it does not authorise a production launch or treat future features as delivered.
+Use [Codex Build Prompt v1.2](docs/CODEX-BUILD-PROMPT.md) with AGENTS.md and the current release checklist. It reconciles the owner's business/privacy rules, dated evidence and separately gated roadmap; it does not authorise a production launch or treat future features as delivered.
 
 ## Current release status
 
