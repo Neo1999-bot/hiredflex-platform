@@ -1,0 +1,46 @@
+import { supportEmail } from "./contact.js";
+
+const supportLink = `<a class="button" href="mailto:${supportEmail}">Contact HiredFlex</a>`;
+const heading = (kicker: string, title: string, text: string) =>
+  `<div class="section-heading"><div><span class="eyebrow">${kicker}</span><h2>${title}</h2><p>${text}</p></div></div>`;
+
+export const publicPages: Record<string, string> = {
+  home: `<section class="hero welcome"><div><span class="eyebrow">Career services · Talent · Opportunity</span><h1>Talent meets<br><span class="accent">opportunity.</span></h1><p>Build a career profile that represents you clearly. Discover opportunities and help businesses connect with talent.</p><div class="actions"><a class="button" href="#workspace">Get started →</a><a class="button quiet" href="#jobs">Explore jobs</a></div><a class="back" href="#external-jobs">Browse employer website roles ↗</a><p><small>Truthful profiles. Clear requirements. Human decisions.</small></p></div><div class="hero-art"><article class="sample-card"><span class="eyebrow">Job seeker</span><h3>Bring your potential.</h3><p>Add your skills, explore roles and follow applications submitted through HiredFlex.</p><a class="back" href="#workspace">Your candidate workspace →</a></article><article class="sample-card offset"><span class="eyebrow">Employer</span><h3>Find your next connection.</h3><p>Publish vacancies and work with assigned recruiters.</p><a class="back" href="#for-employers">For employers →</a></article><a class="back" href="#recruiter">Recruiter workspace →</a></div></section><section class="feature-grid"><div class="feature"><span class="number">01 / CAREER SERVICES</span><h3>Prepare with purpose.</h3><p>Present your real skills and experience clearly.</p><a class="back" href="#services">See career services →</a></div><div class="feature"><span class="number">02 / OPPORTUNITIES</span><h3>Understand the requirements.</h3><p>Matching explains listed skills. It does not predict a hiring outcome.</p><a class="back" href="#jobs">Find opportunities →</a></div><div class="feature"><span class="number">03 / HOW IT WORKS</span><h3>A practical route forward.</h3><p>Candidate, recruiter and employer workspaces support the recruitment journey.</p><a class="back" href="#how-it-works">Explore the process →</a></div></section>`,
+  services:
+    heading(
+      "Career services",
+      "Prepare with purpose. Present yourself honestly.",
+      "Ask HiredFlex about support for your next step. Service availability, scope and price are confirmed before work begins.",
+    ) +
+    `<div class="grid"><article class="card"><h3>CV &amp; ATS optimisation</h3><p>Review structure, readability and relevance against a target role. Qualifications and experience must trace to supplied evidence; there is no universal employer ATS score.</p></article><article class="card"><h3>LinkedIn optimisation</h3><p>Present supported experience, projects and skills clearly. Profile edits require your review.</p></article><article class="card"><h3>Interview preparation</h3><p>Ask about human-led practice using real examples. Automated ThothFlex coaching is being prepared and is not available in this release.</p></article></div><section class="card compact"><h3>Discuss a request</h3><p>Contact us to confirm the next step. Do not email passwords, verification codes or identity-document copies.</p>${supportLink}<p>CV uploads and service-request tracking are not yet available inside this application.</p></section>`,
+  "how-it-works":
+    heading(
+      "How HiredFlex works",
+      "A practical route forward.",
+      "Use the workspace that matches your approved access.",
+    ) +
+    `<div class="stack"><section class="card"><h3>01 · Create your candidate profile</h3><p>Sign in, verify your primary email and create your candidate profile. Public signup does not grant company roles.</p><a class="back" href="#workspace">Get started →</a></section><section class="card"><h3>02 · Add your skills</h3><p>Record truthful skill names. A recorded skill is not an independently verified qualification.</p><a class="back" href="#skills">My skills →</a></section><section class="card"><h3>03 · Discover relevant opportunities</h3><p>Browse native HiredFlex vacancies or source-linked employer roles. Native matching is an informational comparison of exact skill names.</p><a class="back" href="#jobs">Explore jobs →</a></section><section class="card"><h3>04 · Apply and follow progress</h3><p>Applications submitted through HiredFlex have status history. Employer website applications happen externally and do not create HiredFlex tracker entries.</p><a class="back" href="#applications">My applications →</a></section><section class="card"><h3>05 · Recruit and review</h3><p>Approved employers manage company vacancies. Assigned recruiters review, shortlist or reject applications. Interviews, offers and automated screening remain outside this release.</p><a class="back" href="#for-employers">For employers →</a></section></div>`,
+  "for-employers":
+    heading(
+      "For employers",
+      "Build your team with more clarity.",
+      "Create vacancies, define requirements and review applications in a company-scoped workspace.",
+    ) +
+    `<div class="split"><section class="card employer-intro"><h3>Build your team with HiredFlex.</h3><p>Prepare a vacancy draft, add structured requirements, assign an approved recruiter and publish when ready.</p><div class="actions"><a class="button" href="#employer">Open employer workspace →</a><a class="button quiet" href="#employer-access">Request access</a></div></section><section class="card"><h3>Respectful recruitment</h3><p>Employers see applications to their authorised vacancies. Assigned recruiters record review decisions. This release does not provide a searchable candidate directory, interview booking or placement tracking.</p><a class="back" href="#recruiter">Assigned recruiter workspace →</a></section></div>`,
+  "employer-access":
+    heading(
+      "Employer access",
+      "Start with your company.",
+      "Company permissions are approved separately from candidate signup.",
+    ) +
+    `<section class="card compact"><h3>Request employer access</h3><p>Contact HiredFlex with your organisation name, business contact channel and hiring needs. An operator must approve and provision company-scoped roles. Sending an enquiry does not create or verify an employer account.</p>${supportLink}<div class="actions"><a class="button quiet" href="#employer">Open an approved workspace</a></div><h3>Verification status</h3><p>Role approval controls application access. It is not a published employer-verification badge, a background check or an endorsement of every listing. Confirm a role on its original source before applying.</p></section>`,
+  support:
+    heading(
+      "Candidate · Recruiter · Employer",
+      "Help & support",
+      "Get help with access, profiles, vacancy management and application history.",
+    ) +
+    `<div class="split"><section class="card"><details><summary>What does a matching percentage mean?</summary><p>It compares your recorded skills with evaluable structured requirements using exact normalised names. It is not a suitability score or hiring prediction.</p></details><details><summary>Who can see an application?</summary><p>You, authorised members of the vacancy’s company and its assigned recruiter can access the supported application records.</p></details><details><summary>Can I upload a CV or change visibility?</summary><p>CV uploads and selectable profile-discovery visibility are not available in this release. Existing access follows company and vacancy permissions.</p></details><details><summary>Where are status updates?</summary><p>Open My applications for native HiredFlex application history. External employer applications are managed by that employer. Notifications are not enabled in this release.</p></details><a class="back" href="#privacy">Privacy &amp; data →</a></section><aside class="card employer-intro"><h3>Talk to HiredFlex support.</h3><p>Describe the issue without sending passwords, codes or identity-document copies.</p>${supportLink}<p>Email opens your mail application; no message is sent automatically.</p></aside></div>`,
+};
+
+export const siteFooter = `<footer class="site-footer"><div class="footer-grid"><div><a class="brand" href="#home">HiredFlex</a><p>A developing career and recruitment ecosystem. Built around truthful profiles, clear opportunities and respectful connections.</p></div><nav aria-label="Explore footer links"><h3>Explore</h3><a href="#services">Services</a><a href="#jobs">Opportunities</a><a href="#how-it-works">How it works</a></nav><nav aria-label="Platform footer links"><h3>Platform</h3><a href="#workspace">For job seekers</a><a href="#for-employers">For employers</a><a href="#recruiter">For recruiters</a><a href="#services">Career services</a></nav><nav aria-label="Trust footer links"><h3>Trust</h3><a href="#privacy">Privacy &amp; visibility</a><a href="#employer-access">Employer verification &amp; access</a><a href="#support">Contact &amp; support</a><a href="mailto:${supportEmail}">${supportEmail}</a></nav></div><p class="footer-note">© 2026 HiredFlex · No interview or employment outcome is guaranteed.</p></footer>`;

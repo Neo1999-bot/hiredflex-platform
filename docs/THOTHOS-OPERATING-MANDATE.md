@@ -24,6 +24,17 @@ Every execution report starts with a two-line status, uses tables/checklists whe
 
 Candidate qualifications, employment, achievements and graduation must trace to supplied documents or clearly labelled user statements. Do not publish "verified candidate" based only on an intake assertion. In particular, an alumni story must not assert NCV Level 4 graduation until the result/certificate supports it. Gaps should prompt a strategy, never invented experience.
 
+## Current audit addendum — 25 October 2026
+
+The owner restated the full six-mission mandate while supplying 21 additional welcome/employer/footer screenshots. All requested deliverables and missing acceptance evidence are tracked in [MISSION-COVERAGE.md](MISSION-COVERAGE.md). This addendum supersedes the stale discovery observations in the original audit table below where specified:
+
+- Known: Airtable **HiredFlex Operations** is accessible. Schema reads confirm Candidates, CV Requests, Documents, Employers/Leads and Team Tasks, including consent evidence and QA fields. This is schema verification, not proof of production workflow enforcement, candidate accuracy or application integration. No records were read or changed.
+- Known: the owner supplied the Google Forms editor URL. A current content fetch returned HTTP 403; form content, published URL and Forms-to-Airtable transfer remain unverified. It is not correct to say no URL is known.
+- Known: CV Requests has Stage and QA Outcome fields (Pending, Approved, Changes Required). These fields alone do not enforce independent QA before delivery. WhatsApp labels/quick replies remain owner-planned; no Business-app automation was verified.
+- Known: external source-linked jobs and their working filters are reviewable in PR #5. Welcome/footer and employer tabs build on that branch. Pending PRs have not been merged into main; production readiness is not established.
+- Known: hiredflex.co.za is the owner's preferred domain. Registration/ownership remains unverified; no purchase is authorised.
+- Unknown: graduation/certification documents and three qualifying employer/recruiter replies have not been inspected in this audit. Do not turn an alumni narrative into an unsupported graduate claim or open college outreach early.
+
 ## Mission status and current-system audit
 
 | Area                                                              | Done / In progress / Missing                                            | Evidence label and limits                                                                                             |
