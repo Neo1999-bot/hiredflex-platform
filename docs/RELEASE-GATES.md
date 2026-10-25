@@ -56,3 +56,11 @@ On 25 October 2026, Vercel team access succeeded. The latest Ready preview was d
 6. Repeat the existing screens on desktop/mobile; check navigation, validation, error/empty states, sign-in transitions and console/network failures. Compare those screens with Figma. Record URL, commit, date, account roles and outcomes without credentials or personal candidate data.
 
 Additional integration coverage can be added within existing boundaries for history-write failure rollback, both requirement/open race orderings and concurrent HTTP submissions. Existing smoke coverage must not be described as proving those cases.
+
+## Preview company-role provisioning — 25 October 2026
+
+A direct read-only audit of hiredflex-preview found one active mapped candidate user and no company, employer, recruiter or company-role records. After the owner explicitly approved using the existing account for both roles, an isolated HiredFlex Preview Test Company was created and company-scoped Employer and Recruiter roles were provisioned atomically, with employer/recruiter records. The existing Candidate assignment was preserved; no global company role or administrator permission was granted. The SQL console was restored to read-only mode.
+
+A post-write query returned exactly Candidate (global), Employer (test company), and Recruiter (test company). Live sign-in then displayed both workspace tabs. Employer opened successfully with the test company selected in the vacancy form; Recruiter opened successfully with the expected no-assigned-vacancies state. Candidate sign-out was also verified before switching sessions.
+
+This supersedes the missing-company-role prerequisite above for single-account preview testing. Populated lifecycle acceptance, new-account onboarding, mobile/Figma comparison and production gates remain open. Because both company roles share one test identity, these checks do not prove separation between independent employer/recruiter users or cross-company isolation. Production data and configuration were not modified.
