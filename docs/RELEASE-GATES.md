@@ -2,6 +2,14 @@
 
 Release remains blocked. This review preserves the approved Phase 3/4 lifecycle and Phase 5/6 scope. Interviews, offers, uploads, messaging, billing and automated screening remain outside this release.
 
+## GitHub merge and candidate-readiness follow-up — 25 October 2026
+
+GitHub now confirms PR #1 merged to main at `2eb6661b15cbc31887b233250a7eb50dd33be22b`; PRs #8–11 are merged. Neo confirmed the actions and instructed continued bounded development. The old statements below that PR #1 remains open/main is unchanged are historical and superseded. The last development head `41ef602` passed CI run 40200173842; fresh feature revisions require their own checks.
+
+Vercel metadata reports production deployment `dpl_B4frxhqpQzhT8Sks8Nt17qzbZY9V` READY at the new main SHA. An unauthenticated GET to its `/health/ready` encountered Vercel Authentication (HTTP 302), so this run has not verified production database readiness, live sign-in or candidate-data behavior. No protection was weakened, share link created, environment changed or migration run. A merged PR and Ready build do not establish every unchecked operational gate; do not claim registrations, provider configuration, team availability or legal-service terms without their actual evidence.
+
+Next bounded application increment: `/#profile` reads the existing authenticated `/candidate/profile` and `/candidate/skills` endpoints. It shows saved account details, declared skills, an actionable empty state and a checklist that explicitly labels document verification Not checked. No invented score, document upload, verified-candidate badge, schema change or application eligibility threshold is introduced. Existing apply/search/matching and lifecycle behavior remains intact. Current feature tests and render evidence belong to its PR, not the older baseline checks below.
+
 ## Owner acceptance and menu follow-up — 25 October 2026
 
 Neo reported that the guided new-candidate-account test succeeded and added skills were still present after signing back in. No email address, token, screenshot or candidate record was requested or inspected for that report. Do not infer that unmentioned isolation/duplicate-email checks passed.
@@ -42,7 +50,7 @@ This is the authoritative checklist after the live preview acceptance run on 25 
 - [ ] Complete browser edge cases: direct closed-vacancy submission, direct requirement-mutation rejection, and live empty/all-legacy match rendering. Automated CI covers relevant domain/API/database rules; UI-only locking is not proof of direct API rejection.
 - [ ] Mobile viewport acceptance and full browser network/error audit.
 - [ ] Rendered Figma comparison; the Make reference is not renderable by the available connector and was unavailable in the cloud browser.
-- [ ] Production database, live Clerk setup/branding, exact production origin, migration verification and production acceptance. Production still runs older main; this PR is unmerged.
+- [ ] Production database, live Clerk setup/branding, exact production origin, migration verification and production acceptance. Main merge is now confirmed above; production identity/database configuration and runtime acceptance still need current evidence.
 - [ ] Backup/restore ownership, tested restoration, capacity/connection-budget validation and chosen deployment/database regions.
 - [x] Owner-approved interim support/privacy contact: neomarothi.nfm@gmail.com; published in the preview footer and privacy page.
 - [ ] Owner approval and implementation of [candidate-data retention draft](RETENTION-POLICY-DRAFT.md), including legal scope, request handling and provider/backup deletion.

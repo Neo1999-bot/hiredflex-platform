@@ -38,8 +38,8 @@ function workspaceHarness(role = "Employer", records = true, denied = 0) {
         },
       ]
     : [];
-  const fetch = vi.fn(async (url: string) => {
-    if (denied && url === "/employer/vacancies")
+  const fetch = vi.fn(async (url: string, _options?: RequestInit) => {
+    if (denied && ["/employer/vacancies", "/candidate/profile"].includes(url))
       return {
         status: denied,
         ok: false,
@@ -54,6 +54,10 @@ function workspaceHarness(role = "Employer", records = true, denied = 0) {
         displayName: "Employer <name>",
         roleAssignments: [{ role, companyId: "company-a" }],
       };
+    else if (url === "/candidate/profile")
+      data = { createdAt: "2026-10-25T08:00:00Z" };
+    else if (url === "/candidate/skills")
+      data = records ? [{ id: "skill-a", skillName: "Support <script>" }] : [];
     else if (url === "/employer/vacancies") data = vacancies;
     else if (url === "/employer/companies")
       data = [{ id: "company-a", name: "Test <company>" }];
@@ -232,4 +236,62 @@ describe("public welcome and footer links", () => {
       await app.close();
     }
   });
+});
+
+describe("candidate profile readiness", () => {
+  it("renders persisted profile and declared skills without verification or invented scores", async () => {
+    const h = workspaceHarness("Candidate");
+    await h.events.load!();
+    h.location.hash = "#profile";
+    await h.events.hashchange!();
+    expect(h.content.innerHTML).toContain("Profile checklist");
+    expect(h.content.innerHTML).toContain("Employer &lt;name&gt;");
+    expect(h.content.innerHTML).toContain("Support &lt;script&gt;");
+    expect(h.content.innerHTML).toContain("Not checked");
+    expect(h.content.innerHTML).toContain("They do not establish verified");
+    expect(h.content.innerHTML).not.toContain("<script>");
+    expect(h.content.innerHTML).not.toContain("75%");
+    expect(h.content.innerHTML).not.toContain('type="file"');
+    expect(
+      h.fetch.mock.calls.every(
+        ([, options]) => !options || options.method === "GET",
+      ),
+    ).toBe(true);
+  });
+
+  it("offers an actionable empty skill state without blocking applications", async () => {
+    const h = workspaceHarness("Candidate", false);
+    await h.events.load!();
+    h.location.hash = "#profile";
+    await h.events.hashchange!();
+    expect(h.content.innerHTML).toContain("No skills added yet");
+    expect(h.content.innerHTML).toContain("Not added");
+    expect(h.content.innerHTML).toContain("without a minimum number of skills");
+    expect(h.content.innerHTML).toContain('href="#jobs"');
+    expect(h.content.innerHTML).toContain('href="#skills"');
+  });
+
+  it("does not request candidate data for a different role", async () => {
+    const h = workspaceHarness("Employer");
+    await h.events.load!();
+    h.location.hash = "#profile";
+    await h.events.hashchange!();
+    expect(h.content.innerHTML).toContain("Candidate access required");
+    expect(
+      h.fetch.mock.calls.some(([url]) => url.startsWith("/candidate/")),
+    ).toBe(false);
+  });
+
+  it.each([401, 403])(
+    "shows a %s denial instead of a partial candidate profile",
+    async (denied) => {
+      const h = workspaceHarness("Candidate", true, denied);
+      await h.events.load!();
+      h.location.hash = "#profile";
+      await h.events.hashchange!();
+      expect(h.content.innerHTML).toContain("We couldn’t load this page");
+      expect(h.content.innerHTML).not.toContain("Support &lt;script&gt;");
+      expect(h.content.innerHTML).not.toContain("Account details");
+    },
+  );
 });
