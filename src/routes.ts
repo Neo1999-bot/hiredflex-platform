@@ -1,4 +1,4 @@
-import { and, desc, eq, ilike, inArray, or } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import type {
   FastifyInstance,
   FastifyRequest,
@@ -20,6 +20,9 @@ import {
   candidates,
   recruiters,
   vacancies,
+  companies,
+  users,
+  userRoles,
 } from "./db/schema/index.js";
 import {
   activeApplicationStatuses,
@@ -473,6 +476,30 @@ function registerRecruiterRoutes(
   db: Database,
   auth: preHandlerHookHandler,
 ): void {
+  app.get("/recruiter/vacancies", { preHandler: auth }, async (request) => {
+    const principal = requireRole(request, "Recruiter");
+    const rows = await db
+      .select({
+        id: vacancies.id,
+        title: vacancies.title,
+        location: vacancies.location,
+        status: vacancies.status,
+        companyId: vacancies.companyId,
+      })
+      .from(vacancies)
+      .innerJoin(recruiters, eq(recruiters.id, vacancies.assignedRecruiterId))
+      .where(eq(recruiters.userId, principal.userId))
+      .orderBy(desc(vacancies.createdAt))
+      .limit(100);
+    return rows.filter((row) =>
+      principal.roleAssignments.some(
+        (assignment) =>
+          assignment.role === "Recruiter" &&
+          (assignment.companyId === null ||
+            assignment.companyId === row.companyId),
+      ),
+    );
+  });
   app.get<{ Params: VacancyParams }>(
     "/recruiter/vacancies/:vacancyId/applications",
     { preHandler: auth, schema: { params: vacancyParamsSchema } },
@@ -579,6 +606,89 @@ function registerEmployerRoutes(
   db: Database,
   auth: preHandlerHookHandler,
 ): void {
+  app.get("/employer/companies", { preHandler: auth }, async (request) =>
+    db
+      .select({ id: companies.id, name: companies.name })
+      .from(companies)
+      .where(inArray(companies.id, employerCompanyIds(request))),
+  );
+  app.get("/employer/recruiters", { preHandler: auth }, async (request) => {
+    const ids = employerCompanyIds(request);
+    return db
+      .select({
+        id: recruiters.id,
+        displayName: users.displayName,
+        companyId: userRoles.companyId,
+      })
+      .from(recruiters)
+      .innerJoin(users, eq(users.id, recruiters.userId))
+      .innerJoin(userRoles, eq(userRoles.userId, users.id))
+      .where(
+        and(
+          eq(users.accountStatus, "Active"),
+          eq(userRoles.role, "Recruiter"),
+          or(
+            inArray(userRoles.companyId, ids),
+            sql`${userRoles.companyId} is null`,
+          ),
+        ),
+      );
+  });
+  app.post<{ Params: IdParams; Body: { recruiterId: string } }>(
+    "/employer/vacancies/:id/recruiter",
+    {
+      preHandler: auth,
+      schema: {
+        params: idParamsSchema,
+        body: {
+          type: "object",
+          additionalProperties: false,
+          required: ["recruiterId"],
+          properties: { recruiterId: { type: "string", format: "uuid" } },
+        },
+      },
+    },
+    async (request) => {
+      const ids = employerCompanyIds(request);
+      return db.transaction(async (tx) => {
+        const [vacancy] = await tx
+          .select()
+          .from(vacancies)
+          .where(
+            and(
+              eq(vacancies.id, request.params.id),
+              inArray(vacancies.companyId, ids),
+            ),
+          )
+          .for("update");
+        if (!vacancy) throw new ApiError(404, "NOT_FOUND");
+        const [person] = await tx
+          .select({ id: recruiters.id })
+          .from(recruiters)
+          .innerJoin(users, eq(users.id, recruiters.userId))
+          .innerJoin(userRoles, eq(userRoles.userId, users.id))
+          .where(
+            and(
+              eq(recruiters.id, request.body.recruiterId),
+              eq(users.accountStatus, "Active"),
+              eq(userRoles.role, "Recruiter"),
+              or(
+                eq(userRoles.companyId, vacancy.companyId),
+                sql`${userRoles.companyId} is null`,
+              ),
+            ),
+          )
+          .limit(1);
+        if (!person) throw new ApiError(404, "NOT_FOUND");
+        const [updated] = await tx
+          .update(vacancies)
+          .set({ assignedRecruiterId: person.id, updatedAt: new Date() })
+          .where(eq(vacancies.id, vacancy.id))
+          .returning();
+        return updated;
+      });
+    },
+  );
   app.get("/employer/vacancies", { preHandler: auth }, async (request) => {
     const companyIds = employerCompanyIds(request);
     return db

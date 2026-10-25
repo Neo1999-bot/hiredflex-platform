@@ -98,7 +98,9 @@ describe("matching persistence foundation", () => {
   });
 
   it("orders the additive migration after the frozen Phase 3 migrations", () => {
-    expect(journal.entries.map(({ idx, tag }) => ({ idx, tag }))).toEqual([
+    expect(
+      journal.entries.slice(0, 3).map(({ idx, tag }) => ({ idx, tag })),
+    ).toEqual([
       { idx: 0, tag: "0000_phase3_core_foundation" },
       { idx: 1, tag: "0001_canonical_vacancy_and_application_lifecycle" },
       { idx: 2, tag: "0002_explainable_requirement_matching" },

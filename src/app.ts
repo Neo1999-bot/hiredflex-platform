@@ -9,12 +9,20 @@ import {
   type AuthenticatedPrincipal,
 } from "./auth/authorization.js";
 import { installAuthenticationBoundary } from "./auth/fastify.js";
-import type { Database } from "./db/client.js";
+import { connectDatabase, type Database } from "./db/client.js";
+import { readConfig } from "./config.js";
+import type { IncomingMessage, ServerResponse } from "node:http";
 import { registerWorkflowRoutes } from "./routes.js";
 import { registerMatchingRoutes } from "./matching-routes.js";
 import { registerStructuredDataRoutes } from "./structured-data-routes.js";
 import { registerVacancyMatchDiscoveryRoutes } from "./vacancy-match-discovery-routes.js";
 import { ApiError } from "./api/errors.js";
+import {
+  readIdentityConfig,
+  registerIdentityRoutes,
+  type IdentityConfig,
+} from "./auth/identity.js";
+import { registerWebsite } from "./web/site.js";
 
 export interface AppDependencies {
   db: Database;
@@ -23,6 +31,7 @@ export interface AppDependencies {
     request: FastifyRequest,
   ) => AuthenticatedPrincipal | null | Promise<AuthenticatedPrincipal | null>;
   logger?: boolean;
+  identity?: IdentityConfig;
 }
 
 export function buildApp({
@@ -30,9 +39,16 @@ export function buildApp({
   checkDatabase,
   resolvePrincipal,
   logger = true,
+  identity,
 }: AppDependencies): FastifyInstance {
-  const app = Fastify({ logger });
+  const app = Fastify({
+    logger: logger
+      ? { redact: ["req.headers.authorization", "req.headers.cookie"] }
+      : false,
+  });
   installAuthenticationBoundary(app);
+  if (identity) registerIdentityRoutes(app, db, identity);
+  registerWebsite(app, identity);
   if (resolvePrincipal) {
     app.addHook("onRequest", async (request) => {
       request.principal = await resolvePrincipal(request);
@@ -86,4 +102,34 @@ export function buildApp({
   });
 
   return app;
+}
+
+// Vercel discovers src/app.ts. Initialize lazily so importing buildApp for
+// unit tests does not require deployment credentials or open connections.
+let deployedApp: Promise<FastifyInstance> | undefined;
+
+export default async function handler(
+  request: IncomingMessage,
+  response: ServerResponse,
+): Promise<void> {
+  deployedApp ??= (async () => {
+    const config = readConfig();
+    const database = connectDatabase(config.databaseUrl);
+    const app = buildApp({
+      db: database.db,
+      checkDatabase: database.ping,
+      logger: config.nodeEnv !== "test",
+      ...(readIdentityConfig() ? { identity: readIdentityConfig()! } : {}),
+    });
+    app.addHook("onClose", database.close);
+    try {
+      await app.ready();
+      return app;
+    } catch (error) {
+      await database.close();
+      throw error;
+    }
+  })();
+  const app = await deployedApp;
+  app.server.emit("request", request, response);
 }

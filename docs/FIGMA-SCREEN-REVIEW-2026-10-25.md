@@ -1,0 +1,42 @@
+# HiredFlex screenshot review — 25 October 2026
+
+## Evidence and boundaries
+
+Reviewed 31 user-supplied `Screenshot_20261025_*_Figma.jpg` images captured between 13:02:17 and 13:13:53. The files were retrieved from the user's saved records and inspected visually. These are static mobile references for the exact existing HiredFlex Make prototype; they do not establish working persistence, executed navigation, source design tokens or desktop behavior. The screenshot references remove the missing-image prerequisite for these visible states, not the whole Figma/browser acceptance gate. No Figma file was edited. Prototype Stages 1–2 remain accepted; engineering Phase 6 boundaries remain separate.
+
+| Screenshot timestamp suffixes                  | Visible prototype flow                                                       | Existing application mapping / discrepancy                                                                                                                                                                |
+| ---------------------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 130217, 131259, 131310                         | Dashboard, 75% completion, saved jobs, interview and recommendation counters | `/#workspace` loads real skill-match discovery; sample counters are not evidence of persisted metrics and are not copied                                                                                  |
+| 130242                                         | Jobs list, keyword, arrangement and experience selectors, sample vacancies   | `/#jobs` retains native OPEN-vacancy search. New `/#external-jobs` adds source-linked real roles with keyword, location, category and experience filters                                                  |
+| 130433, 130447, 130454                         | Role details, sample 82% indicator, skills and apply action                  | `/#job/:id` and candidate match API remain authoritative for native roles. New `/#external-job/:id` shows sourced summaries and external application links without a fabricated match score               |
+| 130705, 130717, 130726, 130739                 | Confirm profile, choose CV, optional note, review/consent                    | Native application POST accepts vacancyId only. CV upload/sharing, cover notes and expanded profile fields need separately approved storage/permissions/retention work; do not render nonfunctional forms |
+| 130745                                         | Application submitted and promised notifications                             | Native successful submission already creates Applied/history and routes to `/#applications`; notifications remain deferred. External-link visits never claim submission                                   |
+| 130811                                         | Tracker showing Screening and Interview stages                               | `/#applications`, `/#application/:id` use Applied/Reviewing/Shortlisted/Rejected/Withdrawn. Preserve approved engineering states; do not silently rename Reviewing or add Interview                       |
+| 130848, 130900, 130910, 130917, 131140, 131154 | Mock questions and feedback                                                  | Separate preparation concept, not implemented or verified as part of this increment                                                                                                                       |
+| 130928, 130934, 130955                         | Recruiter readiness and employer submission summary                          | Assigned recruiter API remains authoritative. No assessment completion or employer submission is inferred from screenshots                                                                                |
+| 131014, 131031                                 | Client interview and outcome                                                 | Deferred employer process; no new interview/offer states                                                                                                                                                  |
+| 131050, 131107, 131122, 131218                 | Development plan/history                                                     | Separately staged concept; no persisted learning progress is claimed                                                                                                                                      |
+| 131238                                         | Notifications                                                                | Deferred; native application history remains the supported status source                                                                                                                                  |
+| 131339, 131353                                 | Support, privacy visibility, notification toggles                            | Existing `/#privacy` and approved support contact remain. Screenshot visibility choices are not backed by current permission/settings APIs                                                                |
+
+## Bounded implementation: source-linked discovery
+
+Owner request: use real job vacancies and additional working select controls. Two roles were read on Mimecast's own careers site on 25 October 2026 with visible Apply links:
+
+- Associate Systems Administrator, Johannesburg, source ID r6649: <https://careers.mimecast.com/en/jobs/r6649/associate-systems-administrator/>.
+- Senior Commission Analyst, Johannesburg, source ID r6824: <https://careers.mimecast.com/en/jobs/r6824/senior-commission-analyst/>.
+
+`GET /external-opportunities` serves a small manually reviewed catalog; it is not an automated live feed. Each record has title, employer, location, category, required experience, short requirements summary, source URL, checkedOn and reviewBy. Records disappear at 1 November 2026 00:00 UTC unless rechecked and updated, including direct detail navigation. The employer may close a role earlier; candidates must confirm the original advert. A listing is not an employer partnership or permission to submit on its behalf.
+
+The new public pages reuse the existing cards, typography, blue color token, buttons, responsive layout and labels. Keyword search and location/category/experience select boxes filter actual catalog fields. Filter options derive from current records. Salary, employment type and work arrangement are not inferred, and dropdowns for unavailable data are deferred. Search remains independent of matching and of the native application lifecycle.
+
+External Apply opens the original employer page. It does not store candidate data, generate a HiredFlex application, change tracker status, notify anyone or submit a form. Native vacancy IDs, matching calculations, roles and transitions are unchanged. No real vacancy or company record is inserted into preview/production.
+
+## Remaining review
+
+Automated checks cover catalog expiry, source metadata exposure without database/identity access, combined dropdown and keyword filtering, preserved selected values, empty/unknown listing states, external link markup and absence of native application actions. The client flow tests execute the actual generated JavaScript in an isolated DOM harness; they are not a real browser layout check. A local Chromium installation attempt failed because the downloaded archive was truncated, so no rendered application screenshot or pixel-fidelity pass is claimed. Full mobile/browser geometry remains unverified.
+
+- Must fix before launch: independent identities/onboarding, existing browser/direct-API/mobile gates, production setup, retention and operations decisions remain in RELEASE-GATES.md.
+- Design/application differences: expanded profile/CV fields, sample scoring/counters, Screening/Interview stage labels, mock interviews, notifications and visibility settings are specifically unimplemented or deferred; screenshots do not approve expanding them automatically.
+- Optional later improvement: more source-checked roles and a reviewed refresh/feed process; broader dropdowns only after source data and semantics exist.
+- Recheck sources before any public release; static review dates are not continuous availability monitoring.

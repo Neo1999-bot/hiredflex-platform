@@ -96,6 +96,17 @@ export const candidates = pgTable("candidates", {
   ...timestamps(),
 });
 
+export const authIdentities = pgTable("auth_identities", {
+  subject: text("subject").primaryKey(),
+  userId: uuid("user_id")
+    .notNull()
+    .unique()
+    .references(() => users.id, { onDelete: "restrict" }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
 export const employers = pgTable("employers", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id")
