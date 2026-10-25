@@ -3,6 +3,7 @@ import type { IdentityConfig } from "../auth/identity.js";
 import { clientScript } from "./client.js";
 import { styles } from "./styles.js";
 import { supportEmail } from "./contact.js";
+import { currentExternalOpportunities } from "./external-opportunities.js";
 
 const escape = (value: string) =>
   value
@@ -14,6 +15,10 @@ export function registerWebsite(
   app: FastifyInstance,
   identity?: IdentityConfig,
 ) {
+  app.get("/external-opportunities", (_request, reply) => {
+    reply.header("Cache-Control", "no-store");
+    return { items: currentExternalOpportunities() };
+  });
   app.get("/assets/site.css", (_request, reply) =>
     reply.type("text/css").send(styles),
   );
