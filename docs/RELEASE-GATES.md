@@ -2,6 +2,14 @@
 
 Release remains blocked. This review preserves the approved Phase 3/4 lifecycle and Phase 5/6 scope. Interviews, offers, uploads, messaging, billing and automated screening remain outside this release.
 
+## Owner acceptance and menu follow-up — 25 October 2026
+
+Neo reported that the guided new-candidate-account test succeeded and added skills were still present after signing back in. No email address, token, screenshot or candidate record was requested or inspected for that report. Do not infer that unmentioned isolation/duplicate-email checks passed.
+
+Neo also reported that the open header Menu remained expanded when navigating to My workspace. This was reproduced in local Chromium against development head `2066e08`. The targeted fix closes the native disclosure on internal-link activation (including the current route) and at the start of route rendering, preserving native summary keyboard operation and route focus behavior. Completed prototype Stages 1–2 and all API/lifecycle behavior are unchanged.
+
+Local Chromium verification of the fix covers mobile/desktop navigation outside the menu, menu links, same-route links, keyboard activation, browser Back and native toggling. This is public local UI evidence, not new live-provider or database verification. The owner-reported preview result predates this menu fix; fresh deployment evidence belongs to the fix PR.
+
 ## Expanded delivery mandate
 
 The owner added six workstreams on 25 October 2026: application completion, domain/publishing, business-registration preparation, ThothFlex, partner development and gated TVET adoption. They are tracked in [THOTHOS-OPERATING-MANDATE.md](THOTHOS-OPERATING-MANDATE.md); domain tool results are in [DOMAIN-SHORTLIST.md](DOMAIN-SHORTLIST.md). This is additive scope for planned increments and preserves the current release boundaries and unchecked gates below. It does not mean Airtable, WhatsApp integration, CV tracking, ThothFlex, registration, outreach or the college pilot is complete.
@@ -29,7 +37,8 @@ This is the authoritative checklist after the live preview acceptance run on 25 
 - [x] OPEN → CLOSED removes the test vacancy from discovery. No test vacancy remains open.
 - [x] Foreign-company vacancy access is hidden with HTTP 404, confirmed from Vercel request-completion logs.
 - [x] Recruiter access to an unassigned vacancy is hidden with HTTP 404, confirmed from Vercel request-completion logs.
-- [ ] Fresh-account verified-email registration/onboarding and duplicate-email support flow, including independent identities.
+- [x] Owner-reported new candidate account test passed on 25 October: skills persisted after signing out and signing back in. This is owner-reported browser evidence, not an independently observed provider/database trace.
+- [ ] Remaining identity checks: duplicate-email support behavior, explicit verified-primary-email evidence and cross-account visibility/independent Employer/Recruiter isolation.
 - [ ] Complete browser edge cases: direct closed-vacancy submission, direct requirement-mutation rejection, and live empty/all-legacy match rendering. Automated CI covers relevant domain/API/database rules; UI-only locking is not proof of direct API rejection.
 - [ ] Mobile viewport acceptance and full browser network/error audit.
 - [ ] Rendered Figma comparison; the Make reference is not renderable by the available connector and was unavailable in the cloud browser.
