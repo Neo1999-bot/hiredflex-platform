@@ -5,7 +5,7 @@ import type { Database } from "../db/client.js";
 import { clientScript } from "./client.js";
 import { publicPages, siteFooter } from "./public-pages.js";
 
-function workspaceHarness(role = "Employer", records = true) {
+function workspaceHarness(role = "Employer", records = true, denied = 0) {
   const events: Record<string, () => Promise<void>> = {};
   const actions: Record<string, (event: object) => Promise<void>> = {};
   const content = {
@@ -39,6 +39,14 @@ function workspaceHarness(role = "Employer", records = true) {
       ]
     : [];
   const fetch = vi.fn(async (url: string) => {
+    if (denied && url === "/employer/vacancies")
+      return {
+        status: denied,
+        ok: false,
+        json: async () => ({
+          error: { code: denied === 401 ? "UNAUTHENTICATED" : "FORBIDDEN" },
+        }),
+      };
     let data: unknown;
     if (url === "/site-config") data = { authenticationEnabled: true };
     else if (url === "/auth/session")
@@ -86,6 +94,7 @@ function workspaceHarness(role = "Employer", records = true) {
     },
     location,
     fetch,
+    URL,
     URLSearchParams,
     FormData: class {
       [Symbol.iterator]() {
@@ -167,6 +176,20 @@ describe("employer workspace navigation", () => {
     await empty.events.load!();
     expect(empty.content.innerHTML).toContain("No vacancies yet");
   });
+
+  it.each([401, 403])(
+    "renders the API access error for HTTP %s without data",
+    async (status) => {
+      const h = workspaceHarness("Employer", true, status);
+      await h.events.load!();
+      expect(h.content.innerHTML).toContain(
+        status === 401
+          ? "Please sign in to continue."
+          : "Your account does not have access to this workspace.",
+      );
+      expect(h.content.innerHTML).not.toContain("Support &lt;role&gt;");
+    },
+  );
 
   it("does not grant employer access to candidates", async () => {
     const h = workspaceHarness("Candidate");

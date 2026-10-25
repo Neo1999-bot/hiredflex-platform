@@ -1,14 +1,14 @@
 # hiredflex-platform
 
-HiredFlex recruitment and career development platform — connecting candidates, employers, and recruiters through explainable matching, assessment, development, and placement workflows.
+HiredFlex recruitment and career services platform in development. The current release implements informational skill matching and candidate, employer and recruiter application workflows; assessment, development and placement are separately staged parts of the longer-term vision.
 
 ## Current release status
 
-PR #1 contains the Phase 5/6 web workspaces and managed identity integration and remains unmerged. The sections below describe incremental phase deliveries; their original exclusions are historical stage boundaries. Use [Release gates](docs/RELEASE-GATES.md) for current verification evidence, access blockers and launch requirements. This is not a production-readiness claim.
+The development branch contains the Phase 5/6 same-origin web workspaces and managed Clerk identity integration. Owner-reviewed PRs #3–6 have been consolidated into that branch; PR #1 to main remains open while release gates are unresolved. The sections below describe incremental phase deliveries; their original exclusions are historical stage boundaries. Use [Release gates](docs/RELEASE-GATES.md) for current verification evidence, access blockers and launch requirements. This is not a production-readiness claim.
 
 ## Phase 3 engineering foundation
 
-This repository contains the production backend foundation. It does not contain the Stage 1 or Stage 2 user interface or prototype data.
+This section records the Phase 3 backend foundation. The current development branch also contains the Fastify-served web application in src/web; accepted prototype Stages 1–2 remain reference designs and their sample records are not production data.
 
 ### Selected stack
 
@@ -18,7 +18,7 @@ This repository contains the production backend foundation. It does not contain 
 - Vitest for automated tests
 - ESLint and Prettier for code checks and formatting
 
-Hosting is intentionally not configured until the hosting provider, region, and operational requirements are approved.
+A Vercel preview exists. Production identity, database/origin configuration and operational requirements remain release gates; a successful build is not production acceptance.
 
 ### Local setup
 
@@ -46,7 +46,7 @@ Candidate routes provide the available profile record, application list/detail, 
 
 Employer routes create vacancies in `DRAFT`, list and retrieve vacancies for assigned company memberships, open and close them through `DRAFT → OPEN → CLOSED`, and list their vacancy applications. Recruiter routes list and retrieve applications only for assigned vacancies and transition them through the approved application lifecycle. Application status changes and history writes share a transaction.
 
-Protected routes require a verified server-side principal. This repository still has no login or external identity provider configured; the API defaults to unauthenticated until the hosting integration supplies that principal. Candidate profile data is limited to the candidate fields present in the current schema.
+Protected routes require a verified server-side principal. Managed identity code verifies Clerk sessions and loads persisted roles; without complete identity configuration the application fails closed. Preview sign-in evidence is recorded in the release checklist, separately from remaining production acceptance. Candidate profile data is limited to the current schema.
 
 ### Development commands
 
@@ -65,10 +65,12 @@ Schema updates require a matching reviewed SQL migration in `src/db/migrations` 
 - Application states are `Applied`, `Reviewing`, `Shortlisted`, `Rejected`, and `Withdrawn`. `Applied`, `Reviewing`, and `Shortlisted` are active; `Rejected` and `Withdrawn` are terminal. Every withdrawal transition is recorded in status history. The transition graph is implemented in `src/domain/application/lifecycle.ts`.
 - Vacancy states are `DRAFT`, `OPEN`, and `CLOSED`. Only `OPEN` permits application submission. Vacancy state changes follow `DRAFT → OPEN → CLOSED`.
 - Recruiter assignment is vacancy-level. No application-level assignment, recruiter takeover, or reassignment workflow is implemented.
-- Company-scoped user-role assignments represent company membership. Authentication is only an integration boundary: no login mechanism or external identity provider is configured. Protected routes must use a verified principal and default to unauthenticated when none is supplied.
-- The database's active-application unique index covers `Applied`, `Reviewing`, and `Shortlisted`; terminal applications remain available for audit and do not occupy that active slot. Candidate search and recruitment decision endpoints are not implemented. Matching is limited to the informational requirement comparison described below.
+- Company-scoped user-role assignments represent company membership. Clerk session verification and persisted identity/role mapping supply principals when configured; client-supplied role metadata cannot grant access. Protected routes default to unauthenticated when verification is absent or fails.
+- The database's active-application unique index covers `Applied`, `Reviewing`, and `Shortlisted`; terminal applications remain available for audit and do not occupy that active slot. Candidate directory search and automated screening are not implemented; recruiter decisions remain limited to the approved assigned-vacancy transitions. Matching is limited to the informational requirement comparison described below.
 
 ### Current scope limits
+
+The browser uses the typed transport in src/web/api-client.ts. The [integration contract](docs/INTEGRATION-CONTRACT.md) maps supported screens, API responses, failures and verification evidence for issue #2. Static Figma references and runtime acceptance are distinguished explicitly.
 
 Production authentication and deployment are not configured. Candidate profile fields beyond the current identity record and structured skills, and recommendation capabilities, are not implemented.
 

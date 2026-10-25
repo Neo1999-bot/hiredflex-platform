@@ -101,6 +101,11 @@ try {
   const [recruiter] =
     await client`insert into recruiters(user_id) values (${user!.id}) returning id`;
   await client`insert into user_roles(user_id,role,company_id) values (${user!.id},'Recruiter',${company!.id})`;
+  const [otherUser] =
+    await client`insert into users(email,display_name,account_status) values ('other-verify@example.invalid','Other verifier','Active') returning id`;
+  await client`insert into candidates(user_id) values (${otherUser!.id})`;
+  const [otherCompany] =
+    await client`insert into companies(name) values ('Other verification company') returning id`;
   const app = buildApp({
     db,
     checkDatabase: async () => undefined,
@@ -110,11 +115,22 @@ try {
         PlatformRole | undefined;
       return role
         ? {
-            userId: String(user!.id),
+            userId: String(
+              request.headers["x-verification-identity"] === "other"
+                ? otherUser!.id
+                : user!.id,
+            ),
             roleAssignments: [
               {
                 role,
-                companyId: role === "Candidate" ? null : String(company!.id),
+                companyId:
+                  role === "Candidate"
+                    ? null
+                    : String(
+                        request.headers["x-verification-identity"] === "other"
+                          ? otherCompany!.id
+                          : company!.id,
+                      ),
               },
             ],
           }
@@ -237,13 +253,54 @@ try {
     assert.equal(initialHistory[0]!.from_status, null);
     assert.equal(initialHistory[0]!.to_status, "Applied");
     assert.equal(initialHistory[0]!.actor_user_id, user!.id);
-    await call(
+    // Independent synthetic principals must not see another candidate/company's
+    // records. These headers exist only in this disposable verifier's resolver.
+    const otherCandidateHeaders = {
+      "x-verification-role": "Candidate",
+      "x-verification-identity": "other",
+    };
+    const hiddenApplication = await app.inject({
+      method: "GET",
+      url: `/candidate/applications/${applied.id}`,
+      headers: otherCandidateHeaders,
+    });
+    assert.equal(hiddenApplication.statusCode, 404);
+    const otherApplications = await app.inject({
+      method: "GET",
+      url: "/candidate/applications",
+      headers: otherCandidateHeaders,
+    });
+    assert.equal(otherApplications.statusCode, 200);
+    assert.deepEqual(otherApplications.json(), []);
+    const otherMatch = await app.inject({
+      method: "GET",
+      url: `/candidate/vacancies/${draft.id}/match`,
+      headers: otherCandidateHeaders,
+    });
+    assert.equal(otherMatch.statusCode, 200);
+    assert.equal(otherMatch.json().percentage, 0);
+    for (const path of [
+      `/employer/vacancies/${draft.id}`,
+      `/employer/vacancies/${draft.id}/applications`,
+    ]) {
+      const hidden = await app.inject({
+        method: "GET",
+        url: path,
+        headers: {
+          "x-verification-role": "Employer",
+          "x-verification-identity": "other",
+        },
+      });
+      assert.equal(hidden.statusCode, 404, `Foreign company: ${path}`);
+    }
+    const duplicateSubmission = await call(
       "Candidate",
       "POST",
       "/candidate/applications",
       { vacancyId: draft.id },
       409,
     );
+    assert.equal(duplicateSubmission.error.code, "ACTIVE_APPLICATION_EXISTS");
     await call(
       "Recruiter",
       "POST",
@@ -277,11 +334,41 @@ try {
     );
     await call("Employer", "POST", `/employer/vacancies/${draft.id}/close`);
     await call("Candidate", "GET", `/vacancies/${draft.id}`, undefined, 404);
+    const closedSubmission = await call(
+      "Candidate",
+      "POST",
+      "/candidate/applications",
+      { vacancyId: draft.id },
+      409,
+    );
+    assert.equal(closedSubmission.error.code, "VACANCY_NOT_OPEN");
+    const legacyDraft = await call(
+      "Employer",
+      "POST",
+      "/employer/vacancies",
+      { companyId: company!.id, title: "Legacy-only matching contract" },
+      201,
+    );
+    await client`insert into vacancy_requirements(vacancy_id,category,description,requirement_type,required) values (${legacyDraft.id},'Legacy','Unstructured requirement','Skill',true)`;
+    await call(
+      "Employer",
+      "POST",
+      `/employer/vacancies/${legacyDraft.id}/open`,
+    );
+    const legacyMatch = await call(
+      "Candidate",
+      "GET",
+      `/candidate/vacancies/${legacyDraft.id}/match`,
+    );
+    assert.equal(legacyMatch.percentage, null);
+    assert.equal(legacyMatch.totalEvaluable, 0);
+    assert.equal(legacyMatch.notEvaluated, 1);
+    assert.equal(legacyMatch.informational, true);
   } finally {
     await app.close();
   }
   console.log(
-    "PASS: PostgreSQL 18, fresh migrations, rerun, normalization, constraints, rollback, active uniqueness, reapplication, vacancy row locking, concurrent HTTP submissions with single application/history, HTTP apply/review/shortlist/withdraw/reapply workflow",
+    "PASS: PostgreSQL 18, fresh migrations, rerun, normalization, constraints, rollback, active uniqueness, reapplication, vacancy row locking, concurrent HTTP submissions with single application/history, independent candidate/company HTTP isolation, closed-vacancy refusal, null legacy match, HTTP apply/review/shortlist/withdraw/reapply workflow",
   );
 } finally {
   if (client) await client.end({ timeout: 5 });
