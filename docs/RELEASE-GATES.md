@@ -2,6 +2,44 @@
 
 Release remains blocked. This review preserves the approved Phase 3/4 lifecycle and Phase 5/6 scope. Interviews, offers, uploads, messaging, billing and automated screening remain outside this release.
 
+## Current release checklist
+
+This is the authoritative checklist after the live preview acceptance run on 25 October 2026. The dated sections below preserve earlier evidence and are historical snapshots.
+
+- [x] CI quality gates: 205 tests, TypeScript, build, lint, format, packaged startup and disposable PostgreSQL 18 verification. [Run 40152052945](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/40152052945) passed for code/documentation head `00485d5`.
+- [x] Live preview readiness and configured exact preview origin.
+- [x] Actual preview database PostgreSQL 18.6, four migration-journal entries; server max_connections reports 112. This is not a capacity/load-test guarantee.
+- [x] Existing-account Clerk sign-in, reload persistence and sign-out.
+- [x] Candidate, company-scoped Employer and company-scoped Recruiter navigation and API access.
+- [x] Employer creates a DRAFT and saves REQUIRED/PREFERRED structured requirements.
+- [x] Recruiter assignment persists; DRAFT → OPEN publication locks the requirement-editing UI.
+- [x] Published vacancy appears in candidate discovery.
+- [x] Candidate skill addition and removal; the test-added skill was removed afterwards, restoring the original empty skill profile.
+- [x] Live match display: one of two structured requirements gives 50%, with the matched Technical Support skill and deliberately missing Preview Missing Skill listed separately; informational wording remains visible.
+- [x] Application submission creates Applied and initial history.
+- [x] Active duplicate submission is rejected with the explanatory UI message.
+- [x] Assigned recruiter transitions Applied → Reviewing → Shortlisted; candidate sees all history events.
+- [x] Candidate withdrawal yields terminal Withdrawn and preserves history.
+- [x] Reapplication creates a new application while preserving the withdrawn record.
+- [x] Recruiter rejection yields terminal Rejected on the second test application.
+- [x] OPEN → CLOSED removes the test vacancy from discovery. No test vacancy remains open.
+- [x] Foreign-company vacancy access is hidden with HTTP 404, confirmed from Vercel request-completion logs.
+- [x] Recruiter access to an unassigned vacancy is hidden with HTTP 404, confirmed from Vercel request-completion logs.
+- [ ] Fresh-account verified-email registration/onboarding and duplicate-email support flow, including independent identities.
+- [ ] Complete browser edge cases: direct closed-vacancy submission, direct requirement-mutation rejection, and live empty/all-legacy match rendering. Automated CI covers relevant domain/API/database rules; UI-only locking is not proof of direct API rejection.
+- [ ] Mobile viewport acceptance and full browser network/error audit.
+- [ ] Rendered Figma comparison; the Make reference is not renderable by the available connector and was unavailable in the cloud browser.
+- [ ] Production database, live Clerk setup/branding, exact production origin, migration verification and production acceptance. Production still runs older main; this PR is unmerged.
+- [ ] Backup/restore ownership, tested restoration, capacity/connection-budget validation and chosen deployment/database regions.
+- [ ] Owner-approved support/privacy contact, retention policy and its operational implementation.
+- [ ] Final review, merge and production release after the gates above pass.
+
+## Live preview acceptance evidence
+
+The labelled test vacancy followed DRAFT → OPEN → CLOSED. Its two test applications finished Withdrawn and Rejected; a read-only database query confirmed two applications and six status-history events. A second closed vacancy in the test company had no assigned recruiter, and a closed vacancy in a separate isolation-fixture company had no company membership granted to the test user. Both isolation requests returned 404. The SQL console was restored to read-only mode. All fixtures are explicitly marked PREVIEW TEST; no external recruitment communication or real hiring decision occurred.
+
+The tests exercised the real Clerk session and persisted database through browser controls, not injected test principals. They used one identity holding the three approved roles, so independent-user/session isolation and fresh-account onboarding remain separate gates. Production settings/data were not changed.
+
 ## Source evidence
 
 - [PR #1](https://github.com/Neo1999-bot/hiredflex-platform/pull/1) was open and unmerged at review; head `9135397dc56d7b9e922eabe98ade288cdffe561d`, base `ad8aab68918cca783c3ed4245930019c520d7b4c`.
@@ -33,7 +71,7 @@ On 25 October 2026, Vercel team access succeeded. The latest Ready preview was d
 - Figma Make source links remain accessible through the connector, but its screenshot tool rejects Make files. The cloud browser returned Site Unavailable for the supplied Figma reference; visual comparison remains blocked in this browser.
 - A share-link request was rejected by automatic approval review because such a link can expose the protected deployment to anyone holding it. Browser checks proceeded through normal authenticated access instead; no protection setting was weakened. No share link is included in project documentation.
 
-## Remaining gates and ownership
+## Earlier release-gate snapshot (superseded by current checklist)
 
 | Gate                              | Current evidence/status                                                                                        | Next action                                                                                                                                                                          | Access needed                                                                                            |
 | --------------------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
