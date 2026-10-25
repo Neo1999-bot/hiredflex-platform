@@ -1,3 +1,4 @@
+import { createApiClient } from "./api-client.js";
 import { supportEmail } from "./contact.js";
 import { publicPages } from "./public-pages.js";
 
@@ -18,13 +19,7 @@ const empty = (title,description) => '<div class="empty"><h3>'+escape(title)+'</
 const button = (action,label,id='',extra='') => '<button class="button small '+extra+'" data-action="'+action+'" data-id="'+escape(id)+'">'+escape(label)+'</button>';
 function flash(message){notice.textContent=message;notice.hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>notice.hidden=true,6500);}
 const messages={UNAUTHENTICATED:'Please sign in to continue.',FORBIDDEN:'Your account does not have access to this workspace.',ACTIVE_APPLICATION_EXISTS:'You already have an active application for this opportunity.',CANDIDATE_SKILL_EXISTS:'That skill is already on your profile.',VACANCY_REQUIREMENT_EXISTS:'That requirement is already listed.',VACANCY_NOT_OPEN:'This opportunity is no longer accepting applications.',INVALID_APPLICATION_TRANSITION:'This application has changed. Refresh and check its current status.',INVALID_VACANCY_TRANSITION:'This vacancy has changed. Refresh and check its current status.',ACCOUNT_REQUIRES_SUPPORT:'An account already uses this email. Contact HiredFlex to connect it safely.',VERIFIED_EMAIL_REQUIRED:'Verify your primary email address in your account before continuing.',IDENTITY_UNAVAILABLE:'Sign-in is temporarily unavailable. Please try again.',INVALID_VACANCY_REQUIREMENT_STATE:'Requirements can only be edited while a vacancy is in draft.',NOT_FOUND:'This record is no longer available.'};
-async function api(url,method='GET',body){
- const headers={};const token=await window.Clerk?.session?.getToken();if(token)headers.Authorization='Bearer '+token;
- if(body!==undefined)headers['Content-Type']='application/json';
- const res=await fetch(url,{method,headers,body:body===undefined?undefined:JSON.stringify(body),cache:'no-store'});
- if(res.status===204)return null;const data=await res.json();
- if(!res.ok){const error=new Error(messages[data.error?.code]||'Unable to complete this request. Please try again.');error.code=data.error?.code;throw error;}return data;
-}
+const api = (${createApiClient.toString()})({fetcher:(...args)=>fetch(...args),getToken:async()=>window.Clerk?.session?.getToken(),messages});
 async function refreshSession(){
  session=null;
  if(window.Clerk?.session){try{session=await api('/auth/session');}catch(error){if(error.code!=='UNAUTHENTICATED')throw error;}}

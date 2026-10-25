@@ -43,6 +43,7 @@ function clientHarness(hash: string) {
     },
     location,
     fetch,
+    URL,
     URLSearchParams,
     FormData: class {
       [Symbol.iterator]() {
