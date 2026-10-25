@@ -31,7 +31,8 @@ This is the authoritative checklist after the live preview acceptance run on 25 
 - [ ] Rendered Figma comparison; the Make reference is not renderable by the available connector and was unavailable in the cloud browser.
 - [ ] Production database, live Clerk setup/branding, exact production origin, migration verification and production acceptance. Production still runs older main; this PR is unmerged.
 - [ ] Backup/restore ownership, tested restoration, capacity/connection-budget validation and chosen deployment/database regions.
-- [ ] Owner-approved support/privacy contact, retention policy and its operational implementation.
+- [x] Owner-approved interim support/privacy contact: neomarothi.nfm@gmail.com; published in the preview footer and privacy page.
+- [ ] Owner approval and implementation of [candidate-data retention draft](RETENTION-POLICY-DRAFT.md), including legal scope, request handling and provider/backup deletion.
 - [ ] Final review, merge and production release after the gates above pass.
 
 ## Live preview acceptance evidence
@@ -102,3 +103,9 @@ A direct read-only audit of hiredflex-preview found one active mapped candidate 
 A post-write query returned exactly Candidate (global), Employer (test company), and Recruiter (test company). Live sign-in then displayed both workspace tabs. Employer opened successfully with the test company selected in the vacancy form; Recruiter opened successfully with the expected no-assigned-vacancies state. Candidate sign-out was also verified before switching sessions.
 
 This supersedes the missing-company-role prerequisite above for single-account preview testing. Populated lifecycle acceptance, new-account onboarding, mobile/Figma comparison and production gates remain open. Because both company roles share one test identity, these checks do not prove separation between independent employer/recruiter users or cross-company isolation. Production data and configuration were not modified.
+
+## Interim contact and retention draft — 25 October 2026
+
+The owner confirmed there is no owned HiredFlex domain yet and approved neomarothi.nfm@gmail.com as the interim public support/privacy contact. It is defined once in src/web/contact.ts and used by the footer and privacy page. A domain mailbox can replace it after delivery and access are verified; a domain purchase alone does not provide email hosting.
+
+[RETENTION-POLICY-DRAFT.md](RETENTION-POLICY-DRAFT.md) proposes an owner-review schedule with distinct operational, test, register, log and backup categories. It accounts for the Employment Services Act section 16 minimum three-year retention for covered private-employment-agency register records, subject to confirming applicability and trigger. It is not an effective policy, does not activate purges, and does not close the retention implementation gate. No existing record is deleted by this change. All proposed operational periods require owner approval and legal-scope validation.
