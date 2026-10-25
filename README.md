@@ -2,6 +2,10 @@
 
 HiredFlex recruitment and career development platform — connecting candidates, employers, and recruiters through explainable matching, assessment, development, and placement workflows.
 
+## Current release status
+
+PR #1 contains the Phase 5/6 web workspaces and managed identity integration and remains unmerged. The sections below describe incremental phase deliveries; their original exclusions are historical stage boundaries. Use [Release gates](docs/RELEASE-GATES.md) for current verification evidence, access blockers and launch requirements. This is not a production-readiness claim.
+
 ## Phase 3 engineering foundation
 
 This repository contains the production backend foundation. It does not contain the Stage 1 or Stage 2 user interface or prototype data.
