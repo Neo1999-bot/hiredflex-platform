@@ -2,6 +2,10 @@
 
 Release remains blocked. This review preserves the approved Phase 3/4 lifecycle and Phase 5/6 scope. Interviews, offers, uploads, messaging, billing and automated screening remain outside this release.
 
+## Expanded delivery mandate
+
+The owner added six workstreams on 25 October 2026: application completion, domain/publishing, business-registration preparation, ThothFlex, partner development and gated TVET adoption. They are tracked in [THOTHOS-OPERATING-MANDATE.md](THOTHOS-OPERATING-MANDATE.md); domain tool results are in [DOMAIN-SHORTLIST.md](DOMAIN-SHORTLIST.md). This is additive scope for planned increments and preserves the current release boundaries and unchecked gates below. It does not mean Airtable, WhatsApp integration, CV tracking, ThothFlex, registration, outreach or the college pilot is complete.
+
 ## Current release checklist
 
 This is the authoritative checklist after the live preview acceptance run on 25 October 2026. The dated sections below preserve earlier evidence and are historical snapshots.
