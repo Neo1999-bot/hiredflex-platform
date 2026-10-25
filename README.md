@@ -6,6 +6,10 @@ HiredFlex recruitment and career services platform in development. The current r
 
 Use [Codex Build Prompt v1.2](docs/CODEX-BUILD-PROMPT.md) with AGENTS.md and the current release checklist. It reconciles the owner's business/privacy rules, dated evidence and separately gated roadmap; it does not authorise a production launch or treat future features as delivered.
 
+## Latest continuation audit
+
+See [25 October audit](docs/AUDIT-2026-10-25.md) for the inspected main/PR/deployment state, tested versus unverified capabilities, public-policy correction and remaining release gates.
+
 ## Current release status
 
 The development branch contains the Phase 5/6 same-origin web workspaces and managed Clerk identity integration. Owner-reviewed PRs #3–6 have been consolidated into that branch; PR #1 to main remains open while release gates are unresolved. The sections below describe incremental phase deliveries; their original exclusions are historical stage boundaries. Use [Release gates](docs/RELEASE-GATES.md) for current verification evidence, access blockers and launch requirements. This is not a production-readiness claim.

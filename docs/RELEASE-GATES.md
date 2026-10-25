@@ -2,6 +2,12 @@
 
 Release remains blocked. This review preserves the approved Phase 3/4 lifecycle and Phase 5/6 scope. Interviews, offers, uploads, messaging, billing and automated screening remain outside this release.
 
+## Existing-task audit continuation — 25 October 2026
+
+[Current scoped audit](AUDIT-2026-10-25.md) supersedes older pending-PR statements: PR #12 is merged at main `f9bbe39`, and Vercel reports deployment `dpl_EYyL44atn2gbDHvNsJ86xABJHP5g` READY. Fresh `/health/ready` access encountered Vercel Authentication (302); current production DB/auth acceptance remains unverified. No open PRs were returned before preparing this audit's policy-copy fix. Ready metadata does not close the remaining checks below.
+
+The bounded fix reconciles the public Services/Support pages with the existing free-candidate-services rule. It changes no fees, eligibility, lifecycle, schema or third-party configuration. No provider registration, availability confirmation or real intake is inferred from owner approval or merged documents.
+
 ## GitHub merge and candidate-readiness follow-up — 25 October 2026
 
 GitHub now confirms PR #1 merged to main at `2eb6661b15cbc31887b233250a7eb50dd33be22b`; PRs #8–11 are merged. Neo confirmed the actions and instructed continued bounded development. The old statements below that PR #1 remains open/main is unchanged are historical and superseded. The last development head `41ef602` passed CI run 40200173842; fresh feature revisions require their own checks.
