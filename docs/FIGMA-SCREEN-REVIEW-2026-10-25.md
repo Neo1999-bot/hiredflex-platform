@@ -40,3 +40,9 @@ Automated checks cover catalog expiry, source metadata exposure without database
 - Design/application differences: expanded profile/CV fields, sample scoring/counters, Screening/Interview stage labels, mock interviews, notifications and visibility settings are specifically unimplemented or deferred; screenshots do not approve expanding them automatically.
 - Optional later improvement: more source-checked roles and a reviewed refresh/feed process; broader dropdowns only after source data and semantics exist.
 - Recheck sources before any public release; static review dates are not continuous availability monitoring.
+
+## Candidate profile/readiness increment — 25 October 2026
+
+`/#profile` is the bounded profile/readiness increment from CODEX-BUILD-PROMPT.md, using existing account/profile and declared-skill APIs. It reuses current cards, tabs, chips, buttons and responsive styling. The supplied dashboard references at 130217/131259/131310 show a sample 75% completion indicator; this implementation deliberately uses an explainable checklist instead of reproducing an unsupported percentage. No editable Make screen was newly inspected or changed in this increment, and no pixel-fidelity or two-way-sync claim is made.
+
+Mapping: My profile → `/#profile` → GET `/candidate/profile`, GET `/candidate/skills`, existing authenticated session name/email. Statuses mean saved account, declared skills present/absent and document verification Not checked. Missing skills do not prevent applying. CV upload, evidence verification, expanded education/experience fields and recruiter readiness scoring remain separately gated. Screenshots establish design references, not persisted verification.
