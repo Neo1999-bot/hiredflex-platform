@@ -98,7 +98,13 @@ On 25 October 2026, Vercel team access succeeded. The latest Ready preview was d
 5. The assigned recruiter reviews and shortlists/rejects; an unassigned recruiter must be denied. The candidate tracks history, withdraws and reapplies where permitted. Closing the vacancy prevents new submissions.
 6. Repeat the existing screens on desktop/mobile; check navigation, validation, error/empty states, sign-in transitions and console/network failures. Compare those screens with Figma. Record URL, commit, date, account roles and outcomes without credentials or personal candidate data.
 
-Additional integration coverage can be added within existing boundaries for history-write failure rollback, both requirement/open race orderings and concurrent HTTP submissions. Existing smoke coverage must not be described as proving those cases.
+Additional integration coverage can be added within existing boundaries for history-write failure rollback and both requirement/open race orderings. Existing smoke coverage must not be described as proving those cases.
+
+## Concurrent HTTP submission check — 25 October 2026
+
+`scripts/verify-postgres.ts` now starts two candidate application requests together against the disposable PostgreSQL 18 database. It requires exactly one HTTP 201 and one HTTP 409 with `ACTIVE_APPLICATION_EXISTS`, then queries persisted records to require one application in Applied and one initial history event attributed to the candidate user. The existing sequential duplicate rejection and subsequent review/shortlist/withdraw/reapply workflow remain covered.
+
+This checks overlapping injected HTTP requests and their database outcome, not browser double-click behavior, live Clerk sessions or production load. Scheduling is not forced at a particular SQL statement, so it does not guarantee both requests passed the pre-insert check before either insert. It uses synthetic data and the script-only principal resolver in a randomly named database; it does not touch preview or production records. Fresh CI evidence is required for this change before treating the new check as passed.
 
 ## Preview company-role provisioning — 25 October 2026
 
