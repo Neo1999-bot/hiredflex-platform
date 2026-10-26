@@ -204,6 +204,98 @@ try {
       },
       409,
     );
+    // Force the real route's initial history insert to fail after its application
+    // insert. The trigger exists only in this disposable verification database.
+    const rollbackDraft = await call(
+      "Employer",
+      "POST",
+      "/employer/vacancies",
+      { companyId: company!.id, title: "History rollback verification" },
+      201,
+    );
+    await call(
+      "Employer",
+      "POST",
+      `/employer/vacancies/${rollbackDraft.id}/open`,
+    );
+    await client.unsafe(`
+      CREATE FUNCTION verify_reject_history_insert() RETURNS trigger
+      LANGUAGE plpgsql AS $$
+      BEGIN
+        RAISE EXCEPTION USING ERRCODE = 'P0001',
+          MESSAGE = 'synthetic_history_write_failure';
+      END;
+      $$
+    `);
+    try {
+      await client.unsafe(`
+        CREATE TRIGGER verify_history_failure BEFORE INSERT
+        ON application_status_history FOR EACH ROW
+        EXECUTE FUNCTION verify_reject_history_insert()
+      `);
+      const failed = await call(
+        "Candidate",
+        "POST",
+        "/candidate/applications",
+        { vacancyId: rollbackDraft.id },
+        500,
+      );
+      assert.deepEqual(failed, { error: { code: "INTERNAL_SERVER_ERROR" } });
+      const [afterFailure] = await client`
+        select
+          (select count(*)::int from applications
+           where candidate_id = ${candidate!.id}
+             and vacancy_id = ${rollbackDraft.id}) as applications,
+          (select count(*)::int from application_status_history h
+           join applications a on a.id = h.application_id
+           where a.candidate_id = ${candidate!.id}
+             and a.vacancy_id = ${rollbackDraft.id}) as history`;
+      assert.equal(
+        afterFailure!.applications,
+        0,
+        "Failed history must roll back application",
+      );
+      assert.equal(
+        afterFailure!.history,
+        0,
+        "Failed submission must leave no history",
+      );
+    } finally {
+      await client.unsafe(
+        "DROP TRIGGER IF EXISTS verify_history_failure ON application_status_history",
+      );
+      await client.unsafe("DROP FUNCTION verify_reject_history_insert()");
+    }
+    const retry = await call(
+      "Candidate",
+      "POST",
+      "/candidate/applications",
+      { vacancyId: rollbackDraft.id },
+      201,
+    );
+    const retryDetail = await call(
+      "Candidate",
+      "GET",
+      `/candidate/applications/${retry.id}`,
+    );
+    assert.equal(retryDetail.currentStatus, "Applied");
+    assert.deepEqual(
+      retryDetail.history.map((event: { toStatus: string }) => event.toStatus),
+      ["Applied"],
+    );
+    const [afterRetry] = await client`
+      select count(*)::int as count from applications
+      where candidate_id = ${candidate!.id} and vacancy_id = ${rollbackDraft.id}`;
+    assert.equal(
+      afterRetry!.count,
+      1,
+      "Retry must create exactly one application",
+    );
+    await call(
+      "Employer",
+      "POST",
+      `/employer/vacancies/${rollbackDraft.id}/close`,
+    );
     const match = await call(
       "Candidate",
       "GET",
@@ -368,7 +460,7 @@ try {
     await app.close();
   }
   console.log(
-    "PASS: PostgreSQL 18, fresh migrations, rerun, normalization, constraints, rollback, active uniqueness, reapplication, vacancy row locking, concurrent HTTP submissions with single application/history, independent candidate/company HTTP isolation, closed-vacancy refusal, null legacy match, HTTP apply/review/shortlist/withdraw/reapply workflow",
+    "PASS: PostgreSQL 18, fresh migrations, rerun, normalization, constraints, rollback, forced HTTP history-write failure rollback and clean retry, active uniqueness, reapplication, vacancy row locking, concurrent HTTP submissions with single application/history, independent candidate/company HTTP isolation, closed-vacancy refusal, null legacy match, HTTP apply/review/shortlist/withdraw/reapply workflow",
   );
 } finally {
   if (client) await client.end({ timeout: 5 });

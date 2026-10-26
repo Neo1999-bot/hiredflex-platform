@@ -1,6 +1,6 @@
 # Phase 5 — Runtime verification and deployment preparation
 
-Phase 4C is implemented. Phase 5 starts by establishing live PostgreSQL evidence before adding production identity and candidate screens.
+Historical phase purpose: Phase 5 established disposable PostgreSQL evidence before the Phase 6 web/identity increment. Current main already includes those web workspaces and managed identity; production acceptance is still a separate gate. Do not interpret the original deployment sequence below as missing implementation to rebuild.
 
 ## Delivered in this increment
 
@@ -8,7 +8,7 @@ GitHub Actions runs the existing quality checks and a PostgreSQL 18 verification
 
 The script creates a randomly named disposable database, applies the checked-in migrations twice, checks their journal count, exercises PostgreSQL normalization and normalized uniqueness, rejects blank skills, preserves legacy requirements, verifies transaction rollback, active application uniqueness and reapplication after withdrawal, and proves a held vacancy row lock blocks opening on a second connection. It closes connections and drops only the database it created.
 
-The Phase 6 increment extends this gate with the HTTP publish/apply/review/shortlist/withdraw/reapply workflow. CI run [37466715604](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/37466715604) passed on 6 October 2026 for PR head `9135397` against base `ad8aab6` (GitHub test merge `7ecc453`). Job `112279480297` records the PostgreSQL 18 PASS line. The verifier now also sends two overlapping HTTP application submissions and checks one application and one initial history event; see RELEASE-GATES.md for scope and current evidence. History-write failure rollback and both requirement/open race orderings remain coverage limits. A green unit suite alone is not evidence that the database gate passed. See the [current release gate review](RELEASE-GATES.md).
+The Phase 6 increment extends this gate with the HTTP publish/apply/review/shortlist/withdraw/reapply workflow. CI run [37466715604](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/37466715604) passed on 6 October 2026 for PR head `9135397` against base `ad8aab6` (GitHub test merge `7ecc453`). Job `112279480297` records the PostgreSQL 18 PASS line. The verifier now also sends two overlapping HTTP application submissions and checks one application and one initial history event; see RELEASE-GATES.md for scope and current evidence. The 26 October verifier increment adds forced initial-history failure through HTTP, rollback assertions and a clean retry (details below). Transition/withdraw history-write failures and both requirement/open race orderings remain distinct coverage limits. A green unit suite alone is not evidence that the database gate passed. See the [current release gate review](RELEASE-GATES.md).
 
 ## Deployment sequence
 
@@ -28,3 +28,9 @@ GitHub holds code, CI and versioned technical documents. GitBook can publish the
 ## Current access observations
 
 On 3 October 2026, the connected GitBook account returned no organisations, and the connected Vercel account returned no teams. No GitBook space, Vercel project, database resource or deployment was created by this increment. These observations do not prove that a personal Vercel project does not exist.
+
+## HTTP initial-history failure rollback — 26 October 2026
+
+The existing general transaction rollback check did not force a real application route's history insert to fail. The verifier now creates a dedicated synthetic vacancy in its random disposable database, installs a temporary BEFORE INSERT history trigger that raises a deliberate exception and submits through POST `/candidate/applications`. It requires HTTP 500 with only INTERNAL_SERVER_ERROR, zero persisted applications for that candidate/vacancy and zero associated history. A finally block removes the trigger/function; retry must return 201, exactly one Applied history event and exactly one application. The probe vacancy is then closed.
+
+This is test-only SQL inside the existing TEST_DATABASE_ADMIN_URL verifier; no checked-in migration, production principal or application behavior is changed. The verifier still creates/drops only its randomly named database and never falls back to DATABASE_URL. Required CI must execute this revision before treating the new SQL assertions as passed. No local PostgreSQL server was available in this run; the separate 232-test suite and local quality checks passed. This does not prove live Clerk sessions, production acceptance, history-failure rollback on transitions/withdrawal or all SQL interleavings.
