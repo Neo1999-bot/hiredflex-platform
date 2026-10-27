@@ -12,6 +12,7 @@
     "build": "tsc -p tsconfig.json",
     "start": "node --env-file-if-exists=.env dist/src/server.js",
     "verify:startup": "node scripts/verify-startup.mjs",
+    "diagnose:config": "node --import tsx/esm scripts/diagnose-config.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint .",
     "format": "prettier --write .",

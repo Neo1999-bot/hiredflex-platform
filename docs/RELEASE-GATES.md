@@ -2,6 +2,10 @@
 
 Release remains blocked. This review preserves the approved Phase 3/4 lifecycle and Phase 5/6 scope. Interviews, offers, uploads, messaging, billing and automated screening remain outside this release.
 
+## CODEX-03 production diagnostics — 28 October 2026
+
+[Current diagnostic evidence and recovery sequence](CODEX-03-PRODUCTION-DIAGNOSTICS-2026-10-28.md) records production at main cda8773. The authenticated Vercel readiness fetch returned HTTP 500 and deployment-scoped logs show DATABASE_URL is required. Expected DATABASE_URL and AUTH_ALLOWED_ORIGINS remain Preview-only; prefixed Neon integration variables do not satisfy the runtime contract. No credentials, production settings, migrations or role grants were changed. Offline preflight and sanitised startup/readiness diagnostics are separate from production acceptance. Production database/Clerk/role acceptance remains BLOCKED or NOT TESTED, as detailed in that report. Older 302 observations and preview checks below remain dated evidence, not current production acceptance.
+
 ## Existing-task audit continuation — 25 October 2026
 
 [Current scoped audit](AUDIT-2026-10-25.md) supersedes older pending-PR statements: PR #12 is merged at main `f9bbe39`, and Vercel reports deployment `dpl_EYyL44atn2gbDHvNsJ86xABJHP5g` READY. Fresh `/health/ready` access encountered Vercel Authentication (302); current production DB/auth acceptance remains unverified. No open PRs were returned before preparing this audit's policy-copy fix. Ready metadata does not close the remaining checks below.

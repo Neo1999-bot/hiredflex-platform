@@ -65,6 +65,10 @@ export function buildApp({
       await checkDatabase();
       return { status: "ready" };
     } catch {
+      app.log.warn({
+        event: "database_readiness_failed",
+        code: "DATABASE_UNAVAILABLE",
+      });
       return reply.code(503).send({ status: "unavailable" });
     }
   });
