@@ -204,6 +204,98 @@ try {
       },
       409,
     );
+    // Force the real route's initial history insert to fail after its application
+    // insert. The trigger exists only in this disposable verification database.
+    const rollbackDraft = await call(
+      "Employer",
+      "POST",
+      "/employer/vacancies",
+      { companyId: company!.id, title: "History rollback verification" },
+      201,
+    );
+    await call(
+      "Employer",
+      "POST",
+      `/employer/vacancies/${rollbackDraft.id}/open`,
+    );
+    await client.unsafe(`
+      CREATE FUNCTION verify_reject_history_insert() RETURNS trigger
+      LANGUAGE plpgsql AS $$
+      BEGIN
+        RAISE EXCEPTION USING ERRCODE = 'P0001',
+          MESSAGE = 'synthetic_history_write_failure';
+      END;
+      $$
+    `);
+    try {
+      await client.unsafe(`
+        CREATE TRIGGER verify_history_failure BEFORE INSERT
+        ON application_status_history FOR EACH ROW
+        EXECUTE FUNCTION verify_reject_history_insert()
+      `);
+      const failed = await call(
+        "Candidate",
+        "POST",
+        "/candidate/applications",
+        { vacancyId: rollbackDraft.id },
+        500,
+      );
+      assert.deepEqual(failed, { error: { code: "INTERNAL_SERVER_ERROR" } });
+      const [afterFailure] = await client`
+        select
+          (select count(*)::int from applications
+           where candidate_id = ${candidate!.id}
+             and vacancy_id = ${rollbackDraft.id}) as applications,
+          (select count(*)::int from application_status_history h
+           join applications a on a.id = h.application_id
+           where a.candidate_id = ${candidate!.id}
+             and a.vacancy_id = ${rollbackDraft.id}) as history`;
+      assert.equal(
+        afterFailure!.applications,
+        0,
+        "Failed history must roll back application",
+      );
+      assert.equal(
+        afterFailure!.history,
+        0,
+        "Failed submission must leave no history",
+      );
+    } finally {
+      await client.unsafe(
+        "DROP TRIGGER IF EXISTS verify_history_failure ON application_status_history",
+      );
+      await client.unsafe("DROP FUNCTION verify_reject_history_insert()");
+    }
+    const retry = await call(
+      "Candidate",
+      "POST",
+      "/candidate/applications",
+      { vacancyId: rollbackDraft.id },
+      201,
+    );
+    const retryDetail = await call(
+      "Candidate",
+      "GET",
+      `/candidate/applications/${retry.id}`,
+    );
+    assert.equal(retryDetail.currentStatus, "Applied");
+    assert.deepEqual(
+      retryDetail.history.map((event: { toStatus: string }) => event.toStatus),
+      ["Applied"],
+    );
+    const [afterRetry] = await client`
+      select count(*)::int as count from applications
+      where candidate_id = ${candidate!.id} and vacancy_id = ${rollbackDraft.id}`;
+    assert.equal(
+      afterRetry!.count,
+      1,
+      "Retry must create exactly one application",
+    );
+    await call(
+      "Employer",
+      "POST",
+      `/employer/vacancies/${rollbackDraft.id}/close`,
+    );
     const match = await call(
       "Candidate",
       "GET",
@@ -301,11 +393,80 @@ try {
       409,
     );
     assert.equal(duplicateSubmission.error.code, "ACTIVE_APPLICATION_EXISTS");
+    // A failed recruiter history insert must also undo the preceding status and
+    // updated_at write. Compare persisted rows and the candidate-visible history.
+    const beforeReview = await client`
+      select current_status, updated_at from applications where id = ${applied.id}`;
+    const beforeReviewDetail = await call(
+      "Candidate",
+      "GET",
+      `/candidate/applications/${applied.id}`,
+    );
+    await client.unsafe(`
+      CREATE FUNCTION verify_reject_history_insert() RETURNS trigger
+      LANGUAGE plpgsql AS $$
+      BEGIN
+        RAISE EXCEPTION USING ERRCODE = 'P0001',
+          MESSAGE = 'synthetic_history_write_failure';
+      END;
+      $$
+    `);
+    try {
+      await client.unsafe(`
+        CREATE TRIGGER verify_history_failure BEFORE INSERT
+        ON application_status_history FOR EACH ROW
+        EXECUTE FUNCTION verify_reject_history_insert()
+      `);
+      const failedReview = await call(
+        "Recruiter",
+        "POST",
+        `/recruiter/applications/${applied.id}/review`,
+        undefined,
+        500,
+      );
+      assert.deepEqual(failedReview, {
+        error: { code: "INTERNAL_SERVER_ERROR" },
+      });
+      const afterFailedReview = await client`
+        select current_status, updated_at from applications where id = ${applied.id}`;
+      assert.deepEqual(
+        [...afterFailedReview],
+        [...beforeReview],
+        "Failed review must roll back status and updated_at",
+      );
+      assert.deepEqual(
+        await call("Candidate", "GET", `/candidate/applications/${applied.id}`),
+        beforeReviewDetail,
+        "Failed review must preserve candidate-visible application and history",
+      );
+    } finally {
+      await client.unsafe(
+        "DROP TRIGGER IF EXISTS verify_history_failure ON application_status_history",
+      );
+      await client.unsafe("DROP FUNCTION verify_reject_history_insert()");
+    }
     await call(
       "Recruiter",
       "POST",
       `/recruiter/applications/${applied.id}/review`,
     );
+    const reviewed = await call(
+      "Candidate",
+      "GET",
+      `/candidate/applications/${applied.id}`,
+    );
+    assert.equal(reviewed.currentStatus, "Reviewing");
+    assert.deepEqual(
+      reviewed.history.map((event: { toStatus: string }) => event.toStatus),
+      ["Applied", "Reviewing"],
+      "Review retry must add exactly one history event",
+    );
+    assert.equal(reviewed.history[1].fromStatus, "Applied");
+    const reviewEvents = await client`
+      select actor_user_id from application_status_history
+      where application_id = ${applied.id} and to_status = 'Reviewing'`;
+    assert.equal(reviewEvents.length, 1);
+    assert.equal(reviewEvents[0]!.actor_user_id, user!.id);
     await call(
       "Recruiter",
       "POST",
@@ -320,17 +481,96 @@ try {
       detail.history.map((item: { toStatus: string }) => item.toStatus),
       ["Applied", "Reviewing", "Shortlisted"],
     );
+    const beforeWithdrawal = await client`
+      select current_status, updated_at from applications where id = ${applied.id}`;
+    // Withdrawal uses a separate route/transaction from recruiter transitions.
+    // Fault injection stays inside this random disposable database.
+    await client.unsafe(`
+      CREATE FUNCTION verify_reject_history_insert() RETURNS trigger
+      LANGUAGE plpgsql AS $$
+      BEGIN
+        RAISE EXCEPTION USING ERRCODE = 'P0001',
+          MESSAGE = 'synthetic_history_write_failure';
+      END;
+      $$
+    `);
+    try {
+      await client.unsafe(`
+        CREATE TRIGGER verify_history_failure BEFORE INSERT
+        ON application_status_history FOR EACH ROW
+        EXECUTE FUNCTION verify_reject_history_insert()
+      `);
+      const failedWithdrawal = await call(
+        "Candidate",
+        "POST",
+        `/candidate/applications/${applied.id}/withdraw`,
+        undefined,
+        500,
+      );
+      assert.deepEqual(failedWithdrawal, {
+        error: { code: "INTERNAL_SERVER_ERROR" },
+      });
+      const afterFailedWithdrawal = await client`
+        select current_status, updated_at from applications where id = ${applied.id}`;
+      assert.deepEqual(
+        [...afterFailedWithdrawal],
+        [...beforeWithdrawal],
+        "Failed withdrawal must roll back status and updated_at",
+      );
+      assert.deepEqual(
+        await call("Candidate", "GET", `/candidate/applications/${applied.id}`),
+        detail,
+        "Failed withdrawal must preserve candidate-visible application and history",
+      );
+      const stillActive = await call(
+        "Candidate",
+        "POST",
+        "/candidate/applications",
+        { vacancyId: draft.id },
+        409,
+      );
+      assert.equal(stillActive.error.code, "ACTIVE_APPLICATION_EXISTS");
+    } finally {
+      await client.unsafe(
+        "DROP TRIGGER IF EXISTS verify_history_failure ON application_status_history",
+      );
+      await client.unsafe("DROP FUNCTION verify_reject_history_insert()");
+    }
     await call(
       "Candidate",
       "POST",
       `/candidate/applications/${applied.id}/withdraw`,
     );
-    await call(
+    const withdrawn = await call(
+      "Candidate",
+      "GET",
+      `/candidate/applications/${applied.id}`,
+    );
+    assert.equal(withdrawn.currentStatus, "Withdrawn");
+    assert.deepEqual(withdrawn.history.slice(0, -1), detail.history);
+    assert.deepEqual(
+      withdrawn.history.map((event: { toStatus: string }) => event.toStatus),
+      ["Applied", "Reviewing", "Shortlisted", "Withdrawn"],
+      "Withdrawal retry must add exactly one history event",
+    );
+    const withdrawalEvents = await client`
+      select from_status, actor_user_id from application_status_history
+      where application_id = ${applied.id} and to_status = 'Withdrawn'`;
+    assert.equal(withdrawalEvents.length, 1);
+    assert.equal(withdrawalEvents[0]!.from_status, "Shortlisted");
+    assert.equal(withdrawalEvents[0]!.actor_user_id, user!.id);
+    const reapplied = await call(
       "Candidate",
       "POST",
       "/candidate/applications",
       { vacancyId: draft.id },
       201,
+    );
+    assert.notEqual(reapplied.id, applied.id);
+    assert.deepEqual(
+      await call("Candidate", "GET", `/candidate/applications/${applied.id}`),
+      withdrawn,
+      "Reapplication must preserve the withdrawn application and its history",
     );
     await call("Employer", "POST", `/employer/vacancies/${draft.id}/close`);
     await call("Candidate", "GET", `/vacancies/${draft.id}`, undefined, 404);
@@ -368,7 +608,7 @@ try {
     await app.close();
   }
   console.log(
-    "PASS: PostgreSQL 18, fresh migrations, rerun, normalization, constraints, rollback, active uniqueness, reapplication, vacancy row locking, concurrent HTTP submissions with single application/history, independent candidate/company HTTP isolation, closed-vacancy refusal, null legacy match, HTTP apply/review/shortlist/withdraw/reapply workflow",
+    "PASS: PostgreSQL 18, fresh migrations, rerun, normalization, constraints, rollback, forced HTTP submission/recruiter-review/withdrawal history-write failure rollback and clean retries, active uniqueness preserved after failed withdrawal, reapplication preserves withdrawn history, vacancy row locking, concurrent HTTP submissions with single application/history, independent candidate/company HTTP isolation, closed-vacancy refusal, null legacy match, HTTP apply/review/shortlist/withdraw/reapply workflow",
   );
 } finally {
   if (client) await client.end({ timeout: 5 });
