@@ -39,7 +39,16 @@ export function readIdentityConfig(
     item.trim(),
   );
   for (const origin of origins) {
-    const url = new URL(origin);
+    let url: URL;
+    try {
+      url = new URL(origin);
+    } catch {
+      // Node's URL error contains the supplied input; keep config failures safe
+      // for startup logs, including accidentally pasted credentials.
+      throw new Error(
+        "AUTH_ALLOWED_ORIGINS must contain exact trusted origins",
+      );
+    }
     if (
       url.hostname.includes("*") ||
       url.origin !== origin ||
