@@ -6,6 +6,7 @@ import { randomUUID } from "node:crypto";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
+import { verifyRequirementPublicationRaces } from "./verify-requirement-races.js";
 
 // Use a dedicated test server account with CREATEDB. Never use DATABASE_URL.
 const adminUrl = process.env.TEST_DATABASE_ADMIN_URL;
@@ -604,6 +605,22 @@ try {
     assert.equal(legacyMatch.totalEvaluable, 0);
     assert.equal(legacyMatch.notEvaluated, 1);
     assert.equal(legacyMatch.informational, true);
+    await verifyRequirementPublicationRaces({
+      databaseUrl: testUrl.toString(),
+      databaseName,
+      sql: connection,
+      observer: admin,
+      companyId: company!.id,
+      request: async (method, url, payload) => {
+        const response = await app.inject({
+          method,
+          url,
+          headers: { "x-verification-role": "Employer" },
+          ...(payload ? { payload } : {}),
+        });
+        return { statusCode: response.statusCode, body: response.body };
+      },
+    });
   } finally {
     await app.close();
   }

@@ -2,7 +2,7 @@
 
 **Decision date:** 28 October 2026  
 **Decision maker:** Neo Marothi, HiredFlex owner  
-**Decision:** Approved *HiredFlex Candidate-Data Retention and Secure Disposal Policy — Draft 0.3* as the **governance framework**, expressly **subject to outstanding legal verification**.  
+**Decision:** Approved _HiredFlex Candidate-Data Retention and Secure Disposal Policy — Draft 0.3_ as the **governance framework**, expressly **subject to outstanding legal verification**.
 **Scope:** This is a documented owner governance decision, **not** a declaration of full legal compliance or operational release readiness.
 
 ## Explicit exclusions and safeguards
