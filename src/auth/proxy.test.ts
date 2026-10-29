@@ -5,6 +5,8 @@ import { buildApp } from "../app.js";
 import type { Database } from "../db/client.js";
 import { createTokenVerifier, readIdentityConfig } from "./identity.js";
 import { registerClerkProxy } from "./proxy.js";
+import { createServer } from "node:http";
+import { gzipSync } from "node:zlib";
 
 const origin = "https://hiredflex.example.invalid";
 const secret = "sk_live_synthetic_proxy_marker";
@@ -23,6 +25,125 @@ afterEach(() => {
 });
 
 describe("opt-in Production Clerk proxy", () => {
+  it("streams a real compressed HTTP response with correct bytes and separate cookies", async () => {
+    const nativeFetch = globalThis.fetch;
+    const payload = JSON.stringify({ client: "synthetic_transport_marker" });
+    const compressed = gzipSync(payload);
+    const cookies = [
+      "__client=synthetic; Expires=Wed, 01 Jan 2031 00:00:00 GMT; Secure; HttpOnly",
+      "__session=synthetic; Secure; HttpOnly; SameSite=Lax",
+    ];
+    const upstream = createServer((_request, response) => {
+      response.writeHead(200, {
+        "content-type": "application/json",
+        "content-encoding": "gzip",
+        "content-length": compressed.length,
+        "set-cookie": cookies,
+        connection: "keep-alive, x-synthetic-hop",
+        "x-synthetic-hop": "must_not_forward",
+      });
+      response.end(compressed);
+    });
+    const app = Fastify();
+    registerClerkProxy(app, config);
+    try {
+      await new Promise<void>((resolve) =>
+        upstream.listen(0, "127.0.0.1", resolve),
+      );
+      const address = upstream.address();
+      if (!address || typeof address === "string")
+        throw new Error("Synthetic upstream has no TCP address");
+      const fetcher = vi.fn(
+        (input: string | URL | Request, init?: RequestInit) => {
+          expect(String(input)).toBe(
+            "https://frontend-api.clerk.dev/v1/client",
+          );
+          expect(new Headers(init?.headers).get("accept-encoding")).toBe(
+            "identity",
+          );
+          // Only this local test server is contacted; no real provider call.
+          return nativeFetch(`http://127.0.0.1:${address.port}/client`, init);
+        },
+      );
+      vi.stubGlobal("fetch", fetcher);
+      const origin = await app.listen({ host: "127.0.0.1", port: 0 });
+      const result = await nativeFetch(origin + "/__clerk/v1/client");
+      expect(result.status).toBe(200);
+      expect(await result.text()).toBe(payload);
+      expect(result.headers.get("content-encoding")).toBeNull();
+      expect(result.headers.get("content-length")).not.toBe(
+        String(compressed.length),
+      );
+      expect(result.headers.get("x-synthetic-hop")).toBeNull();
+      expect(result.headers.getSetCookie()).toEqual(cookies);
+      expect(result.headers.get("cache-control")).toBe("no-store");
+      expect(fetcher).toHaveBeenCalledTimes(1);
+    } finally {
+      await app.close();
+      upstream.closeAllConnections();
+      await new Promise<void>((resolve, reject) =>
+        upstream.close((error) => (error ? reject(error) : resolve())),
+      );
+    }
+  });
+
+  it.each([500, 502, 503, 504])(
+    "sanitizes upstream HTTP %s without forwarding failure cookies or credentials",
+    async (status) => {
+      vi.stubGlobal(
+        "fetch",
+        vi.fn(
+          async () =>
+            new Response(secret, {
+              status,
+              headers: {
+                "clerk-secret-key": secret,
+                "set-cookie": "__client=must_not_forward",
+              },
+            }),
+        ),
+      );
+      const app = Fastify();
+      registerClerkProxy(app, config);
+      try {
+        const result = await app.inject({ url: "/__clerk/v1/client" });
+        expect(result.statusCode).toBe(503);
+        expect(result.json()).toEqual({
+          error: { code: "IDENTITY_UNAVAILABLE" },
+        });
+        expect(result.headers["clerk-secret-key"]).toBeUndefined();
+        expect(result.headers["set-cookie"]).toBeUndefined();
+        expect(result.body).not.toContain(secret);
+        expect(result.headers["cache-control"]).toBe("no-store");
+      } finally {
+        await app.close();
+      }
+    },
+  );
+
+  it("preserves provider throttling and Retry-After without retrying", async () => {
+    const body = { errors: [{ code: "too_many_requests" }] };
+    const fetcher = vi.fn(async () =>
+      Response.json(body, {
+        status: 429,
+        headers: { "retry-after": "30" },
+      }),
+    );
+    vi.stubGlobal("fetch", fetcher);
+    const app = Fastify();
+    registerClerkProxy(app, config);
+    try {
+      const result = await app.inject({ url: "/__clerk/v1/client" });
+      expect(result.statusCode).toBe(429);
+      expect(result.json()).toEqual(body);
+      expect(result.headers["retry-after"]).toBe("30");
+      expect(result.headers["cache-control"]).toBe("no-store");
+      expect(fetcher).toHaveBeenCalledTimes(1);
+    } finally {
+      await app.close();
+    }
+  });
+
   it("validates the proxy against the trusted origin, key domain and live key modes", () => {
     expect(config.proxyUrl).toBe(origin + "/__clerk");
     expect(

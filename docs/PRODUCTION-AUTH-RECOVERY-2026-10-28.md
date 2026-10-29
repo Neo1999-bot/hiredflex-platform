@@ -90,3 +90,28 @@ Do not mark CODEX-07 complete from these preparatory or CI results. Employer/rec
 | Optional future work                            | Owned branded domain/mailbox, Account Portal and later explicitly staged features. Domain purchase is not assumed necessary for the dashboard-offered proxy route; full branded features require their own scope.                                                                                                                                                  |
 
 Next smallest independent work is PR/CI review and controlled configuration preparation. Neo's intervention is limited to secure credential entry/any credential creation, separately approved production role provisioning, and a later exact-commit deployment approval. Legal/commercial launch decisions remain owner gates. Verdict stays **NOT READY** until essential production authentication, roles and launch acceptance actually pass.
+
+## Independent proxy transport review — 29 October 2026
+
+Reviewed the actual pinned Clerk SDK proxy source and Fastify adapter from PR #19 head 826b538. The SDK requests identity encoding, removes stale upstream Content-Encoding/Content-Length after fetch decoding, strips hop-by-hop response headers and does not follow redirects. No new runtime defect was demonstrated and no application or provider configuration change was needed for this increment.
+
+Six additional tests in src/auth/proxy.test.ts strengthen the evidence:
+
+- A real loopback HTTP upstream returns gzip bytes despite the identity request, two cookies (including an Expires comma) and a nominated hop-by-hop header. A second real loopback HTTP connection receives the Fastify proxy response. The body must arrive intact, stale encoding/length and the nominated header must be absent, cookies must remain separate, and caching must be disabled. The Clerk SDK's outbound call is redirected only by the test to the synthetic loopback server; no real Clerk request or credential is used.
+- Upstream HTTP 500, 502, 503 and 504 must become a fixed 503 IDENTITY_UNAVAILABLE response without the upstream credential marker or failure cookies.
+- HTTP 429 must preserve the provider body and Retry-After without an automatic retry; no-store remains set.
+
+The whole branch now has 248 unit tests (242 from the prepared proxy branch plus six review checks). Fresh execution/quality/PostgreSQL CI evidence belongs to PR #19's exact updated SHA; earlier 242-test CI does not certify this increment. There is no claim of local PostgreSQL or real-provider acceptance.
+
+Fresh read-only requests on 29 October to https://hiredflex-platform.vercel.app returned readiness 200 with status ready, root 200, and 401 UNAUTHENTICATED for /auth/session, /candidate/skills, /employer/vacancies and /recruiter/vacancies. Root HTML still contains a development publishable-key prefix and has no proxy attribute. No key value was recorded. These results establish database ping/public-shell and unauthenticated-denial behavior only; they do not certify the intended live instance, saved/staged environment values, deployment source SHA, signed-in role isolation or complete production workflows. No database console, migration, credential form, role provisioning or deployment action was used in this review.
+
+| Flow comparison target                            | Inspected application wiring                                                                                                  | Evidence and limit                                                                          |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Candidate sign-in / workspace entry               | Root Clerk JS loader → optional /__clerk/npm/@clerk/clerk-js@6/dist/clerk.browser.js and /__clerk/v1/*; post-auth /#workspace | Source and synthetic proxy transport verified; intended live sign-in not tested             |
+| Candidate / employer / recruiter protected access | /auth/session, /candidate/skills, /employer/vacancies, /recruiter/vacancies                                                   | Fresh public unauthenticated requests denied; independent signed-in roles remain not tested |
+
+Figma reference is the exact linked Make file xNiwwAOZfsOz5tjWHEDmeK. Fresh design context returned source-file links without a rendered screenshot, and session creation rejects Make files. No returned source contents or rendered Figma screens inspected; zero designs/screens changed. The table identifies comparison targets and application routes, not verified frame names. Existing export-backed evidence remains dated; visual discrepancies are unknown. Prototype Stages 1–2, all approved UI interactions, informational matching and application/vacancy lifecycles remain intact.
+
+Saved HiredFlex_Candidate_Data_Retention_Policy_Draft_0.3.md was re-read in full (version 1, unchanged modified date 27 October 2026 UTC). Its no-effective-date and no-purge/intake limits remain distinct from the repository's conditional governance approval. This review changes no policy text or approval authority.
+
+Remaining must-fix activation/acceptance is unchanged: complete the existing secure credential/configuration process, obtain the separate exact-commit deployment approval, verify the intended live proxy/domain and provider sessions, then execute the independent role matrix. Do not repeat an already-granted migration approval or rerun migrations as part of this transport review. Optional branded-domain/Account Portal improvements remain separate.
