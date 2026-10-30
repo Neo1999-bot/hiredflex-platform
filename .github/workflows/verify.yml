@@ -39,3 +39,5 @@ jobs:
       - run: npm run db:verify
         env:
           TEST_DATABASE_ADMIN_URL: postgres://hiredflex_test:ci_only_password@localhost:5432/postgres
+          REQUIRE_BACKUP_RESTORE: "1"
+          TEST_POSTGRES_CONTAINER_ID: ${{ job.services.postgres.id }}
