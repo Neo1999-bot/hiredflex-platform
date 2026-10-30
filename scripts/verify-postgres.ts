@@ -6,6 +6,7 @@ import { randomUUID } from "node:crypto";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
+import { verifyDisposableBackupRestore } from "./verify-backup-restore.js";
 
 // Use a dedicated test server account with CREATEDB. Never use DATABASE_URL.
 const adminUrl = process.env.TEST_DATABASE_ADMIN_URL;
@@ -606,6 +607,24 @@ try {
     assert.equal(legacyMatch.informational, true);
   } finally {
     await app.close();
+  }
+
+  // Close HTTP activity before taking the synthetic logical snapshot.
+  if (process.env.REQUIRE_BACKUP_RESTORE === "1") {
+    // Additional synthetic rows make identity/employer preservation observable.
+    await connection`insert into auth_identities(subject,user_id) values ('user_restore_synthetic',${user!.id})`;
+    await connection`insert into employers(user_id) values (${user!.id})`;
+    await verifyDisposableBackupRestore({
+      containerId: process.env.TEST_POSTGRES_CONTAINER_ID ?? "",
+      sourceName: databaseName,
+      sourceUrl: testUrl.toString(),
+      source: connection,
+      admin,
+    });
+  } else {
+    console.log(
+      "NOT TESTED: backup/restore requires explicit REQUIRE_BACKUP_RESTORE=1 and the dedicated test container ID",
+    );
   }
   console.log(
     "PASS: PostgreSQL 18, fresh migrations, rerun, normalization, constraints, rollback, forced HTTP submission/recruiter-review/withdrawal history-write failure rollback and clean retries, active uniqueness preserved after failed withdrawal, reapplication preserves withdrawn history, vacancy row locking, concurrent HTTP submissions with single application/history, independent candidate/company HTTP isolation, closed-vacancy refusal, null legacy match, HTTP apply/review/shortlist/withdraw/reapply workflow",
