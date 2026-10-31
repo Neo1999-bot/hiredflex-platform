@@ -22,6 +22,7 @@ import {
   registerIdentityRoutes,
   type IdentityConfig,
 } from "./auth/identity.js";
+import { registerClerkProxy } from "./auth/proxy.js";
 import { registerWebsite } from "./web/site.js";
 
 export interface AppDependencies {
@@ -48,6 +49,7 @@ export function buildApp({
   });
   installAuthenticationBoundary(app);
   if (identity) registerIdentityRoutes(app, db, identity);
+  if (identity?.proxyUrl) registerClerkProxy(app, identity);
   registerWebsite(app, identity);
   if (resolvePrincipal) {
     app.addHook("onRequest", async (request) => {

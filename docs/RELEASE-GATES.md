@@ -2,6 +2,10 @@
 
 Release remains blocked. This review preserves the approved Phase 3/4 lifecycle and Phase 5/6 scope. Interviews, offers, uploads, messaging, billing and automated screening remain outside this release.
 
+## Production authentication recovery — 28 October 2026
+
+[Current provider/configuration audit and controlled activation plan](PRODUCTION-AUTH-RECOVERY-2026-10-28.md) supersedes historical missing-database conclusions below. Deployment dpl_FLMagkJ1A5yLG3EJjeuLH8JbLbaf at main cda8773 now returns readiness 200. The intended live Clerk instance remains incomplete and its provider-domain proxy is Unverified. This PR prepares opt-in Fastify proxy support; no configuration, secret, role, schema or production deployment was changed. CODEX-07 live role acceptance and launch requirements remain blocked. Public launch verdict: **NOT READY**.
+
 ## Existing-task audit continuation — 25 October 2026
 
 [Current scoped audit](AUDIT-2026-10-25.md) supersedes older pending-PR statements: PR #12 is merged at main `f9bbe39`, and Vercel reports deployment `dpl_EYyL44atn2gbDHvNsJ86xABJHP5g` READY. Fresh `/health/ready` access encountered Vercel Authentication (302); current production DB/auth acceptance remains unverified. No open PRs were returned before preparing this audit's policy-copy fix. Ready metadata does not close the remaining checks below.

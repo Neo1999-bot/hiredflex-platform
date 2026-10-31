@@ -33,6 +33,7 @@
   },
   "homepage": "https://github.com/Neo1999-bot/hiredflex-platform#readme",
   "dependencies": {
+    "@clerk/backend": "3.26.4",
     "drizzle-orm": "^0.45.3",
     "fastify": "^5.12.5",
     "jose": "^6.2.12",
