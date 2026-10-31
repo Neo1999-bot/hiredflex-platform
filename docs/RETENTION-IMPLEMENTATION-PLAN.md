@@ -4,6 +4,8 @@
 **Status:** Planning only; no purge, live intake, policy activation, or production data mutation authorised.  
 **Governing decision:** [Owner approval record](RETENTION-GOVERNANCE-APPROVAL-2026-10-28.md).
 
+**Rule source for future R1 work:** use the [preserved Draft 0.3 source](retention/DRAFT-0.3-SOURCE.txt) and [reconciliation record](RETENTION-POLICY-RECONCILIATION.md), not Draft 0.2's historical owner-review status. These remain inactive proposals subject to legal verification; no exact historical text approval or policy activation is inferred. Missing application closure/terminal dates must produce needs-review; a calculated review point never means authorised deletion.
+
 ## Phase R0 — Legal and data inventory (blocking, no real data export)
 
 1. Confirm the responsible party's legal identity and whether HiredFlex qualifies as a private employment agency; obtain advice on Employment Services Act section 16 register fields, three-year minimum and correct start trigger.
