@@ -2,6 +2,20 @@
 
 Release remains blocked. This review preserves the approved Phase 3/4 lifecycle and Phase 5/6 scope. Interviews, offers, uploads, messaging, billing and automated screening remain outside this release.
 
+## Current evidence precedence — 31 October 2026
+
+This section supersedes stale present-tense claims in the dated checklist below; completed preview flows remain accepted within their recorded scope. See [retention/source reconciliation](RETENTION-POLICY-RECONCILIATION.md).
+
+| Gate                            | Current evidence                                                                                                          | Remaining requirement                                                                                                                                                            |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Production DB/origin/migrations | Prior recovery record: four migrations completed. Today canonical deployment remains main `cda8773`; public readiness 200 | No migration rerun. Readiness alone does not prove signed-in journeys                                                                                                            |
+| Production identity             | Root still uses development-key mode; protected APIs deny unauthenticated requests with 401                               | Intended live Clerk activation and independent candidate/employer/recruiter acceptance; PR #19 remains preparatory                                                               |
+| Retention governance            | Draft 0.3 conditionally approved on 28 October; saved text now preserved alongside historical Draft 0.2                   | Legal verification, exact historical text approval not established, effective-date/publication/implementation/provider gates still open; no repeated governance-approval request |
+| Recovery                        | PR #20 synthetic logical restore CI passed, unmerged. Production Neon connection/region confirmed read-only today         | Actual managed recovery window and operator, restore acceptance, capacity and privacy/restore-suppression controls remain unverified                                             |
+| Figma/mobile                    | Correct Make context gives source links without rendered screens                                                          | Actual bounded rendered comparison and responsive/browser acceptance; preserve prototype Stages 1–2                                                                              |
+
+No approval to merge, deploy, mutate live data, activate intake or perform deletion follows from this documentation reconciliation. Engineering phases, prototype stages and retention R0–R3 are separate boundaries.
+
 ## Existing-task audit continuation — 25 October 2026
 
 [Current scoped audit](AUDIT-2026-10-25.md) supersedes older pending-PR statements: PR #12 is merged at main `f9bbe39`, and Vercel reports deployment `dpl_EYyL44atn2gbDHvNsJ86xABJHP5g` READY. Fresh `/health/ready` access encountered Vercel Authentication (302); current production DB/auth acceptance remains unverified. No open PRs were returned before preparing this audit's policy-copy fix. Ready metadata does not close the remaining checks below.

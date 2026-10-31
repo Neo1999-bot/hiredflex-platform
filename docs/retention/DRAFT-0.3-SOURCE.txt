@@ -1,0 +1,106 @@
+# HiredFlex Candidate-Data Retention and Secure Disposal Policy
+
+**Version:** DRAFT 0.3 — owner approval requested  
+**Prepared:** 28 October 2026  
+**Status:** Not effective; supersedes Draft 0.2 only if expressly approved  
+**Policy owner:** Neo Marothi (proposed; legal responsible party to be confirmed)  
+**Interim privacy contact:** neomarothi.nfm@gmail.com  
+**Effective date:** Not assigned  
+**Next review:** 12 months after adoption, or earlier after a material legal, provider, or processing change
+
+> **Approval boundary:** This document proposes retention rules and controls. It does not certify POPIA compliance, establish the legal status or registration of HiredFlex, activate an intake channel, or authorise an automated purge. Approval of the policy does not approve deletion of existing records. Legal advice should confirm statutory scope and periods before adoption.
+
+## 1. Purpose and governing principles
+
+HiredFlex collects and processes only personal information needed to provide recruitment discovery, candidate applications, and separately requested CV-related services. Each category must have a documented purpose, lawful basis, system of record, retention trigger, review date, and disposal action. Information must not be retained indefinitely because it is convenient or because an account remains active. HiredFlex will retain records beyond a proposed schedule only when a specific legal requirement, reasonable decision-record access need, dispute, or documented legal hold justifies doing so. Such records must be access-restricted and periodically reviewed.
+
+POPIA sections 13–14 govern purpose specification, retention and restriction, subject to lawful exceptions; sections 19–22 govern safeguards and compromises; sections 23–25 concern access/correction/deletion; sections 26–33 address special personal information; and section 72 concerns transfers outside South Africa. The Employment Services Act section 16 may impose a minimum three-year register retention requirement on qualifying private employment agencies. HiredFlex must confirm applicability, record classes and the legal start/end trigger. That requirement must **not** be applied indiscriminately to every CV, chat, attachment or profile field.
+
+## 2. Scope and current operating boundary
+
+This policy covers candidate and recruitment information in HiredFlex's web platform, Clerk identity, PostgreSQL, relevant Vercel logs, the prepared Airtable operations base, and any approved manual CV-service records. It also covers existing WhatsApp vacancy-community information and *future, separately activated* private WhatsApp or Google Forms/Sheets/Drive intake. Existing community membership is not evidence of consent to recruitment intake, talent-pool retention, or marketing. Do not harvest or import community member numbers without a separate lawful basis.
+
+As of the prior Draft 0.2 evidence review, formal WhatsApp and Google Forms candidate intake had not begun; Airtable schema presence did not establish populated candidate records. This version does not claim a fresh audit of those systems. Web CV uploads, billing, interview and messaging integrations are outside the accepted release. Matching is computed on demand, not a separately retained score. The production environment, backup retention, access roster, and provider erasure controls remain to be verified before real intake.
+
+## 3. Roles, lawful basis, and privacy by design
+
+The responsible party and Information Officer must be identified and the officer registered where required before taking up statutory duties. Neo may coordinate operational requests and incidents pending confirmation but is not represented here as a registered Information Officer. Each provider's operator terms, subprocessors, locations, and section 72 cross-border safeguards must be assessed before use with real candidate data.
+
+Collect minimum contact details, target role, qualifications, skills and verifiable work history needed for the service. Avoid collecting ID/passport numbers, banking details, precise home addresses, photographs, health/disability information, race or biometric data unless a documented purpose and lawful authorisation specifically require them. Ordinary ID numbers and photographs are personal information, not automatically POPIA special personal information. Unsolicited excess data should be access-restricted and redacted or removed under a reviewed plan; never falsify source evidence.
+
+Service processing, optional ongoing talent-pool inclusion, and optional marketing are distinct purposes. Record the appropriate lawful basis for each. When consent is used, capture affirmative choice, wording/version, purpose, time, channel and withdrawal. Optional choices default to **off** and refusal must not block the core requested service. Withdrawal does not automatically erase records subject to another lawful retention requirement.
+
+## 4. Proposed retention schedule — owner decision required
+
+All periods below are **proposals**, except where a verified law requires a minimum. A review date is not an unconditional purge date. Retention starts from the specific event in the second column; a login or unrelated activity must not reset old application or CV-document clocks.
+
+| Record category | Trigger and proposed review point | Review/disposal rule |
+|---|---|---|
+| Isolated test fixtures | 30 days after test completion | Delete/de-identify after checking defect holds; never treat real candidate data as fixtures. |
+| Unfinished sign-up | 30 days after account creation without onboarding or necessary activity | Review identity and app data together; preserve legally necessary subsets. |
+| Candidate profile and declared skills | 12 months without meaningful service activity, followed by 30-day notice | Review for closure, restriction and deletion of unnecessary fields; preserve justified register/hold subset. |
+| Applications and status history | 12 months after the **later** of vacancy closure and application terminal status | Review operational detail; retain necessary register/decision evidence separately. If either event is absent, flag for manual review rather than invent a date. |
+| Statutory work-seeker/placement/employer register, if law applies | At least 3 years, using the legally verified trigger; pending verification, propose later of last relevant entry or service relationship end as a conservative internal review trigger | Preserve only legally covered fields; legal review required before deletion. |
+| CV source documents, drafts, certificates and QA copies, if service activated | 90 days after confirmed delivery or cancellation | Verify delivery and any dispute/hold, then securely remove unnecessary working copies and exports. |
+| Minimal CV request/delivery metadata | 12 months after request closure | Review and remove unnecessary fields; separate from source documents. |
+| Unconverted private WhatsApp inquiry, if activated | 30 days after last contact | Review business-controlled chat/media copies; recipients' copies and provider backups may remain outside HiredFlex control. |
+| Converted WhatsApp chat/media, if activated | 30 days after verified minimum handoff into authorised record | Remove transitory copies after checking unresolved matters and necessary evidence. |
+| Google Form/Sheet/Drive duplicate, if activated | 30 days after verified handoff | Review each response, linked sheet, attachment and export independently; if source of truth, use its substantive record category instead. |
+| Routine support correspondence | 12 months after case closure | Remove excess content/attachments; preserve justified complaint evidence. |
+| Privacy requests, complaints and resolutions | 24 months after closure | Keep minimal accountability evidence; remove excess identity-check material. |
+| Consent/notice/withdrawal evidence | While needed for the purpose; review 24 months after purpose ends or withdrawal | Preserve minimal version/time/purpose proof subject to applicable obligations; do not retain entire chats/CVs merely as proof. |
+| Routine security/application logs | Target maximum 30 days | Respect shorter provider expiry; document incident-specific extensions. |
+| Incident, litigation or statutory hold | While the documented hold remains necessary | Restrict use; review at least every 90 days, record release, resume normal schedule. |
+| Routine backups | Target maximum 35-day cycle **only where provider settings permit** | Verify actual retention and deletion-marker replay before making any promise; provider limits override unsupported targets. |
+
+**Meaningful activity** must be defined before automation (e.g., candidate-initiated profile update, application, or explicit request to remain active), with timestamps demonstrably captured. Passive system events and automatic notifications do not qualify. A candidate's active account does not indefinitely preserve unrelated completed applications.
+
+## 5. Systems, access and cross-border inventory
+
+Maintain a live data map listing each field/category, purpose, lawful basis, collection channel, owner, provider, location, transfer safeguards, retention trigger, disposal method and verification evidence. The following remain verification items, not certified configurations: Airtable records/attachments/snapshots and residence; Clerk user/session deletion; PostgreSQL database and backup location; Vercel logs/drains; WhatsApp devices, linked devices and media backups; Google Form responses, Sheets and Drive files. Provider deletion in one store does not imply deletion in others.
+
+Use named individual accounts, least privilege, MFA where supported, restricted attachment links, company/assignment authorisation, and a documented joiner/mover/leaver process. Candidate source documents are available only to assigned operators with a necessary purpose. Recruiters/employers must not gain CRM-wide access. Review exports, shared links, and offboarded users; log approvals without duplicating sensitive content.
+
+## 6. Rights requests, restrictions and disposal workflow
+
+1. Receive requests through the privacy contact; log request ID, receipt date, scope, assigned operator and legally applicable response deadline. Target acknowledgement within five business days as an internal service goal, not a statutory substitute.
+2. Verify identity proportionately. Never ask for passwords, OTPs, or unsolicited ID-document copies by email.
+3. Locate all relevant stores, exports, attachments and dependencies; distinguish an application withdrawal from a request to delete the candidate account.
+4. Determine lawful basis and any register, decision-access, dispute or statutory hold. Explain what can be deleted, what must be restricted/retained, and why.
+5. Generate a **dry-run** plan: record IDs/categories, dependent application/history rows, intended operation, provider, exception, approver and recovery implications. Default to no mutation.
+6. Obtain a separate, recorded deletion approval from an authorised operator. Never bulk-delete or cascade without verified referential integrity and testing.
+7. Execute secure deletion or irreversible de-identification for eligible records; pseudonymised linkable records remain personal information. Coordinate identity, database, Airtable, files, chats, exports and provider copies as applicable.
+8. Verify results and record minimal completion evidence. Preserve deletion markers outside the restore path and replay them before any restored dataset returns to service. Notify requester of outcome and justified limits.
+
+No production erasure workflow or automated retention scheduler is currently represented as operational. Until tested, handle requests through a documented manual review and do not promise complete provider/backup erasure.
+
+## 7. Security compromises and legal holds
+
+Escalate suspected compromise immediately, contain exposure, preserve minimum evidence, record affected data/systems and decisions, and restrict further access. Where there are reasonable grounds to believe personal information was accessed or acquired by an unauthorised person, the responsible party must apply POPIA section 22 and notify the Information Regulator and affected data subjects as required, as soon as reasonably possible subject to lawful exceptions/delays. Do not invent a universal 72-hour rule or wait for a completed forensic report. Record notifications and reasons for any lawful delay. Operators must promptly notify the responsible party. Test this response with fictional data before live intake.
+
+Every hold must have a hold ID, legal/operational justification, scoped records, approver, start date, review date (at least 90-day cadence), and release decision. Holds may not be used as blanket indefinite retention.
+
+## 8. Change management and launch controls
+
+Changes to retention periods, legal bases, providers, intake channels or public notices require versioned review and owner approval. Record the effective date, notice version, migration decision for existing records, and evidence of candidate notification where needed. Do not retroactively assert consent to new purposes. An approved schedule alone does not authorise automated disposal.
+
+**Before real candidate intake:** confirm responsible party and Information Officer arrangements; statutory recruitment-register scope; provider terms and cross-border safeguards; actual access roster and data map; purpose-specific consent/notice versions; safe intake and redaction procedures; privacy request handling; incident drill; backup retention and restore replay; dry-run and synthetic deletion tests; and production identity/database readiness. Publish only truthful statements about implemented safeguards.
+
+**Engineering acceptance criteria (future implementation, not approved by this draft):** stable per-record event timestamps; `retention_policy_version`, `purpose`, `retain_until`, `restriction_reason`, `hold_id`, and `review_status` where appropriate; dry-run output with no mutations; explicit operator approval; transaction-safe application/history treatment; audit events that avoid storing raw CV contents; tests for legal holds, missing triggers, cross-provider partial failures and restore replay. Preserve current vacancy/application lifecycle rules and accepted stage boundaries.
+
+## 9. Decisions requested from owner
+
+- **A.** Confirm the proposed retention schedule in section 4 or identify periods to revise. In particular: 90-day CV working-file review, 12-month inactivity, 24-month privacy-evidence review, and provider-dependent 35-day backup target.
+- **B.** Confirm the legal identity of the responsible party and who will act as Information Officer; do not claim registration until verified.
+- **C.** Approve this policy **as a governance document only**, with no automatic purge, no real candidate invitations, and no activation of deferred intake channels.
+- **D.** Authorise a later, separately reviewed engineering plan for dry-run retention tracking and synthetic-data verification, not live deletion.
+
+**Approval record:** Decision: PENDING · Approver: PENDING · Date: PENDING · Effective date: PENDING · Legal-scope review: PENDING.
+
+## 10. Primary references
+
+- [Protection of Personal Information Act 4 of 2013 (POPIA)](https://www.justice.gov.za/legislation/acts/2013-004.pdf), particularly sections 13–14, 19–25, 26–33, 55 and 72.
+- [Employment Services Act 4 of 2014](https://www.labour.gov.za/DocumentCenter/Acts/Public%20Employment%20Services/Employment%20Services%20Act%202014.pdf), particularly sections 16–17; verify applicability and current law.
+- [Information Regulator of South Africa](https://inforegulator.org.za/) for Information Officer registration and compromise-reporting guidance.
+
+**Source and preservation note:** Based on repository `docs/RETENTION-POLICY-DRAFT.md` Draft 0.2 (25 October 2026). Draft 0.2 remains unchanged; this is a separate approval candidate. This draft does not itself make any technical or operational changes.

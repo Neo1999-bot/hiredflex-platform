@@ -1,5 +1,7 @@
 # HiredFlex candidate-data retention policy — DRAFT 0.2
 
+> Historical Draft 0.2, retained for audit. The owner conditionally approved Draft 0.3 as a governance framework on 28 October 2026. See [source reconciliation and current boundaries](RETENTION-POLICY-RECONCILIATION.md) and the [saved Draft 0.3 text](retention/DRAFT-0.3-SOURCE.txt). Neither version is an effective public policy or authority for intake/deletion. The historical owner-review wording below does not undo the recorded conditional approval.
+
 Prepared: 25 October 2026 (South Africa). Revised after owner scope correction on the same date.
 Status: owner-review draft; no effective date. Proposed periods below are business defaults, not a claim that deletion currently operates or that every legal obligation has been determined.
 Owner: Neo Marothi. Interim support/privacy contact: neomarothi.nfm@gmail.com (approved). No owned business domain has been confirmed.
