@@ -63,4 +63,16 @@ Use an authorized disposable preview and synthetic test accounts. Sign in with a
 
 ## Scope
 
+### Retention review traceability — 1 November 2026
+
+The [R1 application/history increment](RETENTION-APPLICATION-REVIEW.md) is an offline synthetic review calculation, not a new prototype stage, screen, API or erasure action.
+
+| Existing flow / route                                             | Existing API / data source                                                                                     | Bounded retention evidence                                                                                                   |
+| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Application tracker/detail: `/#applications`, `/#application/:id` | `GET /candidate/applications` and `GET /candidate/applications/:id`; current status and terminal history event | History is retained as one dependency group; review uses its terminal event, never account login. No UI/API changes          |
+| Employer vacancy closure: `/#manage/:id`                          | `POST /employer/vacancies/:id/close`; vacancies.closed_at                                                      | Later closure/terminal timestamp drives an inactive review proposal in disposable verification; closure behaviour unchanged  |
+| Internal retention review                                         | No route/API; synthetic function and disposable verification helper only                                       | Missing legal/hold/dependency evidence blocks review eligibility; deletion always false; no operational admin screen claimed |
+
+Fresh exact Make context returned links without a render; zero rendered screens/source contents inspected or design edits. Actual visual comparison remains unverified and design discrepancies Unknown. Preserve accepted prototype Stages 1–2; internal retention phases do not redefine them or expand the active release.
+
 This release covers the approved application lifecycle. Interviews, offers, CV/document upload, WhatsApp/email notifications, billing and automated screening are not part of this release. The privacy page explains the actual stored fields and matching limitations; organisation-specific retention and support details need confirmation before inviting real candidates.
