@@ -56,6 +56,21 @@ describe("managed identity boundary", () => {
   it("accepts a complete session from the trusted instance and origin", () => {
     expect(assertSessionClaims(claims, config)).toBe("user_test");
   });
+  it("accepts the proxy issuer only when the proxy is configured", () => {
+    const proxyIss = "https://hiredflex.example/__clerk";
+    expect(() =>
+      assertSessionClaims({ ...claims, iss: proxyIss }, config),
+    ).toThrow();
+    expect(
+      assertSessionClaims(
+        { ...claims, iss: proxyIss },
+        { ...config, proxyUrl: proxyIss },
+      ),
+    ).toBe("user_test");
+    expect(assertSessionClaims(claims, { ...config, proxyUrl: proxyIss })).toBe(
+      "user_test",
+    );
+  });
   it.each([
     { iss: "https://attacker.example" },
     { azp: "https://attacker.example" },

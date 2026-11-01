@@ -19,6 +19,8 @@ export interface IdentityConfig {
   publishableKey: string;
   secretKey: string;
   origins: string[];
+  proxyUrl?: string;
+  trustVercelProxy?: boolean;
 }
 
 export function readIdentityConfig(
@@ -26,8 +28,17 @@ export function readIdentityConfig(
 ): IdentityConfig | undefined {
   const publishableKey =
     env.CLERK_PUBLISHABLE_KEY ?? env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-  if (!publishableKey || !env.CLERK_SECRET_KEY || !env.AUTH_ALLOWED_ORIGINS)
+  if (
+    env.CLERK_PUBLISHABLE_KEY &&
+    env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY &&
+    env.CLERK_PUBLISHABLE_KEY !== env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+  )
+    throw new Error("Conflicting Clerk publishable keys");
+  if (!publishableKey || !env.CLERK_SECRET_KEY || !env.AUTH_ALLOWED_ORIGINS) {
+    if (env.CLERK_PROXY_URL)
+      throw new Error("Incomplete Clerk proxy configuration");
     return undefined;
+  }
   if (!/^pk_(test|live)_[A-Za-z0-9+/=]+$/.test(publishableKey))
     throw new Error("Invalid Clerk publishable key");
   const domain = Buffer.from(publishableKey.split("_")[2]!, "base64")
@@ -39,7 +50,16 @@ export function readIdentityConfig(
     item.trim(),
   );
   for (const origin of origins) {
-    const url = new URL(origin);
+    let url: URL;
+    try {
+      url = new URL(origin);
+    } catch {
+      // Node's URL error contains the supplied input; keep config failures safe
+      // for startup logs, including accidentally pasted credentials.
+      throw new Error(
+        "AUTH_ALLOWED_ORIGINS must contain exact trusted origins",
+      );
+    }
     if (
       url.hostname.includes("*") ||
       url.origin !== origin ||
@@ -50,7 +70,30 @@ export function readIdentityConfig(
         "AUTH_ALLOWED_ORIGINS must contain exact trusted origins",
       );
   }
+  let proxyUrl: string | undefined;
+  if (env.CLERK_PROXY_URL) {
+    try {
+      const url = new URL(env.CLERK_PROXY_URL);
+      if (
+        url.protocol !== "https:" ||
+        url.username ||
+        url.password ||
+        url.pathname !== "/__clerk" ||
+        url.search ||
+        url.hash ||
+        !origins.includes(url.origin) ||
+        !publishableKey.startsWith("pk_live_") ||
+        !env.CLERK_SECRET_KEY.startsWith("sk_live_") ||
+        domain !== `clerk.${url.hostname}`
+      )
+        throw new Error();
+      proxyUrl = url.href;
+    } catch {
+      throw new Error("Invalid Clerk proxy configuration");
+    }
+  }
   return {
+    ...(proxyUrl ? { proxyUrl, trustVercelProxy: env.VERCEL === "1" } : {}),
     issuer: `https://${domain}`,
     publishableKey,
     secretKey: env.CLERK_SECRET_KEY,
@@ -58,12 +101,25 @@ export function readIdentityConfig(
   };
 }
 
+// A proxied Production instance may stamp either its Frontend API host or the
+// configured proxy URL as `iss`. Both come from trusted server configuration;
+// the signature is still verified against the instance JWKS. Preview (no
+// proxy) keeps the single exact issuer.
+export function acceptedIssuers(
+  config: Pick<IdentityConfig, "issuer" | "proxyUrl">,
+): string[] {
+  return config.proxyUrl
+    ? [config.issuer, config.proxyUrl.replace(/\/$/, "")]
+    : [config.issuer];
+}
+
 export function assertSessionClaims(
   payload: JWTPayload,
-  config: Pick<IdentityConfig, "issuer" | "origins">,
+  config: Pick<IdentityConfig, "issuer" | "origins" | "proxyUrl">,
 ): string {
   if (
-    payload.iss !== config.issuer ||
+    typeof payload.iss !== "string" ||
+    !acceptedIssuers(config).includes(payload.iss) ||
     typeof payload.sub !== "string" ||
     !payload.sub.startsWith("user_") ||
     typeof payload.sid !== "string" ||
@@ -84,14 +140,18 @@ export function createTokenVerifier(
 ) {
   const jwks =
     verificationKey ??
-    createRemoteJWKSet(new URL(`${config.issuer}/.well-known/jwks.json`));
+    (config.proxyUrl
+      ? createRemoteJWKSet(new URL("https://api.clerk.com/v1/jwks"), {
+          headers: { Authorization: `Bearer ${config.secretKey}` },
+        })
+      : createRemoteJWKSet(new URL(`${config.issuer}/.well-known/jwks.json`)));
   return async (request: FastifyRequest): Promise<string | null> => {
     const authorization = request.headers.authorization;
     if (!authorization) return null;
     if (!/^Bearer [^\s]+$/.test(authorization)) throw new UnauthorizedError();
     try {
       const { payload } = await jwtVerify(authorization.slice(7), jwks, {
-        issuer: config.issuer,
+        issuer: acceptedIssuers(config),
         algorithms: ["RS256"],
         requiredClaims: ["exp", "nbf", "sub", "sid", "azp"],
         clockTolerance: 5,
@@ -138,6 +198,10 @@ export function registerIdentityRoutes(
 ) {
   const verify = createTokenVerifier(config);
   app.addHook("onRequest", async (request) => {
+    // Clerk's own FAPI must accept unauthenticated sign-in requests. This
+    // exception is limited to the registered, opt-in proxy namespace.
+    if (config.proxyUrl && /^\/__clerk(?:\/|\?|$)/.test(request.raw.url ?? ""))
+      return;
     const subject = await verify(request);
     if (subject) request.principal = await principalForSubject(db, subject);
   });

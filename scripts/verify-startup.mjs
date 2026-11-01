@@ -1,6 +1,7 @@
 /* global process, fetch, console, setTimeout, clearTimeout, AbortSignal */
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
+import { Buffer } from "node:buffer";
+import { spawn, spawnSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import { setTimeout as delay } from "node:timers/promises";
@@ -9,6 +10,31 @@ import { setTimeout as delay } from "node:timers/promises";
 const pkg = JSON.parse(await readFile("package.json", "utf8"));
 const [command, ...args] = pkg.scripts.start.split(" ");
 assert.equal(command, "node", "Startup verification expects a Node command");
+// These fail before listening or querying any database/provider. Check the real
+// packaged entrypoint, including a malformed value that Node must not echo.
+const marker = "SYNTHETIC_STARTUP_SECRET_MUST_NOT_APPEAR";
+const syntheticEnv = {
+  ...process.env,
+  NODE_ENV: "production",
+  DATABASE_URL: "postgres://unused:unused@127.0.0.1:1/unused",
+  CLERK_PUBLISHABLE_KEY:
+    "pk_test_" + Buffer.from("example.clerk.accounts.dev$").toString("base64"),
+  CLERK_SECRET_KEY: marker,
+  AUTH_ALLOWED_ORIGINS: marker,
+};
+for (const [patch, expected] of [
+  [{ DATABASE_URL: "" }, "DATABASE_URL is required"],
+  [{}, "AUTH_ALLOWED_ORIGINS must contain exact trusted origins"],
+]) {
+  const failed = spawnSync(process.execPath, args, {
+    env: { ...syntheticEnv, ...patch },
+    encoding: "utf8",
+    timeout: 10000,
+  });
+  assert.equal(failed.status, 1, "Invalid configuration must fail startup");
+  assert.ok(failed.stderr.includes(expected));
+  assert.equal((failed.stdout + failed.stderr).includes(marker), false);
+}
 const reservation = createServer();
 await new Promise((resolve) => reservation.listen(0, "127.0.0.1", resolve));
 const { port } = reservation.address();
@@ -80,7 +106,7 @@ try {
     });
   }
   console.log(
-    "PASS: packaged startup, public shell/assets, disabled identity and protected-route denial (no database/provider verification)",
+    "PASS: packaged startup, sanitised missing-database/malformed-origin startup failures, public shell/assets, disabled identity and protected-route denial (no database/provider verification)",
   );
 } finally {
   child.kill("SIGTERM");
