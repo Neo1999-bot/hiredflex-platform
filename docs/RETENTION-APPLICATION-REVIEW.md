@@ -34,6 +34,8 @@ Profile inactivity/30-day notice, 90-day CV working-file review, 24-month privac
 
 Local PostgreSQL execution is unavailable; the focused and full local quality results and fresh disposable PostgreSQL CI belong to the PR's exact SHA. Do not treat prepared SQL as a passing database test before its CI log confirms execution.
 
+The first database CI run caught a verifier-only timestamp representation assumption: Drizzle configures the shared raw client's timestamp parser to return strings. The helper now explicitly projects timestamptz values to epoch milliseconds and constructs Date inputs, preserving nulls. It does not change the driver, application timestamps, schema or lifecycle. Fresh CI after this correction must confirm the integration result; earlier unit success is not substituted for it.
+
 ## Current live and Figma evidence
 
 1 November read-only metadata still shows no Production live-key pair. PR #19's prior Preview-only managed-key separation and Production-only proxy variable remain; no credential/configuration/deployment changes were made today. Public readiness is 200 ready, protected session/candidate/employer/recruiter requests each return 401, and root still serves development-key mode without a proxy attribute. Intended live sign-in and independent-account acceptance remain blocked. Do not rerun completed migrations or deploy from this branch.

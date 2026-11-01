@@ -22,30 +22,44 @@ export async function verifyRetentionReview(
     where a.id in ${client(ids)} order by a.id`;
   const before = [...(await snapshot())];
   const rows = await client`
-    select a.id, a.current_status, v.company_id, v.closed_at,
-      (select max(h.occurred_at) from application_status_history h
+    select a.id, a.current_status, v.company_id,
+      extract(epoch from v.closed_at) * 1000 as closed_ms,
+      (select extract(epoch from max(h.occurred_at)) * 1000 from application_status_history h
        where h.application_id = a.id and h.to_status = a.current_status
-       and h.to_status in ('Rejected', 'Withdrawn')) as terminal_at
+       and h.to_status in ('Rejected', 'Withdrawn')) as terminal_ms
     from applications a join vacancies v on v.id = a.vacancy_id
     where a.id in ${client(ids)} order by a.id`;
   assert.equal(rows.length, 2);
-  const withdrawn = rows.find((row) => row.current_status === "Withdrawn")!;
-  assert.ok(withdrawn.closed_at instanceof Date);
-  assert.ok(withdrawn.terminal_at instanceof Date);
-  const asOf = new Date(
-    Math.max(withdrawn.closed_at.getTime(), withdrawn.terminal_at.getTime()),
-  );
-  asOf.setUTCFullYear(asOf.getUTCFullYear() + 2);
+  // Drizzle configures the shared client's timestamp parsers to return strings.
+  // Epoch projection preserves the instant without local-time string parsing;
+  // preserve missing values as null, never new Date(null) / the Unix epoch.
   const records = rows.map((row) => ({
     id: row.id as string,
     companyId: row.company_id as string,
     currentStatus: row.current_status as "Withdrawn" | "Applied",
-    vacancyClosedAt: row.closed_at as Date | null,
-    terminalAt: row.terminal_at as Date | null,
+    vacancyClosedAt:
+      row.closed_ms == null ? null : new Date(Number(row.closed_ms)),
+    terminalAt:
+      row.terminal_ms == null ? null : new Date(Number(row.terminal_ms)),
     legalScopeReview: "unknown" as const,
     holdReview: "unknown" as const,
     dependencyReview: "unknown" as const,
   }));
+  const withdrawn = records.find((row) => row.currentStatus === "Withdrawn")!;
+  assert.ok(
+    withdrawn.vacancyClosedAt &&
+      Number.isFinite(withdrawn.vacancyClosedAt.getTime()),
+  );
+  assert.ok(
+    withdrawn.terminalAt && Number.isFinite(withdrawn.terminalAt.getTime()),
+  );
+  const asOf = new Date(
+    Math.max(
+      withdrawn.vacancyClosedAt.getTime(),
+      withdrawn.terminalAt.getTime(),
+    ),
+  );
+  asOf.setUTCFullYear(asOf.getUTCFullYear() + 2);
   const principal = {
     userId: "synthetic-retention-operator",
     roleAssignments: [{ role: "Operations/Admin" as const, companyId }],
