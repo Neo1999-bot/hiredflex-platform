@@ -92,12 +92,25 @@ export function readIdentityConfig(
   };
 }
 
+// A proxied Production instance may stamp either its Frontend API host or the
+// configured proxy URL as `iss`. Both come from trusted server configuration;
+// the signature is still verified against the instance JWKS. Preview (no
+// proxy) keeps the single exact issuer.
+export function acceptedIssuers(
+  config: Pick<IdentityConfig, "issuer" | "proxyUrl">,
+): string[] {
+  return config.proxyUrl
+    ? [config.issuer, config.proxyUrl.replace(/\/$/, "")]
+    : [config.issuer];
+}
+
 export function assertSessionClaims(
   payload: JWTPayload,
-  config: Pick<IdentityConfig, "issuer" | "origins">,
+  config: Pick<IdentityConfig, "issuer" | "origins" | "proxyUrl">,
 ): string {
   if (
-    payload.iss !== config.issuer ||
+    typeof payload.iss !== "string" ||
+    !acceptedIssuers(config).includes(payload.iss) ||
     typeof payload.sub !== "string" ||
     !payload.sub.startsWith("user_") ||
     typeof payload.sid !== "string" ||
@@ -129,7 +142,7 @@ export function createTokenVerifier(
     if (!/^Bearer [^\s]+$/.test(authorization)) throw new UnauthorizedError();
     try {
       const { payload } = await jwtVerify(authorization.slice(7), jwks, {
-        issuer: config.issuer,
+        issuer: acceptedIssuers(config),
         algorithms: ["RS256"],
         requiredClaims: ["exp", "nbf", "sub", "sid", "azp"],
         clockTolerance: 5,

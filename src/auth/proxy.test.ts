@@ -438,8 +438,18 @@ describe("opt-in Production Clerk proxy", () => {
     expect(
       await verify((await request()) as Parameters<typeof verify>[0]),
     ).toBe("user_synthetic");
+    // Proxied instances may issue tokens whose iss is the proxy URL.
+    expect(
+      await verify(
+        (await request({ iss: config.proxyUrl })) as Parameters<
+          typeof verify
+        >[0],
+      ),
+    ).toBe("user_synthetic");
     for (const patch of [
       { iss: "https://attacker.invalid" },
+      { iss: config.proxyUrl + "/" },
+      { iss: "https://hiredflex-platform.vercel.app" },
       { azp: "https://attacker.invalid" },
       { exp: now - 60 },
       { sts: "pending" },
