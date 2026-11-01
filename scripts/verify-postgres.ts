@@ -2,6 +2,7 @@ import { buildApp } from "../src/app.js";
 import * as schema from "../src/db/schema/index.js";
 import type { PlatformRole } from "../src/auth/authorization.js";
 import assert from "node:assert/strict";
+import { verifyRetentionReview } from "./verify-retention-review.js";
 import { randomUUID } from "node:crypto";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
@@ -582,6 +583,10 @@ try {
       409,
     );
     assert.equal(closedSubmission.error.code, "VACANCY_NOT_OPEN");
+    await verifyRetentionReview(client, company!.id, [
+      applied.id,
+      reapplied.id,
+    ]);
     const legacyDraft = await call(
       "Employer",
       "POST",

@@ -44,4 +44,8 @@
 
 ## Immediate next code task
 
-Open a focused PR for **R1 read-only retention eligibility report + synthetic tests**, with no schema migration that alters existing records, no purge job, no candidate-facing policy claim, and no new intake flow. Keep the production configuration recovery tracked separately.
+### R1 partial increment — 1 November 2026
+
+[Inactive synthetic application/history review](RETENTION-APPLICATION-REVIEW.md) implements only the existing application clock: later closure/terminal event plus a proposed 12-calendar-month review point, with missing triggers, unresolved legal/hold/dependency checks and company-scoped access blocking. No production route/adapter, schema, scheduler or deletion path exists; every output forbids deletion. Profile, consent, CV/other-provider and statutory-register rules remain unimplemented. This is not completion of CODEX-01 or activation of the policy. Current execution and CI evidence belongs to its feature PR, not the previous documentation or proxy PRs.
+
+Remaining R1 work must be separately bounded: define meaningful activity and required profile/notice timestamps before adding inactive profile review, then address other actually modeled categories. A production inventory or administrative API needs its own reviewed adapter, evidence and permission checks. Preserve the no-purge/no-live-record/no-intake boundary and keep Production authentication recovery separate. The application-only increment does not close the full R1 exit criterion.
