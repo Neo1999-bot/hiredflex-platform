@@ -53,3 +53,15 @@ Therefore: **do not merge any PR to `main` until the owner has entered the match
 4. Owner approves deployment of that exact SHA. Merge → Production deploy. No migration required.
 5. Clerk dashboard: Verify proxy. Then live acceptance: readiness, live-key mode, `/__clerk` health, signup with verified email, signin/reload/signout, independent candidate/employer/recruiter accounts and cross-company isolation.
 6. Rollback: Vercel instant rollback to `dpl_FLMagkJ1A5yLG3EJjeuLH8JbLbaf` (requires owner approval). Note that rollback restores dev-key mode, not a working Production login.
+
+## Release candidate — 1 November 2026 (oversight follow-up)
+
+Branch `release/auth-rc-2026-11-01` (identical to `claude/hiredflex-auth-recovery-qohtd4`) = PR #19 head `1df822a` + issuer fix `490ff19` + PR #17 head `072e0ad` (true merge `ac06176`, both histories preserved) + adversarial JWT tests. A line-by-line check confirmed every non-blank documentation line from both PR heads is present after conflict resolution.
+
+`src/auth/issuer-trust.test.ts` adds negative tests: forged signature reusing the Production `kid`, `alg: none`/`HS256` confusion, Preview-instance tokens and Preview issuer/`azp` presented to Production, bare-origin/trailing-slash/foreign-host/`http` issuer look-alikes, expired/not-yet-valid/missing `azp`/missing `sid`/non-user subject/pending session, Production issuers rejected by the Preview verifier, and a valid token carrying role metadata receiving 401 on candidate/employer/recruiter/session routes without a persisted principal. A deliberate mutation (adding untrusted issuers) made these tests fail; the code was restored.
+
+Full local run on **Node 24.22.2** with a throwaway local **PostgreSQL 18.6** server (CI credentials, loopback only): typecheck, build, `verify:startup`, lint, `format:check` PASS; **272/272 tests** in 20 files PASS; `db:verify` PASS (fresh migrations, rerun, constraints, rollback, concurrency, isolation, full HTTP workflow); `npm audit --omit=dev` 0 vulnerabilities. The same suite also passed on Node 22.23.4. GitHub CI on the exact candidate SHA is still required and blocked by the push refusal below.
+
+Scope check (`git diff main..RC`): no changes under `src/db` (schema/migrations), `src/domain`, `src/routes.ts`, `src/auth/authorization.ts`, `.github` or Vercel config. This session made no Vercel, Clerk, Neon or GitHub writes: no Preview credential, Production data, role or candidate record was read or changed.
+
+Blockers at time of writing: GitHub push 403 (Claude GitHub App lacks write access); Vercel `hired-flex1` team read access pending owner approval; live Clerk key pair entry unverified.
