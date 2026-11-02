@@ -5,12 +5,13 @@ import { readIdentityConfig } from "./auth/identity.js";
 
 async function main(): Promise<void> {
   const config = readConfig();
+  const identity = readIdentityConfig();
   const database = connectDatabase(config.databaseUrl);
   const app = buildApp({
     db: database.db,
     checkDatabase: database.ping,
     logger: config.nodeEnv !== "test",
-    ...(readIdentityConfig() ? { identity: readIdentityConfig()! } : {}),
+    ...(identity ? { identity } : {}),
   });
 
   app.addHook("onClose", async () => database.close());

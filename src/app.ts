@@ -120,12 +120,13 @@ export default async function handler(
 ): Promise<void> {
   deployedApp ??= (async () => {
     const config = readConfig();
+    const identity = readIdentityConfig();
     const database = connectDatabase(config.databaseUrl);
     const app = buildApp({
       db: database.db,
       checkDatabase: database.ping,
       logger: config.nodeEnv !== "test",
-      ...(readIdentityConfig() ? { identity: readIdentityConfig()! } : {}),
+      ...(identity ? { identity } : {}),
     });
     app.addHook("onClose", database.close);
     try {

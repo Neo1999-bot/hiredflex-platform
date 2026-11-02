@@ -36,6 +36,8 @@ Live provider sign-in and browser end-to-end checks remain required after Clerk 
 
 ## Figma-to-application flow map
 
+2 November availability override: [Production incident](PRODUCTION-INCIDENT-2026-11-02.md) records root/session/candidate/employer/recruiter initialization failures on main aa8026e with missing live proxy credentials. Existing route/API mappings below remain unchanged comparison targets. No rendered Make screens or source-link contents were inspected today and no designs changed; do not confuse this known functional startup failure with an inferred design mismatch or permission to rebuild completed prototype Stages 1–2.
+
 Reference: [HiredFlex prototype](https://www.figma.com/make/xNiwwAOZfsOz5tjWHEDmeK/HiredFlex-%E2%80%94-Stage-1-COMPLETE-%E2%80%94-26-Sep-2026).
 
 This map records application routes and API wiring inspected at commit `623bb092743075075ee63f8e0e78a6b8e49d848a` on 25 October 2026. Flow names identify comparison targets; they are not verified Figma frame names or node mappings. Figma returned source references for `src/App.tsx`, `src/operations.tsx`, `src/recruiter-workspace.tsx` and `src/index.css`, but each resource read failed with `Unknown resource`; the screenshot endpoint also reported that Make files are unsupported. No Figma screen interactions, visual fidelity, design tokens or components were verified, and no Figma content was changed. This is a traceability map, not automatic synchronization.

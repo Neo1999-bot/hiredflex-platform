@@ -2,6 +2,12 @@
 
 Release remains blocked. This review preserves the approved Phase 3/4 lifecycle and Phase 5/6 scope. Interviews, offers, uploads, messaging, billing and automated screening remain outside this release.
 
+## Current Production incident — 2 November 2026
+
+[Current incident evidence and guarded recovery choices](PRODUCTION-INCIDENT-2026-11-02.md) supersede the earlier readiness-200 and open-PR snapshots. Main is `aa8026e`; PRs #17/#19/#23/#24 are reported merged outside this run. Canonical deployment `dpl_HdBbCx6b1k41dLHPdYrXGb1UYomm` is READY but root and protected requests return HTTP 500. Runtime logs confirm Incomplete Clerk proxy configuration: Production proxy is configured while the live-key pair is absent. Do not infer a database failure, rerun migrations, mark Production accepted, merge another PR or deploy/rollback without the required approval. Secure credential entry and a separately approved recovery deployment remain blocking.
+
+The bounded code follow-up validates identity before database-client construction and adds regression checks; it preserves fail-closed behaviour and does not restore the deployed site. Other release/privacy/design/provider gates remain open. Previous accepted Preview journeys are preserved as dated evidence, not reclassified as failed or rebuilt.
+
 ## Production authentication recovery — 28 October 2026
 
 [Current provider/configuration audit and controlled activation plan](PRODUCTION-AUTH-RECOVERY-2026-10-28.md) supersedes historical missing-database conclusions below. Deployment dpl_FLMagkJ1A5yLG3EJjeuLH8JbLbaf at main cda8773 now returns readiness 200. The intended live Clerk instance remains incomplete and its provider-domain proxy is Unverified. This PR prepares opt-in Fastify proxy support; no configuration, secret, role, schema or production deployment was changed. CODEX-07 live role acceptance and launch requirements remain blocked. Public launch verdict: **NOT READY**.
