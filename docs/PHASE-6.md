@@ -64,3 +64,7 @@ Use an authorized disposable preview and synthetic test accounts. Sign in with a
 ## Scope
 
 This release covers the approved application lifecycle. Interviews, offers, CV/document upload, WhatsApp/email notifications, billing and automated screening are not part of this release. The privacy page explains the actual stored fields and matching limitations; organisation-specific retention and support details need confirmation before inviting real candidates.
+
+## Onboarding provider boundary — 3 November 2026
+
+[Current bounded verification](ONBOARDING-PROVIDER-VERIFICATION-2026-11-03.md) maps the existing `/#workspace` → `POST /auth/onboard` flow to normal-JWT synthetic refusal/provider-failure tests. Null email verification is refused with 403; provider transport/JSON/malformed required data returns sanitised 503; verified-secondary substitution and client role payloads remain forbidden. Duplicate-account support handling is preserved. This is not live signup, persisted-account verification or browser/Figma acceptance. Production key entry/recovery and independent live roles remain blocked; PR #25 separately owns incident/startup evidence. No rendered Make screens or source contents were inspected and zero design edits were made; preserve accepted Stages 1–2.

@@ -188,7 +188,7 @@ type ClerkUser = {
   email_addresses: {
     id: string;
     email_address: string;
-    verification: { status: string };
+    verification: { status: string } | null;
   }[];
 };
 export function registerIdentityRoutes(
@@ -227,26 +227,57 @@ export function registerIdentityRoutes(
     )
       throw new ApiError(400, "INVALID_REQUEST");
     if (request.principal) return reply.code(200).send(request.principal);
-    const response = await fetch(
-      `https://api.clerk.com/v1/users/${encodeURIComponent(subject)}`,
-      {
-        headers: { Authorization: `Bearer ${config.secretKey}` },
-        signal: AbortSignal.timeout(10000),
-      },
-    );
-    if (!response.ok) throw new ApiError(503, "IDENTITY_UNAVAILABLE");
-    const profile = (await response.json()) as ClerkUser;
-    const email = profile.email_addresses
-      .find(
-        (item) =>
-          item.id === profile.primary_email_address_id &&
-          item.verification.status === "verified",
+    let email: string | undefined;
+    let displayName: string;
+    // Only provider transport/response failures become retryable 503. Keep the
+    // database transaction below outside this boundary (including its 409 path).
+    try {
+      const response = await fetch(
+        `https://api.clerk.com/v1/users/${encodeURIComponent(subject)}`,
+        {
+          headers: { Authorization: `Bearer ${config.secretKey}` },
+          signal: AbortSignal.timeout(10000),
+          redirect: "error",
+        },
+      );
+      if (!response.ok) throw new Error();
+      const profile = (await response.json()) as ClerkUser;
+      if (
+        !profile ||
+        typeof profile !== "object" ||
+        !Array.isArray(profile.email_addresses) ||
+        !(
+          profile.primary_email_address_id === null ||
+          typeof profile.primary_email_address_id === "string"
+        ) ||
+        ![profile.first_name, profile.last_name].every(
+          (value) => value == null || typeof value === "string",
+        )
       )
-      ?.email_address.toLowerCase();
+        throw new Error();
+      const primary =
+        profile.primary_email_address_id === null
+          ? undefined
+          : profile.email_addresses.find(
+              (item) => item?.id === profile.primary_email_address_id,
+            );
+      // Clerk's EmailAddressJSON permits a null verification record. It is not
+      // a verified primary email; a verified secondary cannot substitute for it.
+      if (primary?.verification?.status === "verified") {
+        if (
+          typeof primary.email_address !== "string" ||
+          !primary.email_address.trim()
+        )
+          throw new Error();
+        email = primary.email_address.toLowerCase();
+      }
+      displayName =
+        [profile.first_name, profile.last_name].filter(Boolean).join(" ") ||
+        "HiredFlex candidate";
+    } catch {
+      throw new ApiError(503, "IDENTITY_UNAVAILABLE");
+    }
     if (!email) throw new ApiError(403, "VERIFIED_EMAIL_REQUIRED");
-    const displayName =
-      [profile.first_name, profile.last_name].filter(Boolean).join(" ") ||
-      "HiredFlex candidate";
     try {
       await db.transaction(async (tx) => {
         await tx.execute(
