@@ -68,3 +68,24 @@ Acceptance requires fresh CI logs containing the dedicated signed-onboarding PAS
 | Saved candidate skills                     | `/#skills`; `GET/POST /candidate/skills`, `DELETE /candidate/skills/:skillId`      | Two synthetic persisted candidates; foreign deletion denied and original retained |
 
 These are existing flow targets, not newly verified Figma frame IDs. Visual discrepancies remain Unknown; completed prototype Stages 1–2 remain preserved. No two-way sync is claimed. Stop after this persisted-onboarding verification; PR #25 and Production recovery remain separate.
+
+## Persisted account/role denial — 5 November 2026
+
+The existing signed-onboarding PostgreSQL helper now reuses one exact, unexpired, ephemeral RS256 JWT while temporarily changing only its own synthetic candidate's persisted account/role rows. This closes a narrower server-authorisation evidence gap; it does not change production code or introduce an account-management API. No actual user or provider account is suspended or granted/revoked a role.
+
+Required assertions in the existing disposable PostgreSQL 18 CI gate:
+
+- With the fixture account's status set to non-Active (`Suspended`), that same token receives 401 for session, candidate profile/skills and onboarding. Onboarding cannot reactivate the account, create a replacement identity or change account-table snapshots.
+- After restoring Active, the same token again accesses its original profile. Removing only its persisted Candidate assignment leaves a mapped session with an empty assignment list, but candidate, employer and recruiter APIs return 403. Repeating onboarding returns the existing empty assignment list rather than silently regranting Candidate. Account-table snapshots remain unchanged during these requests.
+- A second independent synthetic candidate remains authorised through both changes. Finally blocks restore the original account status and exact Candidate assignment ID/timestamp; the original complete account-table snapshot and saved skill must match. All such mutations are confined to the randomly named verifier database, which the parent harness drops.
+
+The dedicated account/role-denial PASS line and all retained gates are required on the updated feature SHA. This is persisted server-side authorisation across injected HTTP requests. It does **not** prove Clerk logout, token/session revocation, expiry, cookies, browser refresh, live suspension handling, independent Employer/Recruiter accounts or Production authentication. No credentials, live records, migrations, releases, provider settings or UI are changed.
+
+| Existing flow target                  | Route/API                                                                          | New verification boundary                                                                          |
+| ------------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Returning candidate workspace/profile | `/#workspace`, `/#profile`; `/auth/session`, `/candidate/profile`, `/auth/onboard` | Same signed token observes current persisted account/role denial; onboarding cannot restore access |
+| Saved skills                          | `/#skills`; `GET /candidate/skills`                                                | Denied while account/role unavailable; original skill retained after exact fixture restoration     |
+
+5 November exact Make context returned twelve source/asset links and no image; the screenshot tool explicitly rejects Make files. No rendered screens or source contents inspected and no design edited. Visual parity remains Unknown; completed prototype Stages 1–2 remain preserved. Saved Draft 0.3 reread in full, version 1, remains distinct from effective policy or intake/deletion authority. Production key absence and HTTP 500 were reconfirmed separately today; the existing secure-entry/recovery-approval blocker is unchanged. PR #25 remains separate; PR #23 is already merged, so its former draft-release checklist is stale.
+
+Stop after this denial/restoration check passes. Do not expand this synthetic result into live authentication or launch acceptance.

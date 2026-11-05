@@ -96,12 +96,13 @@ export async function verifySignedOnboarding(
     url: string,
     status: number,
     payload?: object,
+    bearer?: string,
   ) {
     const response = await app.inject({
       method,
       url,
       headers: subject
-        ? { authorization: `Bearer ${await token(subject)}` }
+        ? { authorization: `Bearer ${bearer ?? (await token(subject))}` }
         : {},
       ...(payload ? { payload } : {}),
     });
@@ -219,6 +220,71 @@ export async function verifySignedOnboarding(
     assert.equal(session.email, "onboarding-a@example.invalid");
     await call("user_fixture_a", "GET", "/employer/vacancies", 403);
     await call("user_fixture_a", "GET", "/recruiter/vacancies", 403);
+
+    // Reuse the exact same unexpired JWT throughout: persisted account/role
+    // changes must be read on each request, not cached from token metadata.
+    const existingToken = await token("user_fixture_a");
+    const sameTokenCall = (
+      method: "GET" | "POST",
+      url: string,
+      status: number,
+      payload?: object,
+    ) => call("user_fixture_a", method, url, status, payload, existingToken);
+    await sameTokenCall("GET", "/auth/session", 200);
+    const activeSnapshot = await snapshot();
+    await client`update users set account_status='Suspended' where id=${a.userId}`;
+    try {
+      const suspendedSnapshot = await snapshot();
+      await sameTokenCall("GET", "/auth/session", 401);
+      await sameTokenCall("GET", "/candidate/profile", 401);
+      await sameTokenCall("GET", "/candidate/skills", 401);
+      await sameTokenCall("POST", "/auth/onboard", 401, {});
+      assert.equal(
+        await snapshot(),
+        suspendedSnapshot,
+        "Onboarding must not reactivate a suspended account or create another identity",
+      );
+      await call("user_fixture_b", "GET", "/candidate/profile", 200);
+    } finally {
+      await client`update users set account_status='Active' where id=${a.userId}`;
+    }
+    assert.equal(await snapshot(), activeSnapshot);
+    await sameTokenCall("GET", "/candidate/profile", 200);
+    const [assignment] =
+      await client`select id, created_at from user_roles where user_id=${a.userId} and role='Candidate' and company_id is null`;
+    assert.ok(assignment);
+    await client`delete from user_roles where id=${assignment.id}`;
+    try {
+      const rolelessSnapshot = await snapshot();
+      const roleless = await sameTokenCall("GET", "/auth/session", 200);
+      assert.deepEqual(roleless.roleAssignments, []);
+      await sameTokenCall("GET", "/candidate/profile", 403);
+      await sameTokenCall("GET", "/candidate/skills", 403);
+      await sameTokenCall("GET", "/employer/vacancies", 403);
+      await sameTokenCall("GET", "/recruiter/vacancies", 403);
+      const onboardAgain = await sameTokenCall(
+        "POST",
+        "/auth/onboard",
+        200,
+        {},
+      );
+      assert.deepEqual(onboardAgain.roleAssignments, []);
+      assert.equal(
+        await snapshot(),
+        rolelessSnapshot,
+        "Onboarding must not silently regrant a removed Candidate role",
+      );
+      await call("user_fixture_b", "GET", "/candidate/profile", 200);
+    } finally {
+      await client`insert into user_roles(id,user_id,role,company_id,created_at) values (${assignment.id},${a.userId},'Candidate',null,${assignment.created_at})`;
+    }
+    assert.equal(await snapshot(), activeSnapshot);
+    const restoredSkills = await sameTokenCall("GET", "/candidate/skills", 200);
+    assert.equal(restoredSkills.length, 1);
+    assert.equal(restoredSkills[0].id, skill.id);
+    console.log(
+      "PASS: persisted account suspension and Candidate-role removal deny the same unexpired synthetic JWT; onboarding cannot reactivate/regrant; independent candidate unaffected; exact fixture state restored (not Clerk session revocation)",
+    );
 
     const beforeDuplicate = await snapshot();
     const duplicate = await call(
