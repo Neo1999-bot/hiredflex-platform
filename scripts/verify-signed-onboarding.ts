@@ -1,0 +1,434 @@
+import assert from "node:assert/strict";
+import { exportJWK, generateKeyPair, SignJWT } from "jose";
+import type postgres from "postgres";
+import { buildApp } from "../src/app.js";
+import type { Database } from "../src/db/client.js";
+
+// Called only by the disposable-database harness; never use an application DB.
+export async function verifySignedOnboarding(
+  client: postgres.Sql,
+  db: Database,
+) {
+  const [database] = await client`select current_database() as name`;
+  assert.match(String(database!.name), /^hiredflex_verify_[0-9a-f]{32}$/);
+  const origin = "https://hiredflex.example.invalid";
+  const identity = {
+    issuer: "https://clerk.hiredflex.example.invalid",
+    origins: [origin],
+    proxyUrl: origin + "/__clerk",
+    publishableKey: "synthetic-unused",
+    secretKey: "sk_live_SYNTHETIC_UNUSED",
+  };
+  const keys = await generateKeyPair("RS256");
+  const jwk = {
+    ...(await exportJWK(keys.publicKey)),
+    kid: "disposable-onboarding",
+  };
+  async function token(subject: string) {
+    const now = Math.floor(Date.now() / 1000);
+    return new SignJWT({
+      iss: identity.issuer,
+      azp: origin,
+      sub: subject,
+      sid: `sess_${subject}`,
+      exp: now + 600,
+      nbf: now - 1,
+      // Client claims must not replace persisted Candidate-only assignments.
+      public_metadata: { role: "Employer" },
+    })
+      .setProtectedHeader({ alg: "RS256", kid: jwk.kid })
+      .sign(keys.privateKey);
+  }
+  const profiles = new Map([
+    [
+      "user_fixture_a",
+      { email: "onboarding-a@example.invalid", verified: true },
+    ],
+    [
+      "user_fixture_b",
+      { email: "onboarding-b@example.invalid", verified: true },
+    ],
+    [
+      "user_fixture_duplicate",
+      { email: "ONBOARDING-A@example.invalid", verified: true },
+    ],
+    [
+      "user_fixture_unverified",
+      { email: "unverified@example.invalid", verified: false },
+    ],
+    [
+      "user_fixture_rollback",
+      { email: "rollback@example.invalid", verified: true },
+    ],
+  ]);
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (input) => {
+    const url = String(input);
+    if (url === "https://api.clerk.com/v1/jwks")
+      return Response.json({ keys: [jwk] });
+    const subject = url.startsWith("https://api.clerk.com/v1/users/")
+      ? url.slice("https://api.clerk.com/v1/users/".length)
+      : "";
+    const profile = profiles.get(subject);
+    if (!profile) throw new Error("Unexpected synthetic provider destination");
+    return Response.json({
+      first_name: null,
+      last_name: null,
+      primary_email_address_id: "primary",
+      email_addresses: [
+        {
+          id: "primary",
+          email_address: profile.email,
+          verification: profile.verified ? { status: "verified" } : null,
+        },
+      ],
+    });
+  };
+  const app = buildApp({
+    db,
+    identity,
+    checkDatabase: async () => undefined,
+    logger: false,
+  });
+  async function call(
+    subject: string | undefined,
+    method: "GET" | "POST" | "DELETE",
+    url: string,
+    status: number,
+    payload?: object,
+    bearer?: string,
+  ) {
+    const response = await app.inject({
+      method,
+      url,
+      headers: subject
+        ? { authorization: `Bearer ${bearer ?? (await token(subject))}` }
+        : {},
+      ...(payload ? { payload } : {}),
+    });
+    assert.equal(
+      response.statusCode,
+      status,
+      `${method} ${url} expected ${status}`,
+    );
+    return response.json();
+  }
+  async function snapshot() {
+    const [row] = await client`select jsonb_build_object(
+      'users', (select jsonb_agg(to_jsonb(t) order by id) from users t),
+      'identities', (select jsonb_agg(to_jsonb(t) order by subject) from auth_identities t),
+      'candidates', (select jsonb_agg(to_jsonb(t) order by id) from candidates t),
+      'roles', (select jsonb_agg(to_jsonb(t) order by id) from user_roles t)
+    ) as state`;
+    return JSON.stringify(row!.state);
+  }
+  try {
+    const before = await snapshot();
+    await call(undefined, "GET", "/auth/session", 401);
+    await call("user_fixture_a", "GET", "/auth/session", 401);
+    await call("user_fixture_a", "POST", "/auth/onboard", 400, {
+      role: "Employer",
+    });
+    const refused = await call(
+      "user_fixture_unverified",
+      "POST",
+      "/auth/onboard",
+      403,
+      {},
+    );
+    assert.equal(refused.error.code, "VERIFIED_EMAIL_REQUIRED");
+    assert.equal(
+      await snapshot(),
+      before,
+      "Refused onboarding must write nothing",
+    );
+
+    const a = await call("user_fixture_a", "POST", "/auth/onboard", 201, {});
+    assert.deepEqual(a.roleAssignments, [
+      { role: "Candidate", companyId: null },
+    ]);
+    const afterA = await snapshot();
+    const repeated = await call(
+      "user_fixture_a",
+      "POST",
+      "/auth/onboard",
+      200,
+      {},
+    );
+    assert.equal(repeated.userId, a.userId);
+    assert.equal(
+      await snapshot(),
+      afterA,
+      "Repeat onboarding must not duplicate or mutate accounts",
+    );
+    const [counts] = await client`select
+      (select count(*)::int from users where id=${a.userId}) as users,
+      (select count(*)::int from candidates where user_id=${a.userId}) as candidates,
+      (select count(*)::int from auth_identities where user_id=${a.userId}) as identities,
+      (select count(*)::int from user_roles where user_id=${a.userId}) as roles`;
+    assert.deepEqual(counts, {
+      users: 1,
+      candidates: 1,
+      identities: 1,
+      roles: 1,
+    });
+
+    const b = await call("user_fixture_b", "POST", "/auth/onboard", 201, {});
+    assert.notEqual(a.userId, b.userId);
+    const profileA = await call(
+      "user_fixture_a",
+      "GET",
+      "/candidate/profile",
+      200,
+    );
+    const profileB = await call(
+      "user_fixture_b",
+      "GET",
+      "/candidate/profile",
+      200,
+    );
+    assert.equal(profileA.userId, a.userId);
+    assert.equal(profileB.userId, b.userId);
+    assert.notEqual(profileA.id, profileB.id);
+    const skill = await call(
+      "user_fixture_a",
+      "POST",
+      "/candidate/skills",
+      201,
+      { skillName: "Synthetic persistence" },
+    );
+    assert.deepEqual(
+      await call("user_fixture_b", "GET", "/candidate/skills", 200),
+      [],
+    );
+    await call(
+      "user_fixture_b",
+      "DELETE",
+      `/candidate/skills/${skill.id}`,
+      404,
+    );
+    const retained = await call(
+      "user_fixture_a",
+      "GET",
+      "/candidate/skills",
+      200,
+    );
+    assert.equal(retained.length, 1);
+    assert.equal(retained[0].id, skill.id);
+    const session = await call("user_fixture_a", "GET", "/auth/session", 200);
+    assert.equal(session.userId, a.userId);
+    assert.equal(session.email, "onboarding-a@example.invalid");
+    await call("user_fixture_a", "GET", "/employer/vacancies", 403);
+    await call("user_fixture_a", "GET", "/recruiter/vacancies", 403);
+
+    // Reuse the exact same unexpired JWT throughout: persisted account/role
+    // changes must be read on each request, not cached from token metadata.
+    const existingToken = await token("user_fixture_a");
+    const sameTokenCall = (
+      method: "GET" | "POST",
+      url: string,
+      status: number,
+      payload?: object,
+    ) => call("user_fixture_a", method, url, status, payload, existingToken);
+    await sameTokenCall("GET", "/auth/session", 200);
+    const activeSnapshot = await snapshot();
+    await client`update users set account_status='Suspended' where id=${a.userId}`;
+    try {
+      const suspendedSnapshot = await snapshot();
+      await sameTokenCall("GET", "/auth/session", 401);
+      await sameTokenCall("GET", "/candidate/profile", 401);
+      await sameTokenCall("GET", "/candidate/skills", 401);
+      await sameTokenCall("POST", "/auth/onboard", 401, {});
+      assert.equal(
+        await snapshot(),
+        suspendedSnapshot,
+        "Onboarding must not reactivate a suspended account or create another identity",
+      );
+      await call("user_fixture_b", "GET", "/candidate/profile", 200);
+    } finally {
+      await client`update users set account_status='Active' where id=${a.userId}`;
+    }
+    assert.equal(await snapshot(), activeSnapshot);
+    await sameTokenCall("GET", "/candidate/profile", 200);
+    const [assignment] =
+      await client`select id, created_at from user_roles where user_id=${a.userId} and role='Candidate' and company_id is null`;
+    assert.ok(assignment);
+    await client`delete from user_roles where id=${assignment.id}`;
+    try {
+      const rolelessSnapshot = await snapshot();
+      const roleless = await sameTokenCall("GET", "/auth/session", 200);
+      assert.deepEqual(roleless.roleAssignments, []);
+      await sameTokenCall("GET", "/candidate/profile", 403);
+      await sameTokenCall("GET", "/candidate/skills", 403);
+      await sameTokenCall("GET", "/employer/vacancies", 403);
+      await sameTokenCall("GET", "/recruiter/vacancies", 403);
+      const onboardAgain = await sameTokenCall(
+        "POST",
+        "/auth/onboard",
+        200,
+        {},
+      );
+      assert.deepEqual(onboardAgain.roleAssignments, []);
+      assert.equal(
+        await snapshot(),
+        rolelessSnapshot,
+        "Onboarding must not silently regrant a removed Candidate role",
+      );
+      await call("user_fixture_b", "GET", "/candidate/profile", 200);
+    } finally {
+      await client`insert into user_roles(id,user_id,role,company_id,created_at) values (${assignment.id},${a.userId},'Candidate',null,${assignment.created_at})`;
+    }
+    assert.equal(await snapshot(), activeSnapshot);
+    const restoredSkills = await sameTokenCall("GET", "/candidate/skills", 200);
+    assert.equal(restoredSkills.length, 1);
+    assert.equal(restoredSkills[0].id, skill.id);
+    console.log(
+      "PASS: persisted account suspension and Candidate-role removal deny the same unexpired synthetic JWT; onboarding cannot reactivate/regrant; independent candidate unaffected; exact fixture state restored (not Clerk session revocation)",
+    );
+
+    const beforeDuplicate = await snapshot();
+    const duplicate = await call(
+      "user_fixture_duplicate",
+      "POST",
+      "/auth/onboard",
+      409,
+      {},
+    );
+    assert.equal(duplicate.error.code, "ACCOUNT_REQUIRES_SUPPORT");
+    assert.equal(
+      await snapshot(),
+      beforeDuplicate,
+      "Email conflict must not link identities or leave partial accounts",
+    );
+    await call("user_fixture_duplicate", "GET", "/auth/session", 401);
+
+    // Fail the last insert in the existing onboarding transaction. All earlier
+    // inserts must roll back; the trigger exists only in this random test DB.
+    await client`create function verify_onboarding_failure() returns trigger language plpgsql as $$ begin raise exception 'synthetic onboarding rollback'; end $$`;
+    try {
+      await client`create trigger verify_onboarding_failure before insert on user_roles for each row execute function verify_onboarding_failure()`;
+      const beforeFailure = await snapshot();
+      await call("user_fixture_rollback", "POST", "/auth/onboard", 500, {});
+      assert.equal(
+        await snapshot(),
+        beforeFailure,
+        "Failed role insert must roll back user, identity and candidate",
+      );
+      await call("user_fixture_rollback", "GET", "/auth/session", 401);
+    } finally {
+      await client`drop trigger if exists verify_onboarding_failure on user_roles`;
+      await client`drop function verify_onboarding_failure()`;
+    }
+    await call("user_fixture_rollback", "POST", "/auth/onboard", 201, {});
+
+    // Seed company roles only in the guarded disposable database, never via
+    // public onboarding. The following requests are read-only.
+    const [ownCompany, foreignCompany] =
+      await client`insert into companies(name) values ('Signed scope A'), ('Signed scope B') returning id`;
+    async function seedMember(subject: string, role: "Employer" | "Recruiter") {
+      const [member] =
+        await client`insert into users(email,display_name,account_status) values (${subject + "@example.invalid"},${subject},'Active') returning id`;
+      await client`insert into auth_identities(subject,user_id) values (${subject},${member!.id})`;
+      await client`insert into user_roles(user_id,role,company_id) values (${member!.id},${role},${ownCompany!.id})`;
+      return member!.id;
+    }
+    const employerSubject = "user_fixture_employer";
+    const recruiterSubject = "user_fixture_recruiter";
+    const employerId = await seedMember(employerSubject, "Employer");
+    const recruiterUserId = await seedMember(recruiterSubject, "Recruiter");
+    await client`insert into employers(user_id) values (${employerId})`;
+    const [recruiter] =
+      await client`insert into recruiters(user_id) values (${recruiterUserId}) returning id`;
+    const [assigned, unassigned, foreign] =
+      await client`insert into vacancies(company_id,created_by_user_id,assigned_recruiter_id,title,status) values
+      (${ownCompany!.id},${employerId},${recruiter!.id},'Signed assigned','OPEN'),
+      (${ownCompany!.id},${employerId},null,'Signed unassigned','OPEN'),
+      (${foreignCompany!.id},${employerId},${recruiter!.id},'Signed foreign assignment','OPEN') returning id`;
+    const [application] =
+      await client`insert into applications(candidate_id,vacancy_id) values (${profileA.id},${assigned!.id}) returning id`;
+    const rowIds = (rows: { id: string }[]) => rows.map(({ id }) => id).sort();
+    for (const [subject, userId, role] of [
+      [employerSubject, employerId, "Employer"],
+      [recruiterSubject, recruiterUserId, "Recruiter"],
+    ] as const) {
+      const mapped = await call(subject, "GET", "/auth/session", 200);
+      assert.equal(mapped.userId, userId);
+      assert.deepEqual(mapped.roleAssignments, [
+        { role, companyId: ownCompany!.id },
+      ]);
+      await call(subject, "GET", "/candidate/profile", 403);
+    }
+    assert.deepEqual(
+      rowIds(await call(employerSubject, "GET", "/employer/companies", 200)),
+      [ownCompany!.id],
+    );
+    assert.deepEqual(
+      rowIds(await call(employerSubject, "GET", "/employer/vacancies", 200)),
+      [assigned!.id, unassigned!.id].sort(),
+    );
+    await call(
+      employerSubject,
+      "GET",
+      `/employer/vacancies/${foreign!.id}`,
+      404,
+    );
+    await call(
+      employerSubject,
+      "GET",
+      `/employer/vacancies/${foreign!.id}/applications`,
+      404,
+    );
+    assert.deepEqual(
+      rowIds(
+        await call(
+          employerSubject,
+          "GET",
+          `/employer/vacancies/${assigned!.id}/applications`,
+          200,
+        ),
+      ),
+      [application!.id],
+    );
+    await call(employerSubject, "GET", "/recruiter/vacancies", 403);
+
+    assert.deepEqual(
+      rowIds(await call(recruiterSubject, "GET", "/recruiter/vacancies", 200)),
+      [assigned!.id],
+    );
+    assert.deepEqual(
+      rowIds(
+        await call(
+          recruiterSubject,
+          "GET",
+          `/recruiter/vacancies/${assigned!.id}/applications`,
+          200,
+        ),
+      ),
+      [application!.id],
+    );
+    for (const vacancy of [unassigned!, foreign!]) {
+      await call(
+        recruiterSubject,
+        "GET",
+        `/recruiter/vacancies/${vacancy.id}/applications`,
+        404,
+      );
+    }
+    // The Recruiter token carries misleading Employer metadata, which must not grant access.
+    await call(recruiterSubject, "GET", "/employer/vacancies", 403);
+    console.log(
+      "PASS: separate signed Employer and Recruiter identities enforce persisted company and vacancy assignment scope; foreign and unassigned reads denied; token role metadata ignored",
+    );
+
+    await call(undefined, "GET", "/auth/session", 401);
+    console.log(
+      "PASS: signed synthetic onboarding with real disposable PostgreSQL: Candidate-only creation, idempotency, refusal/no writes, persisted session/profile/skills separation, duplicate-email 409/no linking, last-insert atomic rollback/retry, candidate role denial; not live Clerk/browser authentication",
+    );
+  } finally {
+    try {
+      await app.close();
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  }
+}

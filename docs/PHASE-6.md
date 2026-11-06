@@ -64,3 +64,19 @@ Use an authorized disposable preview and synthetic test accounts. Sign in with a
 ## Scope
 
 This release covers the approved application lifecycle. Interviews, offers, CV/document upload, WhatsApp/email notifications, billing and automated screening are not part of this release. The privacy page explains the actual stored fields and matching limitations; organisation-specific retention and support details need confirmation before inviting real candidates.
+
+## Onboarding provider boundary — 3 November 2026
+
+[Current bounded verification](ONBOARDING-PROVIDER-VERIFICATION-2026-11-03.md) maps the existing `/#workspace` → `POST /auth/onboard` flow to normal-JWT synthetic refusal/provider-failure tests. Null email verification is refused with 403; provider transport/JSON/malformed required data returns sanitised 503; verified-secondary substitution and client role payloads remain forbidden. Duplicate-account support handling is preserved. This is not live signup, persisted-account verification or browser/Figma acceptance. Production key entry/recovery and independent live roles remain blocked; PR #25 separately owns incident/startup evidence. No rendered Make screens or source contents were inspected and zero design edits were made; preserve accepted Stages 1–2.
+
+## Persisted onboarding verification — 4 November 2026
+
+The [same onboarding verification record](ONBOARDING-PROVIDER-VERIFICATION-2026-11-03.md#disposable-persisted-onboarding-extension--4-november-2026) now specifies a separate normal-JWT helper within the disposable PostgreSQL gate. Existing `/#workspace` → `/auth/onboard`, `/auth/session`, `/candidate/profile` and `/#skills` → `/candidate/skills` targets receive SQL-backed creation/idempotency, no email-only linking, Candidate-only grants, foreign-skill refusal and forced last-insert rollback/retry assertions. Fresh CI must show its dedicated PASS line. The 3 November mock-database limits above describe those earlier tests, not this additional helper. Real Clerk/browser/independent company-role and rendered Figma acceptance remain unverified; no Production repair or Stage 1–2 redesign is implied.
+
+## Persisted account/role denial — 5 November 2026
+
+The [existing onboarding evidence record](ONBOARDING-PROVIDER-VERIFICATION-2026-11-03.md#persisted-accountrole-denial--5-november-2026) extends the disposable signed-request helper: `/#workspace`, `/#profile` and `/#skills` map to session/onboarding/profile/skills APIs with the exact same unexpired synthetic token before, during and after persisted account suspension/Candidate-role removal. Suspended account → 401; mapped but roleless candidate → protected-route 403; onboarding must neither reactivate nor regrant. The separate candidate remains unaffected and original fixture rows/skill must be restored. Require the dedicated CI PASS line. This is not live Clerk session revocation or a new account-management screen; actual Figma rendering and Production browser/independent-role acceptance remain unverified. No Stage 1–2 redesign or deferred-stage implementation.
+
+## Signed company-role read isolation — 6 November 2026
+
+[Disposable signed-request evidence](ONBOARDING-PROVIDER-VERIFICATION-2026-11-03.md#signed-company-role-read-isolation--6-november-2026) extends the existing `/#employer` and `/#manage/:id` → company/vacancy/applicant reads, and `/#recruiter` and `/#review/:id` → assigned-vacancy/applicant reads. Separate synthetic identities must see the expected applicant only within persisted company and assignment scope; foreign or unassigned reads are denied. Phase 5 disposable lifecycle tests remain separate and unchanged. This is Phase 6 API evidence, not live role journeys or Figma visual acceptance.

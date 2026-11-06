@@ -1,3 +1,4 @@
+import { verifySignedOnboarding } from "./verify-signed-onboarding.js";
 import { buildApp } from "../src/app.js";
 import * as schema from "../src/db/schema/index.js";
 import type { PlatformRole } from "../src/auth/authorization.js";
@@ -607,6 +608,7 @@ try {
   } finally {
     await app.close();
   }
+  await verifySignedOnboarding(client, db);
   console.log(
     "PASS: PostgreSQL 18, fresh migrations, rerun, normalization, constraints, rollback, forced HTTP submission/recruiter-review/withdrawal history-write failure rollback and clean retries, active uniqueness preserved after failed withdrawal, reapplication preserves withdrawn history, vacancy row locking, concurrent HTTP submissions with single application/history, independent candidate/company HTTP isolation, closed-vacancy refusal, null legacy match, HTTP apply/review/shortlist/withdraw/reapply workflow",
   );
