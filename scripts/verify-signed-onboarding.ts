@@ -30,7 +30,7 @@ export async function verifySignedOnboarding(
       iss: identity.issuer,
       azp: origin,
       sub: subject,
-      sid: "sess_fixture",
+      sid: `sess_${subject}`,
       exp: now + 600,
       nbf: now - 1,
       // Client claims must not replace persisted Candidate-only assignments.
@@ -320,6 +320,106 @@ export async function verifySignedOnboarding(
       await client`drop function verify_onboarding_failure()`;
     }
     await call("user_fixture_rollback", "POST", "/auth/onboard", 201, {});
+
+    // Seed company roles only in the guarded disposable database, never via
+    // public onboarding. The following requests are read-only.
+    const [ownCompany, foreignCompany] =
+      await client`insert into companies(name) values ('Signed scope A'), ('Signed scope B') returning id`;
+    async function seedMember(subject: string, role: "Employer" | "Recruiter") {
+      const [member] =
+        await client`insert into users(email,display_name,account_status) values (${subject + "@example.invalid"},${subject},'Active') returning id`;
+      await client`insert into auth_identities(subject,user_id) values (${subject},${member!.id})`;
+      await client`insert into user_roles(user_id,role,company_id) values (${member!.id},${role},${ownCompany!.id})`;
+      return member!.id;
+    }
+    const employerSubject = "user_fixture_employer";
+    const recruiterSubject = "user_fixture_recruiter";
+    const employerId = await seedMember(employerSubject, "Employer");
+    const recruiterUserId = await seedMember(recruiterSubject, "Recruiter");
+    await client`insert into employers(user_id) values (${employerId})`;
+    const [recruiter] =
+      await client`insert into recruiters(user_id) values (${recruiterUserId}) returning id`;
+    const [assigned, unassigned, foreign] =
+      await client`insert into vacancies(company_id,created_by_user_id,assigned_recruiter_id,title,status) values
+      (${ownCompany!.id},${employerId},${recruiter!.id},'Signed assigned','OPEN'),
+      (${ownCompany!.id},${employerId},null,'Signed unassigned','OPEN'),
+      (${foreignCompany!.id},${employerId},${recruiter!.id},'Signed foreign assignment','OPEN') returning id`;
+    const [application] =
+      await client`insert into applications(candidate_id,vacancy_id) values (${profileA.id},${assigned!.id}) returning id`;
+    const rowIds = (rows: { id: string }[]) => rows.map(({ id }) => id).sort();
+    for (const [subject, userId, role] of [
+      [employerSubject, employerId, "Employer"],
+      [recruiterSubject, recruiterUserId, "Recruiter"],
+    ] as const) {
+      const mapped = await call(subject, "GET", "/auth/session", 200);
+      assert.equal(mapped.userId, userId);
+      assert.deepEqual(mapped.roleAssignments, [
+        { role, companyId: ownCompany!.id },
+      ]);
+      await call(subject, "GET", "/candidate/profile", 403);
+    }
+    assert.deepEqual(
+      rowIds(await call(employerSubject, "GET", "/employer/companies", 200)),
+      [ownCompany!.id],
+    );
+    assert.deepEqual(
+      rowIds(await call(employerSubject, "GET", "/employer/vacancies", 200)),
+      [assigned!.id, unassigned!.id].sort(),
+    );
+    await call(
+      employerSubject,
+      "GET",
+      `/employer/vacancies/${foreign!.id}`,
+      404,
+    );
+    await call(
+      employerSubject,
+      "GET",
+      `/employer/vacancies/${foreign!.id}/applications`,
+      404,
+    );
+    assert.deepEqual(
+      rowIds(
+        await call(
+          employerSubject,
+          "GET",
+          `/employer/vacancies/${assigned!.id}/applications`,
+          200,
+        ),
+      ),
+      [application!.id],
+    );
+    await call(employerSubject, "GET", "/recruiter/vacancies", 403);
+
+    assert.deepEqual(
+      rowIds(await call(recruiterSubject, "GET", "/recruiter/vacancies", 200)),
+      [assigned!.id],
+    );
+    assert.deepEqual(
+      rowIds(
+        await call(
+          recruiterSubject,
+          "GET",
+          `/recruiter/vacancies/${assigned!.id}/applications`,
+          200,
+        ),
+      ),
+      [application!.id],
+    );
+    for (const vacancy of [unassigned!, foreign!]) {
+      await call(
+        recruiterSubject,
+        "GET",
+        `/recruiter/vacancies/${vacancy.id}/applications`,
+        404,
+      );
+    }
+    // The Recruiter token carries misleading Employer metadata, which must not grant access.
+    await call(recruiterSubject, "GET", "/employer/vacancies", 403);
+    console.log(
+      "PASS: separate signed Employer and Recruiter identities enforce persisted company and vacancy assignment scope; foreign and unassigned reads denied; token role metadata ignored",
+    );
+
     await call(undefined, "GET", "/auth/session", 401);
     console.log(
       "PASS: signed synthetic onboarding with real disposable PostgreSQL: Candidate-only creation, idempotency, refusal/no writes, persisted session/profile/skills separation, duplicate-email 409/no linking, last-insert atomic rollback/retry, candidate role denial; not live Clerk/browser authentication",
