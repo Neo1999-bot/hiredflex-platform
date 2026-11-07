@@ -60,7 +60,7 @@ This is a read-only refresh of the existing incident record. It does not change 
 
 - Vercel still reports canonical Production deployment `dpl_HdBbCx6b1k41dLHPdYrXGb1UYomm` as READY from `main` at `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`. READY confirms deployment state only.
 - Names/types/targets were inspected with decryption disabled. Production has `CLERK_PROXY_URL` and `AUTH_ALLOWED_ORIGINS`, but no `CLERK_PUBLISHABLE_KEY` or `CLERK_SECRET_KEY`; Vercel reports `hiddenProductionEnvCount: 0`.
-- The managed `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` entries remain Preview-only. Preview values and Neon bindings were not decrypted or changed.
+- The managed `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` entries remain Preview-only. Preview values and Neon bindings were not decrypted or changed. The project's custom-environment inventory is empty. The available Vercel connector exposes lookup of a known team-shared variable ID but no team-shared-variable listing, so this project-level audit cannot rule out an unattached team-level shared variable; no shared-variable IDs or secret values were guessed or retrieved.
 - Vercel project-domain metadata reports `hiredflex-platform.vercel.app` verified. This is Vercel domain verification, **not** proof that Clerk's proxy domain has been verified.
 - No Production configuration, Preview binding, Neon resource, deployment, rollback, migration, user or role was changed.
 
