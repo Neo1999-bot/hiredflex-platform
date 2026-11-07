@@ -50,3 +50,44 @@ Exact reference: [HiredFlex Make prototype](https://www.figma.com/make/xNiwwAOZf
 | Employer / Recruiter workspace | `/#employer`, `/#recruiter`; `/employer/vacancies`, `/recruiter/vacancies` | Requests 500 before authorization; independent live isolation not tested                    |
 
 These are known functional availability failures, not inferred Figma discrepancies. Visual discrepancies remain Unknown. Historical exports and [Phase 6 mapping](PHASE-6.md) remain dated targets, not proof of current live parity.
+
+
+## Evidence refresh — 7 November 2026
+
+This is a read-only refresh of the existing incident record. It does not change the recovery decision, credentials, application behavior or release authority.
+
+### Production deployment and environment metadata
+
+- Vercel still reports canonical Production deployment `dpl_HdBbCx6b1k41dLHPdYrXGb1UYomm` as READY from `main` at `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`. READY confirms deployment state only.
+- Names/types/targets were inspected with decryption disabled. Production has `CLERK_PROXY_URL` and `AUTH_ALLOWED_ORIGINS`, but no `CLERK_PUBLISHABLE_KEY` or `CLERK_SECRET_KEY`; Vercel reports `hiddenProductionEnvCount: 0`.
+- The managed `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` entries remain Preview-only. Preview values and Neon bindings were not decrypted or changed.
+- Vercel project-domain metadata reports `hiredflex-platform.vercel.app` verified. This is Vercel domain verification, **not** proof that Clerk's proxy domain has been verified.
+- No Production configuration, Preview binding, Neon resource, deployment, rollback, migration, user or role was changed.
+
+### Fresh runtime error evidence and limits
+
+Vercel's seven-day aggregated runtime-error query returned one group:
+
+| Field | Observed value |
+|---|---|
+| Error | `Incomplete Clerk proxy configuration` |
+| Occurrences / affected users | 74 / 34 |
+| Route | `/` |
+| First / last seen | `2026-11-01T22:36:28Z` / `2026-11-06T20:42:58Z` |
+| Last deployment | `dpl_HdBbCx6b1k41dLHPdYrXGb1UYomm` |
+
+A separate last-30-minute runtime-log query returned no records; that is not evidence of recovery. Direct public URL reads for `/`, `/health/ready` and `/site-config` were unavailable through the current read-only browser, so this refresh does not claim a fresh HTTP status for those paths. The latest direct HTTP evidence remains the 6 November report of HTTP 500 for the homepage and readiness endpoint. The recent aggregate error and missing Production key pair keep the release at **NO-GO**.
+
+### Review and CI state
+
+- PR #25 remains open and unmerged on `fix/startup-identity-validation-2026-11-02`; its exact head `0dbcc9c150af5c0d98a6d1f92f5819f14fc2b862` passed [CI run 41399690982](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/41399690982): 276 tests across 21 files, typecheck, build, packaged startup, lint, formatting and the disposable PostgreSQL 18 lifecycle/rollback/isolation workflow.
+- PR #26 remains open and unmerged on `fix/onboarding-provider-failures-2026-11-03`; exact head `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0` passed [CI run 42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357): 284 tests across 21 files, typecheck, build, packaged startup, lint, formatting and disposable PostgreSQL 18 checks. Logs explicitly record signed synthetic onboarding, persisted account/role denial and separate Employer/Recruiter company-and-assignment isolation. These are synthetic verifier results, not live Clerk/browser acceptance.
+- Main remains at `aa8026e`; its combined status reports the Vercel deployment check only. No new Production deployment or main update occurred.
+
+### Phase-document precedence
+
+The current main `docs/PHASE-5.md` correctly labels Phase 5 as historical and records later Phase 6 HTTP and rollback-verification extensions. The separate `phase-5-postgres-verification` branch retains an earlier Phase 5 snapshot and must not supersede main. Main `docs/PHASE-6.md` still contains the 25 October flow-map baseline; PR #26 carries the newer 3–6 November signed-onboarding and role-isolation evidence. Those PR changes remain reviewable but are not yet part of main.
+
+### Figma inspection status
+
+The exact supplied reference is a Figma Make URL. The Figma embedded-app tool explicitly rejected it as an unsupported Make file; direct browser opening was also unavailable. No actual screens, source assets, interactions, variables or design tokens were inspected, and no Figma content was changed. The existing route/API map remains a comparison target, not a verified frame-to-route map. Design discrepancies remain **Unknown**; prototype Stages 1–2 remain preserved.
