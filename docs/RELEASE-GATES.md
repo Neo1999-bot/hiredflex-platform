@@ -1,5 +1,12 @@
 # HiredFlex release gates — 25 October 2026
 
+## Latest evidence refresh — 7 November 2026
+
+[Production incident record and dated evidence](PRODUCTION-INCIDENT-2026-11-02.md) now includes a 7 November refresh. Vercel's seven-day aggregate reports 74 occurrences affecting 34 users of `Incomplete Clerk proxy configuration`, last seen 6 November 2026 at 20:42:58 UTC on the current Production deployment. Names/types/targets-only environment inspection still finds the Production proxy/origin but no live Clerk key pair; the managed development keys remain Preview-only. Vercel deployment READY metadata is not application readiness, and the current read-only browser could not independently fetch the public HTTP endpoints today. Release remains **NO-GO**.
+
+PR #25 (startup-order/incident correction) and PR #26 (signed onboarding and role-isolation verification) remain open and unmerged. Their exact reviewed heads have passing CI: PR #25 run 41399690982 (276 tests) and PR #26 run 42173260357 (284 tests), including disposable PostgreSQL 18 verification. These automated/synthetic results do not establish live Clerk sign-in, browser session handling or independent live-role acceptance. Do not merge, deploy or roll back until the missing Production credentials are securely entered and the exact recovery release is separately approved.
+
+
 Release remains blocked. This review preserves the approved Phase 3/4 lifecycle and Phase 5/6 scope. Interviews, offers, uploads, messaging, billing and automated screening remain outside this release.
 
 ## Current Production incident — 2 November 2026
