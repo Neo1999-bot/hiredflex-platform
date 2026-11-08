@@ -6,7 +6,6 @@
 
 PR #25 (startup-order/incident correction) and PR #26 (signed onboarding and role-isolation verification) remain open and unmerged. Their exact reviewed heads have passing CI: PR #25 run 41399690982 (276 tests) and PR #26 run 42173260357 (284 tests), including disposable PostgreSQL 18 verification. These automated/synthetic results do not establish live Clerk sign-in, browser session handling or independent live-role acceptance. Do not merge, deploy or roll back until the missing Production credentials are securely entered and the exact recovery release is separately approved.
 
-
 Release remains blocked. This review preserves the approved Phase 3/4 lifecycle and Phase 5/6 scope. Interviews, offers, uploads, messaging, billing and automated screening remain outside this release.
 
 ## Current Production incident — 2 November 2026
