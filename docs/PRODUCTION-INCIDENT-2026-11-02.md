@@ -71,9 +71,9 @@ Vercel's seven-day aggregated runtime-error query returned one group:
 | ---------------------------- | ------------------------------------------- |
 | Error                        | `Incomplete Clerk proxy configuration`      |
 | Occurrences / affected users | 79 / 39                                     |
-| Route                        | `/`                                           |
+| Route                        | `/`                                         |
 | First / last seen            | 2026-11-01T22:36:28Z / 2026-11-08T00:13:50Z |
-| Last deployment              | `dpl_HdBbCx6b1k41dLHPdYrXGb1UYomm`            |
+| Last deployment              | `dpl_HdBbCx6b1k41dLHPdYrXGb1UYomm`          |
 
 A separate last-30-minute runtime-log query returned no records. The Vercel API notes that Hobby runtime-log retention is limited to one hour; an empty short-window query is not evidence of recovery. Direct public URL reads for `/`, `/health/ready` and `/site-config` were unavailable through the current read-only browser, so this refresh does not claim a fresh HTTP status for those paths. The latest direct HTTP evidence remains the 6 November report of HTTP 500 for the homepage and readiness endpoint. The 7-day aggregate still records the incomplete-proxy error through 8 November, and the missing Production key pair keeps the release at **NO-GO**.
 
