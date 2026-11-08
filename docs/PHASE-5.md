@@ -49,7 +49,6 @@ After finally removes the temporary trigger/function, retry must reach Withdrawn
 
 The previous paragraph's withdrawal coverage limit is superseded only for this Shortlisted → Withdrawn path. Other starting states, shortlist/reject failure injection and forced concurrency orderings remain distinct checks. This is synthetic HTTP/database evidence, not live Clerk, browser/Figma or production acceptance. No application behavior, schema/migration, real records or provider settings were changed.
 
-
 ## Phase 5 / Phase 6 evidence boundary — 8 November 2026
 
 The 18 October handover PDF is a historical snapshot. Its statement that the full HTTP lifecycle workflow was unverified predates the later Phase 5/6 PostgreSQL CI evidence recorded above; current repository phase documents and exact CI runs take precedence. Phase 5 owns disposable database, lifecycle, rollback and race verification. Phase 6 owns the web interface and managed identity.
