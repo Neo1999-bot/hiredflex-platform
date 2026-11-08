@@ -51,7 +51,6 @@ Exact reference: [HiredFlex Make prototype](https://www.figma.com/make/xNiwwAOZf
 
 These are known functional availability failures, not inferred Figma discrepancies. Visual discrepancies remain Unknown. Historical exports and [Phase 6 mapping](PHASE-6.md) remain dated targets, not proof of current live parity.
 
-
 ## Evidence refresh — 7 November 2026
 
 This is a read-only refresh of the existing incident record. It does not change the recovery decision, credentials, application behavior or release authority.
