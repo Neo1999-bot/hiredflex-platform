@@ -1,5 +1,18 @@
 # HiredFlex release gates — 25 October 2026
 
+## Latest evidence refresh — 9 November 2026
+
+[Detailed read-only incident evidence](PRODUCTION-INCIDENT-2026-11-02.md#evidence-refresh--9-november-2026) records the current source, environment scopes, Preview build metadata and verification limits.
+
+- Main remains `aa8026e`; canonical Production deployment `dpl_HdBbCx6b1k41dLHPdYrXGb1UYomm` reports READY, but no live authentication acceptance is established.
+- Production still lacks `CLERK_PUBLISHABLE_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`. The managed development key pair remains Preview-only. Hidden Production environment count is zero; custom environments are empty. Team-level shared variables cannot be enumerated by the available connector.
+- PR #25 is open at `a7a3785`; [CI run 42454658781](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42454658781) passed 276 tests/21 files and every quality, startup and PostgreSQL gate. Its exact-head Vercel Preview deployment is READY.
+- PR #26 is open at `3ac6c64`; [CI run 42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357) passed 284 tests/21 files and every quality, startup and PostgreSQL gate, including synthetic onboarding and company/assignment isolation. Its exact-head Preview deployment is READY.
+- Preview build readiness is not HTTP route acceptance: direct browser reads of Preview root/readiness were unavailable. The rolling seven-day Production error aggregate still reports 59 incomplete-proxy errors/32 users, last seen 8 November; the 24-hour error aggregate returned no clusters but does not establish recovery.
+- The supplied Figma Make file remains unrenderable through the available inspection endpoints; no actual screens or designs were changed.
+
+**Release verdict remains NO-GO.** Secure entry of the matching intended-Production Clerk key pair, verification of exact Production scopes, a separately approved recovery deployment, and real browser sign-in/session plus independent Candidate/Employer/Recruiter acceptance are still required. Do not merge or deploy based solely on these CI/Preview results.
+
 ## Latest evidence refresh — 8 November 2026
 
 [Production incident record and dated evidence](PRODUCTION-INCIDENT-2026-11-02.md) now includes an 8 November refresh. Vercel's seven-day aggregate reports 79 occurrences affecting 39 users of `Incomplete Clerk proxy configuration`, last seen 8 November 2026 at 00:13:50 UTC on the current Production deployment. The 30-minute runtime-log query returned no records, but the available Hobby log retention is one hour; this is not evidence of recovery. Direct public endpoint reads were unavailable today, so the latest direct HTTP evidence remains the 6 November HTTP 500 report for the homepage and readiness endpoint.
