@@ -56,6 +56,7 @@ Exact endpoint definitions remain authoritative in `src/routes.ts` and `src/stru
 
 ### Design comparison status
 
+- **9 November 2026 inspection attempt:** the Figma Make URL opened the embedded thread surface but returned no rendered page or frames. The available metadata/screenshot endpoints explicitly do not support Make files, and direct web retrieval was unavailable. Zero screens, interactions, variables or design tokens were inspected; zero Figma content was changed. Visual parity remains **Unknown** and the route/API table below remains a comparison target, not a frame mapping.
 - **Design discrepancies:** unknown until the referenced Make prototype can be rendered or its returned source resources can be read. Do not infer a visual mismatch or approval from the filename or source-link list.
 - **Functional release gaps:** fresh-account onboarding and independent-identity isolation, direct API edge cases, mobile/error/accessibility acceptance and production configuration remain tracked in [RELEASE-GATES.md](RELEASE-GATES.md). These are engineering gates, not inferred Figma defects.
 
