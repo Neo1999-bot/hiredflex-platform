@@ -91,7 +91,6 @@ The current main `docs/PHASE-5.md` correctly labels Phase 5 as historical and re
 
 The exact supplied reference is a Figma Make URL. Opening it in the embedded thread succeeded, but the Figma file-session creation rejected Make and the supported screenshot/design-context flow was unavailable. No actual screens, source assets, interactions, variables or design tokens were inspected, and no Figma content was changed. The existing route/API map remains a comparison target, not a verified frame-to-route map. Design discrepancies remain **Unknown**; prototype Stages 1–2 remain preserved.
 
-
 ## Evidence refresh — 9 November 2026
 
 This is a read-only evidence refresh. It does not change Production, Preview, Neon, Clerk, user records, roles, migrations or release authority.
