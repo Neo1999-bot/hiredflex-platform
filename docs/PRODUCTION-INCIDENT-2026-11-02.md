@@ -90,3 +90,43 @@ The current main `docs/PHASE-5.md` correctly labels Phase 5 as historical and re
 ### Figma inspection status
 
 The exact supplied reference is a Figma Make URL. Opening it in the embedded thread succeeded, but the Figma file-session creation rejected Make and the supported screenshot/design-context flow was unavailable. No actual screens, source assets, interactions, variables or design tokens were inspected, and no Figma content was changed. The existing route/API map remains a comparison target, not a verified frame-to-route map. Design discrepancies remain **Unknown**; prototype Stages 1–2 remain preserved.
+
+
+## Evidence refresh — 9 November 2026
+
+This is a read-only evidence refresh. It does not change Production, Preview, Neon, Clerk, user records, roles, migrations or release authority.
+
+### Current source and deployment records
+
+- GitHub still reports `main` at `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`. The canonical Production alias `https://hiredflex-platform.vercel.app` resolves to deployment `dpl_HdBbCx6b1k41dLHPdYrXGb1UYomm`, READY from that main SHA. READY is deployment metadata, not runtime or authentication acceptance.
+- PR #25 remains open and unmerged at `a7a3785041056ed0223e37337a23ebf3b62a5d2d`. Its Vercel Preview deployment `dpl_ALuN5r2utaHyAWJcqLkzkFEk3V4v` is READY from that exact commit; preview URL: [hiredflex-platform-gcxd5rht3-hired-flex1.vercel.app](https://hiredflex-platform-gcxd5rht3-hired-flex1.vercel.app).
+- PR #26 remains open and unmerged at `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`. Its Vercel Preview deployment `dpl_EiCG1w4mtwvQHQD9dU6oooMfhX87` is READY from that exact commit; preview URL: [hiredflex-platform-n283jkvkj-hired-flex1.vercel.app](https://hiredflex-platform-n283jkvkj-hired-flex1.vercel.app).
+- Direct read-only browser fetches of both Preview roots and readiness paths, plus PR #25 `/site-config`, were not accessible through the available browser. No HTTP 200, readiness, served-key or protected-route result is claimed for these Preview deployments.
+
+### Production environment inventory
+
+Vercel project variables were listed with decryption disabled; only names, types and target scopes were used.
+
+- Production contains `CLERK_PROXY_URL`, `AUTH_ALLOWED_ORIGINS`, `DATABASE_URL` and Neon/PostgreSQL integration variables.
+- Production contains none of `CLERK_PUBLISHABLE_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` or `CLERK_SECRET_KEY`.
+- The managed development `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` remain Preview-only.
+- Vercel reports `hiddenProductionEnvCount: 0`; the custom-environment inventory is empty. The only verified project domain returned is `hiredflex-platform.vercel.app`. Vercel domain verification is not Clerk proxy-domain verification.
+- The available connector cannot enumerate team-level shared variables. An unattached team-level shared variable therefore remains unverified; no IDs or values were guessed or retrieved.
+
+### CI evidence
+
+- PR #25 head `a7a3785`: [run 42454658781](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42454658781), job `128651000591`, passed. Logs confirm 276 tests across 21 files, typecheck, build, packaged startup, lint, formatting and PostgreSQL 18 verification, including the existing lifecycle, rollback, concurrent-submission and isolation checks.
+- PR #26 head `3ac6c64`: [run 42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357), job `127745773095`, passed. Logs confirm 284 tests across 21 files, the same quality/startup gates, signed synthetic onboarding, persisted account/role denial, Employer/Recruiter company-and-assignment isolation, and the retained PostgreSQL 18 workflow checks.
+- These are automated and synthetic database/provider-boundary results. They do not prove live Clerk sign-up, browser sessions, email verification, token renewal/revocation or independent live role journeys.
+
+### Runtime evidence and limits
+
+- The rolling seven-day Vercel runtime-error aggregate returned 59 occurrences affecting 32 users for `Incomplete Clerk proxy configuration` on `/`; first seen 1 November and last seen `2026-11-08T00:13:50Z`, on Production deployment `dpl_HdBbCx6b1k41dLHPdYrXGb1UYomm`.
+- The separate 24-hour error aggregate returned no clusters. This is not proof of recovery: the seven-day result still contains the configuration error and the Production Clerk pair remains absent.
+- A 24-hour individual runtime-log query was rejected because the Hobby plan does not retain that window (the API recommends a one-hour window). This is an API retention limit, not an empty-log result.
+
+### Figma inspection status
+
+The supplied Figma Make reference opened the embedded thread surface but returned no rendered Make page or frames. The available metadata/screenshot endpoints do not support `/make/` files, and direct web retrieval was inaccessible. Zero actual screens, interactions, variables or design tokens were inspected; zero Figma designs were changed. The existing Phase 6 route/API map remains a comparison target, not a verified frame mapping. Prototype Stages 1–2 remain untouched.
+
+No merge, Production deployment, rollback, credential/configuration change, migration, real-user/role mutation, charge or external communication occurred during this refresh.
