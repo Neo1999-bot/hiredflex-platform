@@ -1,4 +1,4 @@
-
+# HiredFlex release gates — 25 October 2026
 
 ## Latest evidence refresh — 10 November 2026
 
@@ -12,7 +12,6 @@
 - Production deployment metadata READY and Preview build READY do not establish public HTTP reachability or live authentication. No Production merge/deploy/rollback or migration is authorised by this evidence refresh.
 
 **Release verdict: NO-GO.** Keep candidate intake paused pending secure Production Clerk configuration, owner-approved public-access/domain decision, separately approved recovery deployment, real browser session/role acceptance, and remaining privacy/recovery/mobile/accessibility/design gates.
-# HiredFlex release gates — 25 October 2026
 
 ## Latest evidence refresh — 9 November 2026
 

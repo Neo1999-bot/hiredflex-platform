@@ -64,11 +64,11 @@ Exact endpoint definitions remain authoritative in `src/routes.ts` and `src/stru
 
 Use an authorized disposable preview and synthetic test accounts. Sign in with a verified primary email, onboard, refresh the workspace, and sign out. Pass only when the same candidate account persists across refresh, protected access ends after sign-out and a second candidate cannot retrieve the first candidate's application details. Record the tested commit, preview origin, date, expected/actual results and evidence without tokens, passwords or personal candidate data. A simple successful login does not close the ownership check; if any prerequisite is unavailable, record it as blocked rather than passed.
 
-## Scope
-
-This release covers the approved application lifecycle. Interviews, offers, CV/document upload, WhatsApp/email notifications, billing and automated screening are not part of this release. The privacy page explains the actual stored fields and matching limitations; organisation-specific retention and support details need confirmation before inviting real candidates.
-
 
 ### Figma Make inspection update — 10 November 2026
 
 The Make file was opened in the embedded Figma thread, but session creation returned an explicit unsupported-file-type error for Make. The available Figma file-inspection tools require a supported Design/FigJam/Slides/Figspec file session; no installed Figma design-to-code skill was available, so no design-context call was made without its required guidance. No rendered screen, frame, interaction, source asset or design variable was inspected, and no Figma content was changed. The flow rows above remain application-route/API comparison targets, not verified frame-to-route mappings. Visual parity remains **Unknown**. Preserve completed prototype Stages 1–2; do not infer a redesign requirement from unavailable inspection. A supported export of the actual screens or a supported Design-file reference is required to finish visual comparison.
+
+## Scope
+
+This release covers the approved application lifecycle. Interviews, offers, CV/document upload, WhatsApp/email notifications, billing and automated screening are not part of this release. The privacy page explains the actual stored fields and matching limitations; organisation-specific retention and support details need confirmation before inviting real candidates.
