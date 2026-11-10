@@ -129,3 +129,31 @@ Vercel project variables were listed with decryption disabled; only names, types
 The supplied Figma Make reference opened the embedded thread surface but returned no rendered Make page or frames. The available metadata/screenshot endpoints do not support `/make/` files, and direct web retrieval was inaccessible. Zero actual screens, interactions, variables or design tokens were inspected; zero Figma designs were changed. The existing Phase 6 route/API map remains a comparison target, not a verified frame mapping. Prototype Stages 1–2 remain untouched.
 
 No merge, Production deployment, rollback, credential/configuration change, migration, real-user/role mutation, charge or external communication occurred during this refresh.
+
+
+## Evidence refresh — 10 November 2026
+
+Read-only evidence refresh; no Production/Preview settings, identity credentials, users, roles, database records, migrations, deployment or release authority were changed.
+
+### Repository and CI
+
+- Main remains `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`.
+- PR #25 remains open and unmerged at `dbfafa0eb22434b7a647f5ccbeb4b3846de4c20b`. [CI run 42574037573](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42574037573), job 129017624375, passed on Node 24: 276 tests / 21 files, typecheck, build, packaged startup, lint, formatting and the disposable PostgreSQL 18 verification. The database PASS line includes fresh/rerun migrations, transaction/history rollback and retry, active uniqueness, vacancy locking, concurrent submission, candidate/company isolation and the existing HTTP lifecycle.
+- PR #26 remains open and unmerged at `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`. [CI run 42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357), job 127745773095, passed on Node 24: 284 tests / 21 files, typecheck, build, packaged startup, lint, formatting and disposable PostgreSQL 18 verification. Its database checks include signed synthetic onboarding, persisted account suspension/role removal, independent Employer and Recruiter identities, company/vacancy-assignment isolation, and the retained lifecycle checks. These are synthetic provider/JWT/database checks, not live Clerk browser acceptance.
+- The exact PR #25 head has a READY Preview deployment, `dpl_8h2mEhqWyadBJiGxnkZ7iA2FwLbg`, built from `dbfafa0`. The latest overall Preview deployment listed is a different revision (`dpl_9LXmf2cRDgN7m83TePG9Swp6ZMnC`, commit `d7870e0)); it is not used as exact-head evidence.
+
+### Production configuration and access protection
+
+- Canonical Production deployment `dpl_HdBbCx6b1k41dLHPdYrXGb1UYomm` remains READY from main `aa8026e`. READY is deployment metadata, not successful route/authentication acceptance.
+- Names/types/targets-only Vercel inventory was repeated with decryption disabled. Production has `CLERK_PROXY_URL` and `AUTH_ALLOWED_ORIGINS`, plus database environment entries, but no Production `CLERK_PUBLISHABLE_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` or `CLERK_SECRET_KEY`. The `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` entries remain Preview-only. No values were decrypted. `hiddenProductionEnvCount` is 0. The connector cannot enumerate team-level shared variables, so an unattached shared variable cannot be ruled out.
+- Vercel project metadata reports SSO protection enabled with deployment type `all_except_custom_domains`. The attached domains returned are Vercel-managed `.vercel.app` aliases; no custom domain is attached. This is a **potential public-access blocker** for default domains and requires an owner-approved public-access/domain decision. No SSO setting, domain, share link or protection bypass was changed or created.
+- Seven-day runtime aggregation currently shows one `Incomplete Clerk proxy configuration` group: 29 occurrences, 21 users, route `/`, last observed 8 November 2026 at 00:13:50 UTC on the Production deployment. The 24-hour aggregation returned no clusters. That absence does not prove recovery; request volume/access may be affected by deployment protection, and live route acceptance was not established.
+- A direct read-only browser open of the latest Preview URL was unavailable through the web inspection path. No share link was created to bypass Vercel protection. Do not infer HTTP 200, browser sign-in or public reachability from READY metadata.
+
+### Figma Make inspection
+
+The supplied Make file opened in the embedded Figma thread, but Figma session creation explicitly rejected the file type as unsupported for its file tools. The installed skill list exposed no Figma design-to-code guidance, so the design-context tool was not called without its required guidance. No rendered screens, frames, interactions, source assets or variables were inspected; no Figma content was changed. Visual parity remains **Unknown**. The existing route/API map remains a comparison target, not a verified frame mapping. Completed prototype Stages 1–2 remain preserved.
+
+### Release conclusion
+
+Production remains **NO-GO**. Secure entry of the matching intended-Production Clerk key pair, an owner-approved public-access/domain decision, a separately approved recovery deployment, and real browser sign-in/session plus independent Candidate/Employer/Recruiter acceptance remain outstanding. Privacy/retention, recovery/backup ownership, mobile/accessibility and visual acceptance remain open. Candidate intake remains paused.
