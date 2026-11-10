@@ -130,7 +130,6 @@ The supplied Figma Make reference opened the embedded thread surface but returne
 
 No merge, Production deployment, rollback, credential/configuration change, migration, real-user/role mutation, charge or external communication occurred during this refresh.
 
-
 ## Evidence refresh — 10 November 2026
 
 Read-only evidence refresh; no Production/Preview settings, identity credentials, users, roles, database records, migrations, deployment or release authority were changed.
