@@ -67,3 +67,8 @@ Use an authorized disposable preview and synthetic test accounts. Sign in with a
 ## Scope
 
 This release covers the approved application lifecycle. Interviews, offers, CV/document upload, WhatsApp/email notifications, billing and automated screening are not part of this release. The privacy page explains the actual stored fields and matching limitations; organisation-specific retention and support details need confirmation before inviting real candidates.
+
+
+### Figma Make inspection update — 10 November 2026
+
+The Make file was opened in the embedded Figma thread, but session creation returned an explicit unsupported-file-type error for Make. The available Figma file-inspection tools require a supported Design/FigJam/Slides/Figspec file session; no installed Figma design-to-code skill was available, so no design-context call was made without its required guidance. No rendered screen, frame, interaction, source asset or design variable was inspected, and no Figma content was changed. The flow rows above remain application-route/API comparison targets, not verified frame-to-route mappings. Visual parity remains **Unknown**. Preserve completed prototype Stages 1–2; do not infer a redesign requirement from unavailable inspection. A supported export of the actual screens or a supported Design-file reference is required to finish visual comparison.
