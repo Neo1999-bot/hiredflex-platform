@@ -1,3 +1,17 @@
+
+
+## Latest evidence refresh — 10 November 2026
+
+[Detailed 10 November incident and configuration evidence](PRODUCTION-INCIDENT-2026-11-02.md#evidence-refresh--10-november-2026) supersedes earlier dated counts and deployment observations.
+
+- Main is `aa8026e`. PR #25 is open at `dbfafa0`; [CI 42574037573](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42574037573) passed 276 tests/21 files and all Node 24 quality/startup/PostgreSQL 18 gates. Its exact-head Preview `dpl_8h2mEhqWyadBJiGxnkZ7iA2FwLbg` is READY. PR #26 is open at `3ac6c64`; [CI 42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357) passed 284 tests/21 files and all quality/startup/PostgreSQL 18 gates, including synthetic onboarding and persisted Candidate/Employer/Recruiter isolation.
+- Main still contains the startup-order defect in `src/app.ts` and `src/server.ts`: database-client construction occurs before identity configuration is validated. PR #25 moves identity validation before database-client construction and preserves fail-closed behaviour; it remains unmerged.
+- Production still lacks the Clerk live-key pair. The seven-day runtime aggregate has 29 incomplete-proxy errors affecting 21 users, last observed 8 November; the 24-hour aggregate has no clusters, which is not proof of recovery.
+- Vercel project SSO protection is enabled for all non-custom domains; only Vercel-managed default domains are attached and no custom domain is present. Confirm the intended public-access/domain policy before launch. No protection bypass, share link or domain/configuration change was made.
+- Figma Make inspection remains blocked: embedded thread opened, but session creation rejects Make; no actual screens or interactions were inspected and no designs changed. Phase 6 preserves the exact limitation and existing flow/API mapping.
+- Production deployment metadata READY and Preview build READY do not establish public HTTP reachability or live authentication. No Production merge/deploy/rollback or migration is authorised by this evidence refresh.
+
+**Release verdict: NO-GO.** Keep candidate intake paused pending secure Production Clerk configuration, owner-approved public-access/domain decision, separately approved recovery deployment, real browser session/role acceptance, and remaining privacy/recovery/mobile/accessibility/design gates.
 # HiredFlex release gates — 25 October 2026
 
 ## Latest evidence refresh — 9 November 2026
