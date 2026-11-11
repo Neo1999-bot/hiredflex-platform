@@ -156,3 +156,32 @@ The supplied Make file opened in the embedded Figma thread, but Figma session cr
 ### Release conclusion
 
 Production remains **NO-GO**. Secure entry of the matching intended-Production Clerk key pair, an owner-approved public-access/domain decision, a separately approved recovery deployment, and real browser sign-in/session plus independent Candidate/Employer/Recruiter acceptance remain outstanding. Privacy/retention, recovery/backup ownership, mobile/accessibility and visual acceptance remain open. Candidate intake remains paused.
+
+## Evidence refresh — 11 November 2026
+
+This is a names/types/targets-only Vercel and repository refresh. Secret values were not requested or decrypted. No Production, provider, database, role, account, or deployment setting was changed.
+
+### Current Production configuration and runtime evidence
+
+- Project-level Production inventory contains `CLERK_PROXY_URL`, `AUTH_ALLOWED_ORIGINS`, and `DATABASE_URL`. It contains no Production `CLERK_PUBLISHABLE_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, or `CLERK_SECRET_KEY`. The managed development `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` remain Preview-only. Vercel reports `hiddenProductionEnvCount: 0`; the custom-environment inventory is empty.
+- The connector cannot enumerate all team-level shared variables. This project-level result cannot rule out an unattached shared variable; no unknown shared-variable ID was guessed or retrieved.
+- The canonical Production deployment `dpl_HdBbCx6b1k41dLHPdYrXGb1UYomm` remains READY from main `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`. Direct read-only browser requests to the root and `/health/ready` were unavailable in this run, so no fresh HTTP status is claimed.
+- Vercel's latest runtime-error aggregation reports one `Incomplete Clerk proxy configuration` occurrence affecting one user in the last 24 hours, and 26 occurrences affecting 18 users over seven days, route `/`; the last observed event was 10 November 2026 at 08:09:58 UTC. A declining count or lack of a newer event is not proof of recovery while the live-key pair remains absent.
+
+### Current code and CI evidence
+
+- Main remains `aa8026e`. Its `src/app.ts` and `src/server.ts` still construct the database client before validating identity configuration.
+- PR #25 remains open, unmerged, against main at head `b435bcc922194703ca435a03edb26f058819e2f9`. Its bounded fix validates identity before database-client construction and retains fail-closed behaviour. CI run [42970540874](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42970540874) passed 276 tests across 21 files, typecheck, build, packaged startup, lint, formatting, and disposable PostgreSQL 18 verification. Its exact-head Preview deployment `dpl_2cXjCK2ym8yxinqMdprJRxGtoh29` is READY. This does not supply missing Production credentials or prove live sign-in.
+- PR #26 remains open, unmerged, at head `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`. CI run [42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357) passed 284 tests across 21 files and all quality/startup/PostgreSQL gates, including synthetic signed onboarding and persisted Candidate/Employer/Recruiter isolation. These are synthetic JWT/database checks, not live Clerk browser sessions.
+
+### Public access and hosting constraints
+
+- Vercel project metadata reports SSO protection enabled for `all_except_custom_domains`. The attached domains are Vercel-managed `.vercel.app` aliases; no custom domain is attached. This remains a potential public-access blocker. No SSO setting, bypass, share link, domain, or DNS record was changed.
+- The Vercel project metadata does not expose the team's current subscription plan. Vercel's [Terms of Service](https://vercel.com/legal/terms) and [Fair Use Guidelines](https://vercel.com/docs/limits/fair-use-guidelines) restrict Hobby to personal/non-commercial use. Because HiredFlex's intended model includes employer/partner revenue, confirm the actual plan and permitted hosting arrangement before a commercial pilot. This is a conditional provider-terms gate, not a claim that the account is on Hobby or a legal opinion. No upgrade, purchase, or paid resource was initiated.
+
+### Figma and privacy boundary
+
+- The exact Figma Make reference opened in the embedded thread, but the Make file is unsupported by the available session/screenshot/metadata inspection path. Zero rendered screens, interactions, variables, or design tokens were inspected; zero designs were changed. Visual parity remains Unknown and the existing Phase 6 route/API table remains comparison targets, not frame mappings.
+- Saved Candidate Data Retention Policy Draft 0.3 remains not effective, with no effective date and the responsible-party/legal-scope questions unresolved. It does not authorise real candidate intake or automated deletion. No real candidate records were accessed or changed.
+
+**Release verdict: NO-GO.** Secure intended-Production Clerk configuration, owner-approved public-access/domain and hosting-plan decisions, a separately approved recovery deployment, live browser/session/independent-role acceptance, and remaining privacy/recovery/mobile/accessibility/design gates are still outstanding. No merge, Production deployment/rollback, live migration, or business/legal commitment is authorised by this evidence refresh.
