@@ -1,6 +1,19 @@
 # HiredFlex release gates — 25 October 2026
 
-## Latest evidence refresh — 10 November 2026
+## Latest evidence refresh — 11 November 2026
+
+[Detailed 11 November Production, CI, Figma and hosting evidence](PRODUCTION-INCIDENT-2026-11-02.md#evidence-refresh--11-november-2026) supersedes the earlier dated counts and configuration observations below.
+
+- Main remains `aa8026e`; Production deployment `dpl_HdBbCx6b1k41dLHPdYrXGb1UYomm` reports READY, but direct public root/readiness requests were unavailable and live authentication is not accepted.
+- Project-level Production has `CLERK_PROXY_URL`, `AUTH_ALLOWED_ORIGINS`, and `DATABASE_URL`, but no live Clerk publishable/secret pair. Managed development keys remain Preview-only; `hiddenProductionEnvCount` is zero. Team-level shared variables cannot be enumerated by the available connector.
+- PR #25 is open at `b435bcc`; [CI 42970540874](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42970540874) passed 276 tests/21 files, all Node 24 quality/startup checks and disposable PostgreSQL 18 verification. Its exact-head Preview `dpl_2cXjCK2ym8yxinqMdprJRxGtoh29` is READY. PR #26 is open at `3ac6c64`; [CI 42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357) passed 284 tests/21 files and the synthetic signed-onboarding and persisted role-isolation checks.
+- Vercel's latest runtime-error aggregate records one incomplete-proxy error/one user in 24 hours and 26 errors/18 users in seven days, last seen 10 November at 08:09:58 UTC. This is not proof of recovery. SSO protection remains enabled for all non-custom domains; only Vercel-managed domains are attached and no custom domain is present.
+- The Vercel team plan is not exposed by project metadata. If the account is on Hobby, Vercel's terms restrict it to personal/non-commercial use; confirm plan eligibility or an approved host before a commercial pilot. No upgrade or purchase was made.
+- Figma Make inspection remains blocked: embedded thread opened, but no rendered screens or interactions were returned and no designs changed. Saved Draft 0.3 remains not effective and does not authorise intake or automated deletion.
+
+**Release verdict: NO-GO.** Keep candidate intake paused pending secure Production Clerk configuration, owner-approved public-access/domain and hosting-plan decisions, separately approved recovery deployment, live browser/session/role acceptance, and remaining privacy/recovery/mobile/accessibility/design gates. No Production merge/deploy/rollback or migration is authorised by this evidence refresh.
+
+## Historical evidence refresh — 10 November 2026
 
 [Detailed 10 November incident and configuration evidence](PRODUCTION-INCIDENT-2026-11-02.md#evidence-refresh--10-november-2026) supersedes earlier dated counts and deployment observations.
 
