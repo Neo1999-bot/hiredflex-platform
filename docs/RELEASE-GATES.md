@@ -246,3 +246,7 @@ This follow-up supersedes the PR #25 head, CI and Preview values in the earlier 
 - **Figma / privacy:** the 12 November Make session attempt was rejected as unsupported; zero rendered screens or design changes. Draft 0.3 remains not effective and does not authorise intake or automated deletion.
 
 **Release verdict remains NO-GO.** Secure Production Clerk configuration, an owner-approved public-access/domain and hosting-plan decision, separate exact release approval, live browser/session/independent-role acceptance, and remaining privacy/recovery/mobile/accessibility/design gates remain outstanding.
+
+## Documentation verification follow-up — 12 November 2026
+
+The code-bearing PR #25 revision `b7299194a54da4526f6d7e31891f7654cd7c0604` passed exact-head CI [43172216302](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43172216302). The subsequent documentation-only evidence commit `2a55c6baaddac4f2f40b43d1b491432eaab64b7e` has a failed first exact-head CI [43173891200](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43173891200): install, typecheck, build, startup and lint passed; Prettier failed on the four changed Markdown files; tests and PostgreSQL verification were skipped. Its Preview `dpl_7n3v6LC484zLxezQmyroKm4AV7FS` is READY but not accepted while CI is red. The corrective documentation revision requires a fresh exact-head CI and Preview result. The earlier code-bearing CI pass is not inherited by later commits.
