@@ -27,12 +27,15 @@ Clerk verification uses RS256, trusted issuer/JWKS, required exp/nbf/sub/sid/azp
 | ------------------------------ | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | Sign-in / candidate onboarding | `/#workspace`                                      | Clerk session → GET /auth/session; POST /auth/onboard requires verified primary email and persists Candidate only                         |
 | Public search / job detail     | `/#jobs`, `/#job/:id`                              | GET /vacancies with q/location; GET /vacancies/:id; OPEN-only discovery                                                                   |
-| Match explanations             | `/#job/:id`, `/#workspace`                         | Candidate match/detail and discovery endpoints; informational matched/missing/not-evaluated, percentage null if no evaluable requirements |
+| Match explanations             | `/#job/:id`, `/#workspace`                         | GET /candidate/vacancies/:id/match and GET /candidate/vacancy-matches; informational matched/missing/not-evaluated, null if none evaluable |
+| Candidate profile / readiness  | `/#profile`                                        | GET /candidate/profile and GET /candidate/skills; read-only checklist, no upload or evidence-verification claim                           |
 | Candidate skills               | `/#skills`                                         | GET/POST /candidate/skills; DELETE /candidate/skills/:id; candidate ownership comes from verified principal                               |
 | Apply / track / withdraw       | `/#job/:id`, `/#applications`, `/#application/:id` | POST /candidate/applications accepts vacancyId only; own list/detail; POST withdrawal; status/history persist transactionally             |
 | Employer overview / vacancies  | `/#employer`, `?tab=vacancies`                     | GET /employer/vacancies and /employer/companies; POST DRAFT creation scoped to approved company                                           |
-| Manage / publish / close       | `/#manage/:id`                                     | Requirement GET/POST/DELETE (writes DRAFT-only), recruiter assignment and POST open/close                                                 |
+| Manage / publish / close       | `/#manage/:id`                                     | GET/POST/DELETE requirements (writes DRAFT-only); GET /employer/recruiters; POST recruiter assignment; POST open/close                     |
 | Employer applicants / pipeline | `/#employer?tab=applicants` or pipeline            | GET /employer/vacancies/:id/applications; read-only employer view; no recruiter role escalation                                           |
+| Employer company list           | `/#employer?tab=company`                           | GET /employer/companies; displays approved company assignments only; no self-service creation or editing                                  |
+| Employer access & settings      | `/#employer?tab=settings`                          | Verified session and persisted company-role assignments; informational only; role changes require authorised support/operator           |
 | Assigned recruiter decisions   | `/#recruiter`, `/#review/:id`                      | Assigned vacancy/application list and POST review/shortlist/reject; server checks assignment and transition rules                         |
 
 Figma identity: <https://www.figma.com/make/xNiwwAOZfsOz5tjWHEDmeK/HiredFlex-%E2%80%94-Stage-1-COMPLETE-%E2%80%94-26-Sep-2026>. Make context uses its root 0:1; stable Design frame/node IDs are unavailable and are not invented. User-supplied screenshot timestamps and visible flows are mapped in FIGMA-SCREEN-REVIEW-2026-10-25.md and EMPLOYER-SCREEN-REVIEW.md. Static samples, CV upload/notes, Interview/Offer and notification screens are not inferred to be delivered API features.
@@ -44,7 +47,7 @@ Figma identity: <https://www.figma.com/make/xNiwwAOZfsOz5tjWHEDmeK/HiredFlex-%E2
 - The test resolver is injected only into that isolated Fastify verifier; no production authentication bypass is added. This verifies HTTP/database ownership predicates, not a new independent Clerk account's onboarding.
 - Typed transport tests cover fresh bearer tokens, payloads, same-origin credential confinement, 401/403 with HTML bodies, duplicate errors, 204, network/JSON failures and token refresh failures. Actual generated-client tests exercise error rendering and native/external navigation.
 - Earlier 25 October preview evidence records real Clerk sign-in, persisted candidate/employer/recruiter journeys and database results using one approved identity. That evidence is dated and distinct from new-commit tests. Fresh browser/provider checks on the updated preview remain necessary; do not relabel old screenshots as proof of a newly deployed SHA.
-- Owner approval in the conversation authorises consolidation of reviewed PRs. PRs #3–6 are merged into development; main/production release remains governed by RELEASE-GATES.md. Vercel's current production target is linked to main at ad8aab6; production DB/origin/live identity are not certified by these merges.
+- Historical 25 October snapshot (superseded by the 12 November current-state addendum below): owner approval in the conversation authorised consolidation of reviewed PRs. PRs #3–6 were merged into development; Vercel's then-current production target was linked to main at ad8aab6. That snapshot is not current main or release evidence.
 
 The integration implementation and automated contract gaps can be reviewed separately from public launch. Keep issue #2's remaining live-preview acceptance explicit until the updated deployed SHA, readiness and both dashboards are checked with real sessions. Fresh independent-account onboarding, full accessibility, backups/restore, retention and production setup remain release gates.
 
@@ -73,3 +76,30 @@ Fresh exact-file Figma Make context again returned source links without a render
 Candidate `/#application/:applicationId` reads GET `/candidate/applications/:applicationId`; its existing Withdraw action calls POST `/candidate/applications/:applicationId/withdraw`. The verifier now forces this route's history write to fail and requires unchanged status/timestamp, unchanged visible application/history and continued active-duplicate refusal. Retry must add exactly one attributed Withdrawn event; a new application must retain the old application's terminal history. See PHASE-5.md for the disposable-data scope, exact starting state and execution limits.
 
 The exact linked Figma Make file was rechecked: design context returned source links without a rendered screenshot, while session creation rejects Make files. No source-link contents or rendered Figma screens were inspected in this increment; no prototype, UI, tokens or interactions were changed. Previously inspected user exports remain dated visual references. No new design discrepancy or visual-fidelity claim is made. Completed prototype Stages 1–2, independent search/informational matching and accepted lifecycle boundaries remain preserved; this change tests existing persisted behavior only.
+
+## Current route mapping and release-state audit — 12 November 2026
+
+The following code-to-route map was checked against main `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`. It verifies application wiring only; it does not establish live Clerk sign-in or visual parity with the Figma Make file.
+
+| Concern | UI / transport source | Authoritative route source |
+| --- | --- | --- |
+| Screen routing and interactions | `src/web/client.ts` | Client navigation/rendering only; no ownership authority |
+| Same-origin API transport | `src/web/api-client.ts` | Retrieves the current Clerk token and confines requests to validated same-origin paths |
+| Session and Candidate onboarding | `src/web/client.ts`, `src/web/api-client.ts` | `src/auth/identity.ts`: GET `/auth/session`, POST `/auth/onboard` |
+| Vacancy and application lifecycle | `src/web/client.ts` | `src/routes.ts`: public vacancies, candidate applications, employer vacancies, recruiter assignment/review |
+| Skills and vacancy requirements | `src/web/client.ts` | `src/structured-data-routes.ts` |
+| Match detail | `src/web/client.ts` | `src/matching-routes.ts` |
+| Candidate match discovery | `src/web/client.ts` | `src/vacancy-match-discovery-routes.ts` |
+
+The Employer Company tab calls GET `/employer/companies` and renders only persisted, approved company assignments. The Access & settings tab is informational: it explains that roles are database-controlled and directs requests to support. Neither tab creates companies, changes roles, or exposes notification/discovery toggles. The existing synthetic UI test `src/web/navigation.test.ts` covers company/access views, vacancy selection, truthful empty states and wrong-role denial.
+
+### Current repository and release evidence
+
+- Main is `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`; PR #1 is merged at `2eb6661b15cbc31887b233250a7eb50dd33be22b`. The earlier PR #1-open statement is historical.
+- PR #25 remains open/unmerged at `e2c8048f0bbda228e2f4a90e26a3ee4ffd703ce8`. Exact-head CI [43171128379](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43171128379) passed 276 tests across 21 files, all quality/startup steps and disposable PostgreSQL 18 verification. Its exact-head Preview is READY; this is not Production acceptance.
+- PR #26 remains open/unmerged at `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`; CI [42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357) passed 284 tests across 21 files, including synthetic signed onboarding and persisted Candidate/Employer/Recruiter isolation. It does not prove live Clerk browser sessions.
+- Current Production, environment scopes, runtime errors and remaining release blockers are recorded in [RELEASE-GATES.md](RELEASE-GATES.md) and [PRODUCTION-INCIDENT-2026-11-02.md](PRODUCTION-INCIDENT-2026-11-02.md). Those documents remain authoritative for the NO-GO decision; this contract does not authorise merge or deployment.
+
+### Figma reference status
+
+The existing 25 October screenshot review documents 31 static user-supplied mobile references and their known implementation/deferred-flow differences. They are historical screenshots, not a fresh rendering of the live Make file. On 12 November the embedded Figma view opened, but Make-file session creation again returned unsupported-file-type; no frames, interactions, variables or design tokens were rendered or inspected, and no Figma content changed. The route map above is not a Figma frame map. Visual parity remains **Unknown**; see [Phase 6](PHASE-6.md) and [Figma screenshot review](FIGMA-SCREEN-REVIEW-2026-10-25.md).
