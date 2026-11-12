@@ -232,7 +232,6 @@ This dated refresh supersedes only the older counts and observations it explicit
 
 **Release verdict: NO-GO.** Secure entry and scope verification of the matching Production Clerk key pair, an owner-approved public-access/domain and hosting-plan decision, separate exact release approval, live sign-up/sign-in/session/sign-out and independent Candidate/Employer/Recruiter browser acceptance, plus privacy/recovery/mobile/accessibility/design gates remain outstanding.
 
-
 ## Exact-head follow-up — 12 November 2026, 09:06 SAST
 
 This follow-up supersedes the PR #25 head, CI and Preview values in the earlier 12 November refresh; it does not authorise merge, Production deployment, rollback or configuration changes.

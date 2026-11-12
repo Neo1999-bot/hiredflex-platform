@@ -210,7 +210,6 @@ The embedded Figma Make view opened, but the required session-creation operation
 
 **Release verdict remains NO-GO.** The owner must securely enter the matching Production Clerk pair and separately approve any exact Production release after scope verification. Public-access/domain and hosting-plan decisions, live browser/session/independent-role acceptance and remaining privacy/recovery/mobile/accessibility/design gates remain open.
 
-
 ## Exact-head evidence follow-up — 12 November 2026, 09:06 SAST
 
 This follow-up supersedes the earlier 12 November PR #25 head/CI/Preview references only. Production configuration and launch conclusions remain unchanged.

@@ -76,7 +76,6 @@ This release covers the approved application lifecycle. Interviews, offers, CV/d
 
 The embedded Figma view opened, but the required file-session creation call rejected this `/make/` file as an unsupported file type. The available Figma skill list was empty; the design-context tool requires a session and design-to-code guidance, so it was not called without those prerequisites. No rendered page, frame, interaction, asset or variable was returned; zero actual screens were inspected and zero Figma content was changed. The 25 October screenshot review remains dated static reference evidence, not a fresh inspection of the live Make file. The route/API table remains an application-flow comparison target, not a verified frame mapping. Visual parity and design discrepancies remain **Unknown**. Preserve accepted prototype Stages 1–2.
 
-
 ### Exact-head verification follow-up — 12 November 2026, 09:06 SAST
 
 The Phase 6 route/API map remains an application-wiring map, not a Figma frame map. Current engineering evidence is:

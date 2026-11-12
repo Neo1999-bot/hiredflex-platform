@@ -66,7 +66,6 @@ The phase boundary remains unchanged: Phase 5 owns disposable PostgreSQL, lifecy
 
 The 18 October handover remains historical. The 8 November reconciliation above is retained; this 12 November refresh adds exact current PR-head evidence without changing the Phase 5/6 responsibilities or approved lifecycle.
 
-
 ## Exact-head evidence follow-up — 12 November 2026, 09:06 SAST
 
 This follow-up supersedes only the PR #25 head and CI reference in the earlier 12 November entry. The Phase 5/6 responsibility boundary and accepted application lifecycle are unchanged.
