@@ -23,20 +23,20 @@ Clerk verification uses RS256, trusted issuer/JWKS, required exp/nbf/sub/sid/azp
 
 ## Native flow mapping
 
-| Screen / flow                  | Route                                              | API contract                                                                                                                              |
-| ------------------------------ | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Sign-in / candidate onboarding | `/#workspace`                                      | Clerk session → GET /auth/session; POST /auth/onboard requires verified primary email and persists Candidate only                         |
-| Public search / job detail     | `/#jobs`, `/#job/:id`                              | GET /vacancies with q/location; GET /vacancies/:id; OPEN-only discovery                                                                   |
+| Screen / flow                  | Route                                              | API contract                                                                                                                               |
+| ------------------------------ | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Sign-in / candidate onboarding | `/#workspace`                                      | Clerk session → GET /auth/session; POST /auth/onboard requires verified primary email and persists Candidate only                          |
+| Public search / job detail     | `/#jobs`, `/#job/:id`                              | GET /vacancies with q/location; GET /vacancies/:id; OPEN-only discovery                                                                    |
 | Match explanations             | `/#job/:id`, `/#workspace`                         | GET /candidate/vacancies/:id/match and GET /candidate/vacancy-matches; informational matched/missing/not-evaluated, null if none evaluable |
-| Candidate profile / readiness  | `/#profile`                                        | GET /candidate/profile and GET /candidate/skills; read-only checklist, no upload or evidence-verification claim                           |
-| Candidate skills               | `/#skills`                                         | GET/POST /candidate/skills; DELETE /candidate/skills/:id; candidate ownership comes from verified principal                               |
-| Apply / track / withdraw       | `/#job/:id`, `/#applications`, `/#application/:id` | POST /candidate/applications accepts vacancyId only; own list/detail; POST withdrawal; status/history persist transactionally             |
-| Employer overview / vacancies  | `/#employer`, `?tab=vacancies`                     | GET /employer/vacancies and /employer/companies; POST DRAFT creation scoped to approved company                                           |
+| Candidate profile / readiness  | `/#profile`                                        | GET /candidate/profile and GET /candidate/skills; read-only checklist, no upload or evidence-verification claim                            |
+| Candidate skills               | `/#skills`                                         | GET/POST /candidate/skills; DELETE /candidate/skills/:id; candidate ownership comes from verified principal                                |
+| Apply / track / withdraw       | `/#job/:id`, `/#applications`, `/#application/:id` | POST /candidate/applications accepts vacancyId only; own list/detail; POST withdrawal; status/history persist transactionally              |
+| Employer overview / vacancies  | `/#employer`, `?tab=vacancies`                     | GET /employer/vacancies and /employer/companies; POST DRAFT creation scoped to approved company                                            |
 | Manage / publish / close       | `/#manage/:id`                                     | GET/POST/DELETE requirements (writes DRAFT-only); GET /employer/recruiters; POST recruiter assignment; POST open/close                     |
-| Employer applicants / pipeline | `/#employer?tab=applicants` or pipeline            | GET /employer/vacancies/:id/applications; read-only employer view; no recruiter role escalation                                           |
-| Employer company list           | `/#employer?tab=company`                           | GET /employer/companies; displays approved company assignments only; no self-service creation or editing                                  |
-| Employer access & settings      | `/#employer?tab=settings`                          | Verified session and persisted company-role assignments; informational only; role changes require authorised support/operator           |
-| Assigned recruiter decisions   | `/#recruiter`, `/#review/:id`                      | Assigned vacancy/application list and POST review/shortlist/reject; server checks assignment and transition rules                         |
+| Employer applicants / pipeline | `/#employer?tab=applicants` or pipeline            | GET /employer/vacancies/:id/applications; read-only employer view; no recruiter role escalation                                            |
+| Employer company list          | `/#employer?tab=company`                           | GET /employer/companies; displays approved company assignments only; no self-service creation or editing                                   |
+| Employer access & settings     | `/#employer?tab=settings`                          | Verified session and persisted company-role assignments; informational only; role changes require authorised support/operator              |
+| Assigned recruiter decisions   | `/#recruiter`, `/#review/:id`                      | Assigned vacancy/application list and POST review/shortlist/reject; server checks assignment and transition rules                          |
 
 Figma identity: <https://www.figma.com/make/xNiwwAOZfsOz5tjWHEDmeK/HiredFlex-%E2%80%94-Stage-1-COMPLETE-%E2%80%94-26-Sep-2026>. Make context uses its root 0:1; stable Design frame/node IDs are unavailable and are not invented. User-supplied screenshot timestamps and visible flows are mapped in FIGMA-SCREEN-REVIEW-2026-10-25.md and EMPLOYER-SCREEN-REVIEW.md. Static samples, CV upload/notes, Interview/Offer and notification screens are not inferred to be delivered API features.
 
@@ -81,22 +81,22 @@ The exact linked Figma Make file was rechecked: design context returned source l
 
 The following code-to-route map was checked against main `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`. It verifies application wiring only; it does not establish live Clerk sign-in or visual parity with the Figma Make file.
 
-| Concern | UI / transport source | Authoritative route source |
-| --- | --- | --- |
-| Screen routing and interactions | `src/web/client.ts` | Client navigation/rendering only; no ownership authority |
-| Same-origin API transport | `src/web/api-client.ts` | Retrieves the current Clerk token and confines requests to validated same-origin paths |
-| Session and Candidate onboarding | `src/web/client.ts`, `src/web/api-client.ts` | `src/auth/identity.ts`: GET `/auth/session`, POST `/auth/onboard` |
-| Vacancy and application lifecycle | `src/web/client.ts` | `src/routes.ts`: public vacancies, candidate applications, employer vacancies, recruiter assignment/review |
-| Skills and vacancy requirements | `src/web/client.ts` | `src/structured-data-routes.ts` |
-| Match detail | `src/web/client.ts` | `src/matching-routes.ts` |
-| Candidate match discovery | `src/web/client.ts` | `src/vacancy-match-discovery-routes.ts` |
+| Concern                           | UI / transport source                        | Authoritative route source                                                                                 |
+| --------------------------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Screen routing and interactions   | `src/web/client.ts`                          | Client navigation/rendering only; no ownership authority                                                   |
+| Same-origin API transport         | `src/web/api-client.ts`                      | Retrieves the current Clerk token and confines requests to validated same-origin paths                     |
+| Session and Candidate onboarding  | `src/web/client.ts`, `src/web/api-client.ts` | `src/auth/identity.ts`: GET `/auth/session`, POST `/auth/onboard`                                          |
+| Vacancy and application lifecycle | `src/web/client.ts`                          | `src/routes.ts`: public vacancies, candidate applications, employer vacancies, recruiter assignment/review |
+| Skills and vacancy requirements   | `src/web/client.ts`                          | `src/structured-data-routes.ts`                                                                            |
+| Match detail                      | `src/web/client.ts`                          | `src/matching-routes.ts`                                                                                   |
+| Candidate match discovery         | `src/web/client.ts`                          | `src/vacancy-match-discovery-routes.ts`                                                                    |
 
 The Employer Company tab calls GET `/employer/companies` and renders only persisted, approved company assignments. The Access & settings tab is informational: it explains that roles are database-controlled and directs requests to support. Neither tab creates companies, changes roles, or exposes notification/discovery toggles. The existing synthetic UI test `src/web/navigation.test.ts` covers company/access views, vacancy selection, truthful empty states and wrong-role denial.
 
 ### Current repository and release evidence
 
 - Main is `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`; PR #1 is merged at `2eb6661b15cbc31887b233250a7eb50dd33be22b`. The earlier PR #1-open statement is historical.
-- PR #25 remains open/unmerged at `e2c8048f0bbda228e2f4a90e26a3ee4ffd703ce8`. Exact-head CI [43171128379](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43171128379) passed 276 tests across 21 files, all quality/startup steps and disposable PostgreSQL 18 verification. Its exact-head Preview is READY; this is not Production acceptance.
+- PR #25 remains open/unmerged. The preceding head `e2c8048f0bbda228e2f4a90e26a3ee4ffd703ce8` passed exact-head CI [43171128379](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43171128379): 276 tests across 21 files, all quality/startup steps and disposable PostgreSQL 18 verification. Its exact-head Preview was READY; this is not Production acceptance. The subsequent route-mapping documentation commit requires its own exact-head checks.
 - PR #26 remains open/unmerged at `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`; CI [42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357) passed 284 tests across 21 files, including synthetic signed onboarding and persisted Candidate/Employer/Recruiter isolation. It does not prove live Clerk browser sessions.
 - Current Production, environment scopes, runtime errors and remaining release blockers are recorded in [RELEASE-GATES.md](RELEASE-GATES.md) and [PRODUCTION-INCIDENT-2026-11-02.md](PRODUCTION-INCIDENT-2026-11-02.md). Those documents remain authoritative for the NO-GO decision; this contract does not authorise merge or deployment.
 
