@@ -72,7 +72,6 @@ The Make file was opened in the embedded Figma thread, but session creation retu
 
 This release covers the approved application lifecycle. Interviews, offers, CV/document upload, WhatsApp/email notifications, billing and automated screening are not part of this release. The privacy page explains the actual stored fields and matching limitations; organisation-specific retention and support details need confirmation before inviting real candidates.
 
-
 ### Figma Make inspection attempt — 12 November 2026
 
 The embedded Figma view opened, but the required file-session creation call rejected this `/make/` file as an unsupported file type. The available Figma skill list was empty; the design-context tool requires a session and design-to-code guidance, so it was not called without those prerequisites. No rendered page, frame, interaction, asset or variable was returned; zero actual screens were inspected and zero Figma content was changed. The 25 October screenshot review remains dated static reference evidence, not a fresh inspection of the live Make file. The route/API table remains an application-flow comparison target, not a verified frame mapping. Visual parity and design discrepancies remain **Unknown**. Preserve accepted prototype Stages 1–2.

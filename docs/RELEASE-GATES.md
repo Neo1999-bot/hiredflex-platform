@@ -216,7 +216,6 @@ Owner confirms formal WhatsApp and Google Forms intake has not started. Existing
 
 RETENTION-POLICY-DRAFT.md v0.2 adds conditional operational rows and provider, minimisation, access, consent-version, Information Officer registration and incident-response requirements. The schedule is not effective and no deletion runs. Before real intake, approve the actual notice/scope, register the appropriate officer, confirm operators/providers, complete the synthetic QA/delivery and privacy checks, and resolve applicable candidate-fee/service boundaries as recorded in REGISTRATION-PREPARATION.md. These documentation additions do not tick implementation or production gates and do not expand the platform's accepted stages.
 
-
 ## Latest evidence refresh — 12 November 2026
 
 This dated refresh supersedes only the older counts and observations it explicitly updates. It does not authorise a merge, deployment, rollback, production configuration change or candidate intake.

@@ -55,7 +55,6 @@ The 18 October handover PDF is a historical snapshot. Its statement that the ful
 
 The newer signed-onboarding, persisted account/role denial and Employer/Recruiter company-and-assignment isolation checks are recorded on open PR #26 at head `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`, with CI run [42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357). They remain open-PR evidence, not merged main behavior, and synthetic signed-token/PostgreSQL checks do not prove live Clerk browser sessions. Open PRs #18 and #20 are separate verification increments; GitHub currently reports both as non-mergeable against older base `cda8773`, so their passing historical CI does not add their changes to current main.
 
-
 ## Phase 5 / Phase 6 verification refresh — 12 November 2026
 
 The phase boundary remains unchanged: Phase 5 owns disposable PostgreSQL, lifecycle, transaction, rollback and concurrency evidence; Phase 6 owns the web interface, managed identity, onboarding and role-scoped workspaces.

@@ -186,7 +186,6 @@ This is a names/types/targets-only Vercel and repository refresh. Secret values 
 
 **Release verdict: NO-GO.** Secure intended-Production Clerk configuration, owner-approved public-access/domain and hosting-plan decisions, a separately approved recovery deployment, live browser/session/independent-role acceptance, and remaining privacy/recovery/mobile/accessibility/design gates are still outstanding. No merge, Production deployment/rollback, live migration, or business/legal commitment is authorised by this evidence refresh.
 
-
 ## Evidence refresh — 12 November 2026
 
 This is a read-only refresh. No provider setting, secret, user, role, database record, migration, deployment or rollback was changed.
