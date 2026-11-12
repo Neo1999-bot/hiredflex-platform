@@ -65,3 +65,14 @@ The phase boundary remains unchanged: Phase 5 owns disposable PostgreSQL, lifecy
 - PR #18 and #20 remain open and non-mergeable against their older `cda8773` base; PR #21 is also open/non-mergeable against that base. PR #22 is stacked on PR #21 and is mergeable only against that branch, not directly against current main. Do not treat their historical checks as current-main acceptance.
 
 The 18 October handover remains historical. The 8 November reconciliation above is retained; this 12 November refresh adds exact current PR-head evidence without changing the Phase 5/6 responsibilities or approved lifecycle.
+
+
+## Exact-head evidence follow-up — 12 November 2026, 09:06 SAST
+
+This follow-up supersedes only the PR #25 head and CI reference in the earlier 12 November entry. The Phase 5/6 responsibility boundary and accepted application lifecycle are unchanged.
+
+- Main remains `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`. PR #25 is open/unmerged at head `b7299194a54da4526f6d7e31891f7654cd7c0604`. Exact-head CI [43172216302](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43172216302), job `131027953012`, passed all steps: Node 24 install, typecheck, build, packaged startup, lint, formatting, 276 tests across 21 files, and disposable PostgreSQL 18 verification. The database log records fresh/rerun migrations, constraints, rollback, forced submission/recruiter-review/withdrawal history-write failure rollback and clean retries, active uniqueness, reapplication history, vacancy locking, concurrent submissions, candidate/company isolation and the HTTP application lifecycle.
+- The same CI log confirms the packaged-startup check rejects incomplete proxy-key configurations before resource construction; it does not supply or validate live Production credentials.
+- Exact-head Preview `dpl_B4HeHicvVwJxWE6iPSvyGGqrGBp5` is READY for `b729919`. This is branch Preview evidence, not Production acceptance.
+- PR #26 remains open/unmerged at `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`; CI [42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357), job `127745773095`, passed 284 tests across 21 files and the signed synthetic onboarding, persisted account/role denial, Employer/Recruiter company-and-assignment isolation and PostgreSQL 18 checks.
+- These are open-branch results. Neither synthetic signed-token/PostgreSQL verification nor a READY Preview proves live Clerk browser sessions, refresh, sign-out or independent live-role acceptance.

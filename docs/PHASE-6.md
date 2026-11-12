@@ -75,3 +75,13 @@ This release covers the approved application lifecycle. Interviews, offers, CV/d
 ### Figma Make inspection attempt — 12 November 2026
 
 The embedded Figma view opened, but the required file-session creation call rejected this `/make/` file as an unsupported file type. The available Figma skill list was empty; the design-context tool requires a session and design-to-code guidance, so it was not called without those prerequisites. No rendered page, frame, interaction, asset or variable was returned; zero actual screens were inspected and zero Figma content was changed. The 25 October screenshot review remains dated static reference evidence, not a fresh inspection of the live Make file. The route/API table remains an application-flow comparison target, not a verified frame mapping. Visual parity and design discrepancies remain **Unknown**. Preserve accepted prototype Stages 1–2.
+
+
+### Exact-head verification follow-up — 12 November 2026, 09:06 SAST
+
+The Phase 6 route/API map remains an application-wiring map, not a Figma frame map. Current engineering evidence is:
+
+- Main remains `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`; PR #25 remains open/unmerged at `b7299194a54da4526f6d7e31891f7654cd7c0604`. Exact-head CI [43172216302](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43172216302), job `131027953012`, passed 276 tests across 21 files, Node 24 quality/startup checks and disposable PostgreSQL 18 verification. Its exact-head Preview `dpl_B4HeHicvVwJxWE6iPSvyGGqrGBp5` is READY; this does not prove Production authentication.
+- PR #26 remains open/unmerged at `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`; CI [42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357) passed 284 tests across 21 files and synthetic signed onboarding/account/role/company-assignment isolation. Live Clerk browser journeys remain unverified.
+- Production configuration, runtime, SSO and launch blockers remain authoritative in [RELEASE-GATES.md](RELEASE-GATES.md); no live sign-in/session acceptance is inferred from these branch checks.
+- The 12 November Figma Make inspection attempt is unchanged: the embedded view opens, but Make session creation is rejected as unsupported; no screen/frame/interaction/token was returned and no design was changed. Preserve prototype Stages 1–2. Visual parity remains Unknown.

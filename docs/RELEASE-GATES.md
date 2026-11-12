@@ -231,3 +231,18 @@ This dated refresh supersedes only the older counts and observations it explicit
 - **Privacy:** saved Candidate Data Retention Policy Draft 0.3 remains not effective, with no effective date and unresolved responsible-party/legal-scope questions. It does not authorise intake or automated deletion.
 
 **Release verdict: NO-GO.** Secure entry and scope verification of the matching Production Clerk key pair, an owner-approved public-access/domain and hosting-plan decision, separate exact release approval, live sign-up/sign-in/session/sign-out and independent Candidate/Employer/Recruiter browser acceptance, plus privacy/recovery/mobile/accessibility/design gates remain outstanding.
+
+
+## Exact-head follow-up — 12 November 2026, 09:06 SAST
+
+This follow-up supersedes the PR #25 head, CI and Preview values in the earlier 12 November refresh; it does not authorise merge, Production deployment, rollback or configuration changes.
+
+- **Main / Production:** main remains `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`; Production deployment `dpl_HdBbCx6b1k41dLHPdYrXGb1UYomm` reports READY at that SHA. READY remains deployment metadata, not application or identity acceptance.
+- **PR #25:** open/unmerged, base main `aa8026e`, current head `b7299194a54da4526f6d7e31891f7654cd7c0604`. Exact-head CI [43172216302](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43172216302), job `131027953012`, passed 276 tests/21 files, Node 24 install/typecheck/build/packaged startup/lint/format and disposable PostgreSQL 18 verification. The CI log explicitly records the incomplete-proxy startup rejection and the existing history rollback/concurrency/isolation/lifecycle checks. Exact-head Preview `dpl_B4HeHicvVwJxWE6iPSvyGGqrGBp5` is READY; it is not Production.
+- **PR #26:** open/unmerged at `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`; CI [42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357), job `127745773095`, passed 284 tests/21 files, signed synthetic onboarding/account/role denial, Employer/Recruiter company-and-assignment isolation and PostgreSQL 18 verification.
+- **Production environment:** project-level inventory remains names/types/targets-only with decryption disabled. Production contains `CLERK_PROXY_URL`, `AUTH_ALLOWED_ORIGINS` and `DATABASE_URL`, but no `CLERK_PUBLISHABLE_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` or `CLERK_SECRET_KEY`; the managed development key pair remains Preview-only. Hidden Production variable count is zero; team-level shared variables cannot be enumerated by this connector.
+- **Runtime:** the latest 24-hour aggregate returned no errors. The seven-day aggregate reports 14 incomplete Clerk proxy errors affecting 13 users on `/`, last seen 10 November 2026 at 08:09:58 UTC. This is not proof of recovery while the live-key pair is absent.
+- **Access / HTTP:** SSO remains enabled for `all_except_custom_domains`; only Vercel-managed `.vercel.app` aliases are attached and no custom domain is attached. Direct read-only browser requests to Production and the Preview were unavailable through the inspection path, so no fresh HTTP status is claimed. The team's subscription plan is not exposed by project metadata.
+- **Figma / privacy:** the 12 November Make session attempt was rejected as unsupported; zero rendered screens or design changes. Draft 0.3 remains not effective and does not authorise intake or automated deletion.
+
+**Release verdict remains NO-GO.** Secure Production Clerk configuration, an owner-approved public-access/domain and hosting-plan decision, separate exact release approval, live browser/session/independent-role acceptance, and remaining privacy/recovery/mobile/accessibility/design gates remain outstanding.

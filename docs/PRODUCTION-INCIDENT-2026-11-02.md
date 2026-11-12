@@ -209,3 +209,13 @@ This is a read-only refresh. No provider setting, secret, user, role, database r
 The embedded Figma Make view opened, but the required session-creation operation rejected the `/make/` file as unsupported. No frames, rendered screens, interactions or design variables were returned; zero Figma content was changed. The Phase 6 route/API map remains a comparison target, not a verified frame map. Visual parity is Unknown. The saved Draft 0.3 remains not effective and does not authorise real candidate intake or automated deletion.
 
 **Release verdict remains NO-GO.** The owner must securely enter the matching Production Clerk pair and separately approve any exact Production release after scope verification. Public-access/domain and hosting-plan decisions, live browser/session/independent-role acceptance and remaining privacy/recovery/mobile/accessibility/design gates remain open.
+
+
+## Exact-head evidence follow-up — 12 November 2026, 09:06 SAST
+
+This follow-up supersedes the earlier 12 November PR #25 head/CI/Preview references only. Production configuration and launch conclusions remain unchanged.
+
+- PR #25 is still open/unmerged against main `aa8026e`, now at head `b7299194a54da4526f6d7e31891f7654cd7c0604`. Exact-head CI [43172216302](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43172216302), job `131027953012`, passed Node 24 install/typecheck/build/packaged-startup/lint/format, 276 tests across 21 files and disposable PostgreSQL 18 verification. The latest exact-head Preview `dpl_B4HeHicvVwJxWE6iPSvyGGqrGBp5` is READY for that commit.
+- PR #26 remains open/unmerged at `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`; CI [42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357), job `127745773095`, passed 284 tests/21 files and the signed synthetic onboarding, account/role denial, Employer/Recruiter isolation and PostgreSQL 18 checks.
+- Production remains on main `aa8026e`, deployment `dpl_HdBbCx6b1k41dLHPdYrXGb1UYomm` READY. Project-level Production still lacks the live Clerk publishable/secret pair; Preview development keys remain Preview-only. The 24-hour runtime-error aggregate is empty; seven-day errors are 14 occurrences/13 users, last seen 10 November at 08:09:58 UTC. No new HTTP status is claimed because direct read-only browser requests were unavailable.
+- SSO remains enabled for non-custom domains; no custom domain is attached. The team plan remains unknown from project metadata. No environment, access, domain, deployment or provider setting was changed.
