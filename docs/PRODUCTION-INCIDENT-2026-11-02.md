@@ -185,3 +185,28 @@ This is a names/types/targets-only Vercel and repository refresh. Secret values 
 - Saved Candidate Data Retention Policy Draft 0.3 remains not effective, with no effective date and the responsible-party/legal-scope questions unresolved. It does not authorise real candidate intake or automated deletion. No real candidate records were accessed or changed.
 
 **Release verdict: NO-GO.** Secure intended-Production Clerk configuration, owner-approved public-access/domain and hosting-plan decisions, a separately approved recovery deployment, live browser/session/independent-role acceptance, and remaining privacy/recovery/mobile/accessibility/design gates are still outstanding. No merge, Production deployment/rollback, live migration, or business/legal commitment is authorised by this evidence refresh.
+
+
+## Evidence refresh — 12 November 2026
+
+This is a read-only refresh. No provider setting, secret, user, role, database record, migration, deployment or rollback was changed.
+
+### Production configuration and runtime
+
+- Vercel project-level environment inventory was re-read with decryption disabled. Production has `CLERK_PROXY_URL`, `AUTH_ALLOWED_ORIGINS` and `DATABASE_URL`; the live Clerk pair remains absent: no Production `CLERK_PUBLISHABLE_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` or `CLERK_SECRET_KEY`. The managed development publishable/secret pair remains Preview-only. `hiddenProductionEnvCount` is zero. Team-level shared variables are not enumerable through the available connector.
+- The canonical Production deployment `dpl_HdBbCx6b1k41dLHPdYrXGb1UYomm` remains READY from main `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`. READY does not prove that a function starts or that Clerk sessions work.
+- The latest 24-hour runtime-error aggregate returned no errors. The seven-day aggregate reports 14 `Incomplete Clerk proxy configuration` occurrences affecting 13 users on `/`, last seen 10 November 2026 at 08:09:58 UTC. The lower count is not a recovery signal while the required Production key pair is absent.
+- Project SSO protection remains enabled for `all_except_custom_domains`. Only Vercel-managed `.vercel.app` aliases are attached; no custom domain is attached. The team plan is not exposed by the project metadata. No public-access protection, domain or hosting-plan setting was changed.
+- Direct read-only requests to the latest Preview `/health/live`, Preview `/health/ready` and Production `/health/ready` were not accessible through the available web inspection path. No HTTP status is claimed from those attempts.
+
+### Exact-head engineering evidence
+
+- PR #25 remains open/unmerged at `db71b91c2a74b2d63ace680eb27347305ad562db` against main `aa8026e`. [CI run 42971413050](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42971413050), job `130360513992`, passed all listed steps: install, typecheck, build, packaged startup, lint, formatting, 276 tests across 21 files and disposable PostgreSQL 18 verification. The exact-head Preview `dpl_HMJsqqTxrvR5rJU5rG7s3vvgBu9B` is READY, but is not live Production acceptance.
+- PR #26 remains open/unmerged at `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`. [CI run 42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357), job `127745773095`, passed 284 tests across 21 files, signed synthetic onboarding, persisted account/role denial, Employer/Recruiter company-and-assignment isolation, and the existing PostgreSQL 18 lifecycle verification.
+- Main `src/app.ts` still constructs the database client before identity validation. PR #25 contains the bounded startup-order fix; it remains branch-only. PR #26 contains the bounded onboarding-provider correction and synthetic persisted-isolation verifier; it remains branch-only. Neither change is in Production.
+
+### Figma and release boundary
+
+The embedded Figma Make view opened, but the required session-creation operation rejected the `/make/` file as unsupported. No frames, rendered screens, interactions or design variables were returned; zero Figma content was changed. The Phase 6 route/API map remains a comparison target, not a verified frame map. Visual parity is Unknown. The saved Draft 0.3 remains not effective and does not authorise real candidate intake or automated deletion.
+
+**Release verdict remains NO-GO.** The owner must securely enter the matching Production Clerk pair and separately approve any exact Production release after scope verification. Public-access/domain and hosting-plan decisions, live browser/session/independent-role acceptance and remaining privacy/recovery/mobile/accessibility/design gates remain open.
