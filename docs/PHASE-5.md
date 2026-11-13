@@ -10,7 +10,9 @@ The script creates a randomly named disposable database, applies the checked-in 
 
 The Phase 6 increment extends this gate with the HTTP publish/apply/review/shortlist/withdraw/reapply workflow. CI run [37466715604](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/37466715604) passed on 6 October 2026 for PR head `9135397` against base `ad8aab6` (GitHub test merge `7ecc453`). Job `112279480297` records the PostgreSQL 18 PASS line. The verifier now also sends two overlapping HTTP application submissions and checks one application and one initial history event; see RELEASE-GATES.md for scope and current evidence. The 26–28 October verifier increments add forced initial-history, recruiter-review and candidate-withdrawal history failures through HTTP, rollback assertions and clean retries (details below). Shortlist/reject failure injection, withdrawal from other starting states and both requirement/open race orderings remain distinct coverage limits. A green unit suite alone is not evidence that the database gate passed. See the [current release gate review](RELEASE-GATES.md).
 
-## Deployment sequence
+## Historical deployment sequence (superseded by Phase 6)
+
+The numbered sequence below records the original Phase 5 handoff and is retained for historical context. Its screen-building steps were delivered in Phase 6; remaining live identity, browser and Production acceptance is tracked in [RELEASE-GATES.md](RELEASE-GATES.md). Do not treat this historical sequence as unimplemented work to rebuild.
 
 1. Run the new PostgreSQL gate in CI and inspect its result.
 2. Establish a Vercel project and a separate preview PostgreSQL database. Keep preview and production credentials separate.
