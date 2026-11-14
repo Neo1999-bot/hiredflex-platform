@@ -1,3 +1,30 @@
+## Latest evidence refresh — 14 November 2026
+
+This dated snapshot supersedes the 11 November observations above. It is a read-only evidence refresh plus the exact-head CI result; it does not authorise a merge, deployment, rollback, credential change or live-data test.
+
+### Source and automated verification
+
+- Main remains `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`. PR #25 remains open and unmerged at `c83bf2cbf379979a7599823dde24c25e0a80e07b`; its base is the unchanged main SHA. The branch includes the startup-order correction and the Phase 5 historical-sequence label.
+- Exact-head [GitHub Actions run 43377719765](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43377719765), job `131728009776`, **PASSED** on 13 November. It completed `npm ci`, typecheck, build, packaged-startup verification, lint, format, all **276 tests in 21 files**, and `npm run db:verify` against disposable PostgreSQL **18.7**.
+- The PostgreSQL gate recorded PASS for migrations/rerun, normalization and constraints, transaction rollback, forced HTTP history-write failure rollback for submission/recruiter review/withdrawal with clean retries, active-application uniqueness, reapplication history, vacancy locking, concurrent submissions, candidate/company isolation, closed-vacancy refusal, legacy-match handling and the retained HTTP lifecycle workflow. Expected synthetic constraint/trigger errors in the disposable database are part of those negative assertions, not a production incident.
+- PR #25's exact-head Vercel Preview `dpl_DaLdUngQdtpFJAU7x9HTGTD8xGAv` reports READY for this SHA. A read-only `GET /health/ready` attempt against that protected Preview was blocked with `401 deployment_authentication_required` after redirect. No protection bypass was attempted; Preview route-level acceptance is therefore **BLOCKED**, not passed.
+- PR #26 remains open at `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`. Its exact-head [CI run 42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357) passed 284 tests/21 files and disposable PostgreSQL 18.6 verification for synthetic signed onboarding, persisted Candidate separation, Candidate-only assignment, account suspension/role-removal denial, and separate Employer/Recruiter company and vacancy-assignment isolation. These are synthetic SQL/JWT checks, not live Clerk signup, browser cookies, sign-out or live-role acceptance.
+
+### Current Production configuration and runtime evidence
+
+- Canonical Production deployment `dpl_HdBbCx6b1k41dLHPdYrXGb1UYomm` reports READY at main `aa8026e`. Provider READY metadata is not application readiness.
+- A names/types/targets-only project environment inventory with decryption disabled finds Production `CLERK_PROXY_URL`, `AUTH_ALLOWED_ORIGINS` and `DATABASE_URL`; no Production `CLERK_PUBLISHABLE_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` or `CLERK_SECRET_KEY`. The managed development publishable/secret pair remains Preview-only. `hiddenProductionEnvCount` is zero and there are no custom environments. Team-level shared variables are not enumerable through the available project connector, so their absence is not asserted.
+- The seven-day Vercel runtime aggregate contains 11 `Incomplete Clerk proxy configuration` occurrences affecting 9 users, last seen `2026-11-13T23:08:18Z` on the canonical Production deployment. This confirms the live identity configuration remains incomplete.
+- The only verified attached project domain returned is `hiredflex-platform.vercel.app`; no custom domain is attached. Public access/SSO policy and hosting-plan eligibility remain owner decisions or unverified provider facts.
+
+### Design and governance boundaries
+
+- The supplied Figma URL is a Make file. The Figma session-opening tool rejects Make files (it supports Design, FigJam, Slides and Figspec); no screen, frame, interaction or design token was rendered or inspected, and no design was changed. The Phase 6 route/API map remains a comparison target, not verified frame-to-route parity. Visual discrepancies remain **Unknown**.
+- Saved Candidate Data Retention Policy Draft 0.3 remains not effective, with no effective date. It does not authorise real candidate intake, automated deletion or a legal-compliance claim.
+- Prototype Stages 1–2, informational matching, independent vacancy search and the existing application lifecycle remain preserved. Interviews, offers, CV uploads, notifications, billing and automated screening remain deferred.
+
+**Release verdict: NO-GO.** Production live Clerk keys, an approved recovery deployment, successful protected-preview route access, real browser sign-in/session and independent role acceptance, privacy/retention decisions, recovery/backup evidence, mobile/accessibility acceptance and actual Figma visual comparison remain open. Do not merge PR #25 or #26 into Production-linked main until the credential and release-approval gates are resolved.
+
 # HiredFlex release gates — 25 October 2026
 
 ## Latest evidence refresh — 11 November 2026
