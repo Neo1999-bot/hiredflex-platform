@@ -20,6 +20,8 @@ const syntheticEnv = {
   CLERK_PUBLISHABLE_KEY:
     "pk_test_" + Buffer.from("example.clerk.accounts.dev$").toString("base64"),
   CLERK_SECRET_KEY: marker,
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "",
+  CLERK_PROXY_URL: "",
   AUTH_ALLOWED_ORIGINS: marker,
 };
 for (const [patch, expected] of [
@@ -33,6 +35,35 @@ for (const [patch, expected] of [
   });
   assert.equal(failed.status, 1, "Invalid configuration must fail startup");
   assert.ok(failed.stderr.includes(expected));
+  assert.equal((failed.stdout + failed.stderr).includes(marker), false);
+}
+// Reproduce the Production ordering hazard without real credentials/providers.
+// Missing live-key entries must fail closed; do not silently disable the proxy.
+const proxyEnv = {
+  ...syntheticEnv,
+  CLERK_PUBLISHABLE_KEY:
+    "pk_live_" +
+    Buffer.from("clerk.hiredflex.example.invalid$").toString("base64"),
+  CLERK_SECRET_KEY: "sk_live_" + marker,
+  CLERK_PROXY_URL: "https://hiredflex.example.invalid/__clerk",
+  AUTH_ALLOWED_ORIGINS: "https://hiredflex.example.invalid",
+};
+for (const patch of [
+  { CLERK_PUBLISHABLE_KEY: "", CLERK_SECRET_KEY: "" },
+  { CLERK_PUBLISHABLE_KEY: "" },
+  { CLERK_SECRET_KEY: "" },
+]) {
+  const failed = spawnSync(process.execPath, args, {
+    env: { ...proxyEnv, ...patch },
+    encoding: "utf8",
+    timeout: 10000,
+  });
+  assert.equal(
+    failed.status,
+    1,
+    "Incomplete proxy credentials must prevent startup",
+  );
+  assert.ok(failed.stderr.includes("Incomplete Clerk proxy configuration"));
   assert.equal((failed.stdout + failed.stderr).includes(marker), false);
 }
 const reservation = createServer();
@@ -52,6 +83,7 @@ const child = spawn(process.execPath, args, {
     CLERK_PUBLISHABLE_KEY: "",
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "",
     CLERK_SECRET_KEY: "",
+    CLERK_PROXY_URL: "",
     AUTH_ALLOWED_ORIGINS: "",
   },
 });
@@ -106,7 +138,7 @@ try {
     });
   }
   console.log(
-    "PASS: packaged startup, sanitised missing-database/malformed-origin startup failures, public shell/assets, disabled identity and protected-route denial (no database/provider verification)",
+    "PASS: packaged startup, sanitised missing-database/malformed-origin/incomplete-proxy-key startup failures, public shell/assets, disabled identity and protected-route denial (no database/provider verification)",
   );
 } finally {
   child.kill("SIGTERM");
