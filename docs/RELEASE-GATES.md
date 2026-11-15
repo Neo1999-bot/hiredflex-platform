@@ -277,7 +277,6 @@ This follow-up supersedes the PR #25 head, CI and Preview values in the earlier 
 
 The code-bearing PR #25 revision `b7299194a54da4526f6d7e31891f7654cd7c0604` passed exact-head CI [43172216302](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43172216302). The subsequent documentation-only evidence commit `2a55c6baaddac4f2f40b43d1b491432eaab64b7e` has a failed first exact-head CI [43173891200](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43173891200): install, typecheck, build, startup and lint passed; Prettier failed on the four changed Markdown files; tests and PostgreSQL verification were skipped. Its Preview `dpl_7n3v6LC484zLxezQmyroKm4AV7FS` is READY but not accepted while CI is red. The corrective documentation revision requires a fresh exact-head CI and Preview result. The earlier code-bearing CI pass is not inherited by later commits.
 
-
 ## 15 November 2026 — release evidence refresh
 
 Date: 15 November 2026, Africa/Johannesburg. Read-only operational inspection and exact-head verification; no Production configuration, access, deployment or data changes.
