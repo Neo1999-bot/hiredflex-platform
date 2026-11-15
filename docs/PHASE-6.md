@@ -97,7 +97,6 @@ The UI search flow calls `GET /vacancies` with query/location filters and does n
 
 This verifies application wiring, not browser acceptance. Protected Preview access still prevents live sign-in/session and independent role-journey verification. The supplied Figma Make file could not be rendered by the available Figma Design APIs: no frames or screens were inspected, no visual comparison was completed and no Figma edits were made. The table remains a route/API mapping, not a verified frame mapping. Preserve accepted prototype Stages 1–2.
 
-
 ### Figma Make inspection capability check — 15 November 2026
 
 The supplied Make file opened in the embedded Figma view, but `create_session` explicitly rejected the `/make/` file as unsupported (supported session types returned: Design, FigJam, Slides and Figspec). The installed-skill registry returned no available skills. The Figma `get_design_context` tool contract does describe Make support using node `0:1`, but it requires the `figma-design-to-code` guidance first; no listed skill URI or resource-reading tool was available, so that call was not made without its required guidance. The separate metadata and screenshot tools explicitly do not support Make files.
