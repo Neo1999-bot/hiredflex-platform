@@ -283,67 +283,21 @@ Date: 15 November 2026, Africa/Johannesburg. Read-only operational inspection an
 
 ### Repository and automated verification
 
-- Main remains `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`. PR #25 remains
-  open/unmerged against main at `c39164c822a3933b5684477a1ab137d3bc0e311e`; no
-  submitted reviews or inline review threads were returned. PR #26 remains
-  open/unmerged at `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`; no submitted
-  reviews or inline review threads were returned.
-- Exact-head CI
-  [43569019722](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43569019722),
-  job `132369105671`, completed successfully on 14 November. Inspected job steps
-  show npm ci, typecheck, build, packaged startup, lint, formatting, tests and
-  `db:verify` all completed successfully. Logs confirm 276 tests across 21 files
-  and PostgreSQL 18.7 disposable verification, including migration/rerun,
-  rollback and forced history-write failure retries, active-application
-  uniqueness, reapplication, vacancy locking, concurrent HTTP submissions,
-  candidate/company isolation and the HTTP application lifecycle.
-- PR #1 is closed and merged; its former branch `phase-5-postgres-verification`
-  remains present. Current `docs/PHASE-5.md` labels Phase 5 as historical and
-  superseded by Phase 6; its original deployment sequence is not missing
-  application work to rebuild.
+- Main remains `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`. PR #25 remains open/unmerged against main at `c39164c822a3933b5684477a1ab137d3bc0e311e`; no submitted reviews or inline review threads were returned. PR #26 remains open/unmerged at `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`; no submitted reviews or inline review threads were returned.
+- Exact-head CI [43569019722](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43569019722), job `132369105671`, completed successfully on 14 November. Inspected job steps show npm ci, typecheck, build, packaged startup, lint, formatting, tests and `db:verify` all completed successfully. Logs confirm 276 tests across 21 files and PostgreSQL 18.7 disposable verification, including migration/rerun, rollback and forced history-write failure retries, active-application uniqueness, reapplication, vacancy locking, concurrent HTTP submissions, candidate/company isolation and the HTTP application lifecycle.
+- PR #1 is closed and merged; its former branch `phase-5-postgres-verification` remains present. Current `docs/PHASE-5.md` labels Phase 5 as historical and superseded by Phase 6; its original deployment sequence is not missing application work to rebuild.
 
 ### Vercel deployment and access
 
-- Git-linked project context resolves project `prj_kZwS13HgD8tAXU7citzCrthoc5T0`
-  in team `team_K4IUE7hquq2RICHJfIditXPS`; the team plan is reported as
-  **Hobby**. Project SSO protection is enabled for `all_except_custom_domains`.
-  The attached hostnames are Vercel-managed aliases; no custom domain is
-  attached.
-- Exact-head Preview `dpl_7D9XCvJGe6EGrsRTpWR89Cg5MJzE` reports READY for commit
-  `c39164c`. This is deployment metadata only. The direct URL inspection path
-  could not retrieve the protected Preview endpoints. No Vercel share link,
-  protection bypass or SSO setting change was used.
-- Canonical Production deployment `dpl_HdBbCx6b1k41dLHPdYrXGb1UYomm` still
-  reports READY at main `aa8026e`; READY does not establish application startup
-  or sign-in.
-- A fresh project-level environment inventory used `decrypt=false`. Production
-  has `CLERK_PROXY_URL`, `AUTH_ALLOWED_ORIGINS` and `DATABASE_URL`; it has no
-  `CLERK_PUBLISHABLE_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` or
-  `CLERK_SECRET_KEY`. The managed development
-  `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` entries remain
-  Preview-only. `hiddenProductionEnvCount` is zero; project-level inventory does
-  not enumerate team-level shared variables. No values were decrypted.
-- Fresh Production runtime-error aggregates show 5 `Incomplete Clerk proxy
-  configuration` occurrences affecting 4 users in the last 24 hours and 11
-  occurrences affecting 8 users in the last 7 days, on `/`. Last observed: 15
-  November 2026 at 04:52:01 UTC (06:52:01 SAST). The stack reaches
-  `readIdentityConfig` in main `src/app.ts`. PR #25 validates identity
-  configuration before constructing the database client in both server
-  entrypoints; this prevents premature DB initialization but does not supply the
-  missing live Clerk keys.
+- Git-linked project context resolves project `prj_kZwS13HgD8tAXU7citzCrthoc5T0` in team `team_K4IUE7hquq2RICHJfIditXPS`; the team plan is reported as **Hobby**. Project SSO protection is enabled for `all_except_custom_domains`. The attached hostnames are Vercel-managed aliases; no custom domain is attached.
+- Exact-head Preview `dpl_7D9XCvJGe6EGrsRTpWR89Cg5MJzE` reports READY for commit `c39164c`. This is deployment metadata only. The direct URL inspection path could not retrieve the protected Preview endpoints. No Vercel share link, protection bypass or SSO setting change was used.
+- Canonical Production deployment `dpl_HdBbCx6b1k41dLHPdYrXGb1UYomm` still reports READY at main `aa8026e`; READY does not establish application startup or sign-in.
+- A fresh project-level environment inventory used `decrypt=false`. Production has `CLERK_PROXY_URL`, `AUTH_ALLOWED_ORIGINS` and `DATABASE_URL`; it has no `CLERK_PUBLISHABLE_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` or `CLERK_SECRET_KEY`. The managed development `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` entries remain Preview-only. `hiddenProductionEnvCount` is zero; project-level inventory does not enumerate team-level shared variables. No values were decrypted.
+- Fresh Production runtime-error aggregates show 5 `Incomplete Clerk proxy configuration` occurrences affecting 4 users in the last 24 hours and 11 occurrences affecting 8 users in the last 7 days, on `/`. Last observed: 15 November 2026 at 04:52:01 UTC (06:52:01 SAST). The stack reaches `readIdentityConfig` in main `src/app.ts`. PR #25 validates identity configuration before constructing the database client in both server entrypoints; this prevents premature DB initialization but does not supply the missing live Clerk keys.
 
 ### Figma and browser acceptance
 
-- The supplied HiredFlex Figma Make file opened in the embedded Figma view.
-  Required file-session creation rejected the `/make/` file as unsupported; the
-  available Design metadata/screenshot/context APIs do not support Make files.
-  No frames, screens, interactions, variables or assets were rendered; no Figma
-  content was changed. Visual parity and design discrepancies remain
-  **Unknown**. The Phase 6 route/API map remains an application wiring map, not
-  a verified Figma frame map.
-- Vercel SSO prevents direct protected Preview inspection through the available
-  path. Creating a share link would bypass the configured protection and was not
-  attempted. Live sign-in, session persistence/sign-out and independent
-  Candidate/Employer/Recruiter browser journeys remain **NOT VERIFIED**.
+- The supplied HiredFlex Figma Make file opened in the embedded Figma view. Required file-session creation rejected the `/make/` file as unsupported; the available Design metadata/screenshot/context APIs do not support Make files. No frames, screens, interactions, variables or assets were rendered; no Figma content was changed. Visual parity and design discrepancies remain **Unknown**. The Phase 6 route/API map remains an application wiring map, not a verified Figma frame map.
+- Vercel SSO prevents direct protected Preview inspection through the available path. Creating a share link would bypass the configured protection and was not attempted. Live sign-in, session persistence/sign-out and independent Candidate/Employer/Recruiter browser journeys remain **NOT VERIFIED**.
 
 **Release verdict: NO-GO.** Secure matching live Clerk key configuration, approved access for protected Preview acceptance, live role/session verification, and remaining backup/recovery, privacy, mobile/accessibility and Figma gates remain outstanding. This evidence update does not authorise merge, Production deployment/rollback, environment changes, a paid upgrade or candidate intake.
