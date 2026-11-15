@@ -303,7 +303,6 @@ Date: 15 November 2026, Africa/Johannesburg. Read-only operational inspection an
 
 **Release verdict: NO-GO.** Secure matching live Clerk key configuration, approved access for protected Preview acceptance, live role/session verification, and remaining backup/recovery, privacy, mobile/accessibility and Figma gates remain outstanding. This evidence update does not authorise merge, Production deployment/rollback, environment changes, a paid upgrade or candidate intake.
 
-
 ## 15 November 2026 — Production Clerk key-format follow-up
 
 Read-only Vercel inventory and runtime-log refresh. This records observed configuration metadata and errors only; no key values were decrypted and no Production settings or deployments were changed by this run.
