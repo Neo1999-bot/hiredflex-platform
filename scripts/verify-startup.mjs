@@ -66,6 +66,26 @@ for (const patch of [
   assert.ok(failed.stderr.includes("Incomplete Clerk proxy configuration"));
   assert.equal((failed.stdout + failed.stderr).includes(marker), false);
 }
+// A malformed publishable key must fail with its fixed diagnostic before the
+// application can initialize. Keep the paired secret synthetic and verify that
+// neither it nor any other marker is echoed into startup output.
+const malformedPublishable = spawnSync(process.execPath, args, {
+  env: { ...proxyEnv, CLERK_PUBLISHABLE_KEY: "pk_live_malformed" },
+  encoding: "utf8",
+  timeout: 10000,
+});
+assert.equal(
+  malformedPublishable.status,
+  1,
+  "Malformed publishable keys must prevent startup",
+);
+assert.ok(
+  malformedPublishable.stderr.includes("Invalid Clerk publishable key"),
+);
+assert.equal(
+  (malformedPublishable.stdout + malformedPublishable.stderr).includes(marker),
+  false,
+);
 const reservation = createServer();
 await new Promise((resolve) => reservation.listen(0, "127.0.0.1", resolve));
 const { port } = reservation.address();
@@ -138,7 +158,7 @@ try {
     });
   }
   console.log(
-    "PASS: packaged startup, sanitised missing-database/malformed-origin/incomplete-proxy-key startup failures, public shell/assets, disabled identity and protected-route denial (no database/provider verification)",
+    "PASS: packaged startup, sanitised missing-database/malformed-origin/incomplete-proxy/malformed-publishable-key startup failures, public shell/assets, disabled identity and protected-route denial (no database/provider verification)",
   );
 } finally {
   child.kill("SIGTERM");
