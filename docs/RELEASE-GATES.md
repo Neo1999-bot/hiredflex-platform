@@ -1,3 +1,31 @@
+## Latest evidence refresh — 16 November 2026
+
+This snapshot supersedes the 14 November observations below. It records a bounded synthetic startup-regression test and a read-only Production/Preview refresh. It does not authorise a merge, Production deployment, rollback, credential change, migration or live-data test.
+
+### Source and automated verification
+
+- Main remains `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`. PR #25 remains open and unmerged on `fix/startup-identity-validation-2026-11-02`, based on unchanged main.
+- Commit `21d901e7aa9a55d540a8b7e0510f426547946dd9` adds a synthetic malformed Clerk publishable-key case to the packaged-startup verifier. It requires the fixed `Invalid Clerk publishable key` diagnostic and confirms the synthetic secret marker is not echoed. This verifies fail-closed startup handling only; it does not validate or repair the real Production key.
+- [GitHub Actions run 43816733057](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43816733057) **PASSED** for the exact commit. Node 24 `npm ci`, typecheck, build, packaged-startup verification, lint, format, **276 tests in 21 files**, and `npm run db:verify` all passed. The disposable PostgreSQL service was **18.7**. The verifier passed fresh migrations/rerun, normalization/constraints, rollback, forced submission/recruiter-review/withdrawal history-write rollback and retries, active-application uniqueness, reapplication history, vacancy locking, concurrent HTTP submissions, candidate/company isolation, closed-vacancy refusal, null legacy matching and the retained HTTP lifecycle.
+- [Vercel Preview deployment dpl_BzLc4FsGRrQJoe3uEzuKkZ7fv2SS](https://vercel.com/hired-flex1/hiredflex-platform/BzLc4FsGRrQJoe3uEzuKkZ7fv2SS) reports READY for the exact commit. It is a Preview deployment, not Production acceptance. Project SSO protection remains enabled for non-custom domains; no protection setting was changed.
+- `npm ci` reported **9 moderate severity vulnerabilities**. This run did not execute `npm audit` or identify affected package/advisory names; production-versus-development impact remains unclassified. No dependency or lockfile change was made.
+
+### Current Production configuration and runtime evidence
+
+- Names/types/targets-only Vercel inventory with decryption disabled now shows Production entries for `CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` (both Sensitive; created at 2026-11-15 07:29:25Z and 07:30:04Z respectively). Production also has `CLERK_PROXY_URL`, `AUTH_ALLOWED_ORIGINS` and `DATABASE_URL`. The managed `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` entries remain Preview-scoped. No values were decrypted or copied; `hiddenProductionEnvCount` is zero. Team-level shared variables are not enumerable through the available project connector.
+- Canonical Production deployment `dpl_4tGdASYAtWv2zWnZjzg4fmaZaZLp` reports READY at unchanged main `aa8026e`. READY metadata is not application acceptance.
+- The latest 24-hour Vercel runtime aggregate reports **21** `Invalid Clerk publishable key` occurrences affecting **8** users on `/`, first seen 2026-11-15 07:23:00Z and last seen 07:34:08Z on that Production deployment. One older `Incomplete Clerk proxy configuration` occurrence remains in the window. This shows the Production key entries exist but the deployed application rejects the publishable key format; it does not establish which credential characters or provider setting are wrong. Do not weaken validation or inspect/decrypt the values to guess a fix.
+- A direct public `/health/ready` fetch through the available web reader was unavailable. No HTTP status is claimed. The observed runtime exception and READY provider metadata must not be described as a successful or repaired sign-in deployment.
+- No Production environment variable, credential, provider setting, deployment, database or role was modified. No migration, rollback or live-data mutation was performed.
+
+### Figma and governance boundaries
+
+- The supplied Figma URL remains a Make file. Figma session creation explicitly rejects Make files; the available skill registry returned no installed guidance; the direct web reader could not access the URL. **Zero screens/frames/interactions/design tokens were inspected and zero Figma edits were made.** The Phase 6 route/API map remains comparison targets, not verified frame-to-route parity. Visual discrepancies remain Unknown.
+- The saved Master Product Specification remains the product source of truth and records accepted prototype Stages 1–2; those stages were not rebuilt. The saved Candidate Data Retention Policy Draft 0.3 remains not effective, has no effective date and does not authorise real intake or automated deletion.
+- Informational matching, independent vacancy search and the existing application lifecycle remain preserved. Interviews, offers, CV uploads, notifications, billing and automated screening remain deferred.
+
+**Release verdict: NO-GO.** Production Clerk configuration remains invalid; protected live sign-in/session and independent Candidate/Employer/Recruiter browser journeys remain unverified; backup/restore, privacy/retention, mobile/accessibility and actual Figma comparison remain open. Do not merge PR #25/#26 or promote Production on the strength of this CI/Preview result.
+
 ## Latest evidence refresh — 14 November 2026
 
 This dated snapshot supersedes the 11 November observations above. It is a read-only evidence refresh plus the exact-head CI result; it does not authorise a merge, deployment, rollback, credential change or live-data test.
