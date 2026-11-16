@@ -70,7 +70,7 @@ for (const patch of [
 // application can initialize. Keep the paired secret synthetic and verify that
 // neither it nor any other marker is echoed into startup output.
 const malformedPublishable = spawnSync(process.execPath, args, {
-  env: { ...proxyEnv, CLERK_PUBLISHABLE_KEY: "pk_live_malformed" },
+  env: { ...proxyEnv, CLERK_PUBLISHABLE_KEY: "pk_live_malformed*" },
   encoding: "utf8",
   timeout: 10000,
 });
