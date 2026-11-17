@@ -1,3 +1,31 @@
+## Latest evidence refresh — 17 November 2026
+
+This snapshot supersedes the 16 November observations above. It records exact-head CI, current branch/deployment metadata and read-only runtime/configuration evidence. It does not authorise a merge, Production change, rollback, migration, live-data test or public release.
+
+### Repository and automated verification
+
+- Main remains `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`. PR #25 remains open/unmerged on `fix/startup-identity-validation-2026-11-02`, based on unchanged main, at exact head `02eea2bf8ffded242c48b2c4b406802fb18eeb4e`. The latest head commit is documentation-only; the existing startup identity-validation regression remains in the PR's earlier code commit.
+- Exact-head GitHub Actions [run 43817000361](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43817000361), job `133131218367`, completed successfully. Inspected steps show Node 24 install, typecheck, build, packaged startup verification, lint, Prettier check, **276 tests across 21 files**, and `db:verify` all passed. The disposable PostgreSQL service was 18.7; its PASS line confirms migration/rerun, normalization/constraints, rollback, forced submission/recruiter-review/withdrawal history-write failure rollback and retries, active-application uniqueness, reapplication history, vacancy locking, concurrent HTTP submissions, candidate/company isolation, closed-vacancy refusal, null legacy matching and the retained HTTP lifecycle.
+- The same `npm ci` step reported **9 moderate severity vulnerabilities**. The workflow log does not identify package/advisory names or production-versus-development impact. No `npm audit`, dependency upgrade or lockfile change was run. Keep this as an unclassified security-review item, not a confirmed exploitable production defect.
+- PR #26 remains open/unmerged at `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`; its exact-head CI [run 42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357) passed 284 tests across 21 files, including signed synthetic onboarding and persisted Candidate/Employer/Recruiter company/assignment isolation. This is existing CI evidence, not a new live-browser run.
+- PR #1 is closed and merged at `2eb6661b15cbc31887b233250a7eb50dd33be22b`; the historical `phase-5-postgres-verification` branch still exists. In the PR #25 branch, `docs/PHASE-5.md` explicitly labels its deployment sequence historical/superseded by Phase 6. PR #22 remains stacked on PR #21; PRs #21, #20, #18 and #14 remain open against older/non-mergeable bases. Do not duplicate their governance, retention, backup/restore or publication-race work.
+
+### Vercel and runtime evidence
+
+- Exact-head Preview deployment [dpl_7nmjcXuWWYYbeKAjJ1b8HTJE8sgk](https://vercel.com/hired-flex1/hiredflex-platform/7nmjcXuWWYYbeKAjJ1b8HTJE8sgk) reports READY for `02eea2b`. This is Preview build metadata, not authenticated browser acceptance.
+- The latest Production deployment record [dpl_4tGdASYAtWv2zWnZjzg4fmaZaZLp](https://vercel.com/hired-flex1/hiredflex-platform/4tGdASYAtWv2zWnZjzg4fmaZaZLp) reports READY at unchanged main `aa8026e`. READY does not establish successful function startup or sign-in.
+- A fresh names/types/targets-only environment inventory with decryption disabled confirms Production-scoped `CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` entries, alongside `CLERK_PROXY_URL`, `AUTH_ALLOWED_ORIGINS` and `DATABASE_URL`. The managed `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` pair remains Preview-scoped. No values were decrypted or copied.
+- The last-24-hour runtime-error aggregate returned **no error groups**. The seven-day aggregate still contains **21 Invalid Clerk publishable key** occurrences affecting 8 users (last seen 15 November 2026 07:34:08Z) and **12 Incomplete Clerk proxy configuration** occurrences affecting 9 users (last seen 15 November 2026 07:22:49Z). The absence of new errors in the shorter window is not proof of recovery or successful sign-in; no fresh HTTP request could be completed through the available reader.
+- Project SSO protection remains enabled for `all_except_custom_domains`. Direct read-only web requests to the exact Preview and Production `/health/ready` endpoints were inaccessible. No share link, protection bypass, SSO change, Production configuration edit or deployment was attempted.
+
+### Figma and product-governance boundaries
+
+- The supplied Figma Make URL was opened in the embedded Figma surface, but required file-session creation rejected the `/make/` file as unsupported. The available skill registry returned no installed Figma guidance, and the direct web reader could not access the URL. **No frames, screens, interactions, variables or design tokens were rendered or inspected; no Figma edits were made.** Visual parity remains Unknown. The existing Phase 6 route/API map remains an application wiring map, not a verified Figma frame map.
+- The saved Master Product Specification remains the product source of truth. Accepted prototype Stages 1–2 remain preserved and are distinct from engineering Phase 6. Draft 0.3 remains not effective and does not authorise candidate intake or automated deletion.
+- Informational matching, independent vacancy search and the existing application lifecycle remain unchanged. Interviews, offers, CV uploads, notifications, billing and automated screening remain deferred.
+
+**Release verdict: NO-GO.** The Production Clerk publishable key remains rejected by runtime validation despite the Production key entries being present. Live sign-in/session/sign-out and independent Candidate/Employer/Recruiter browser journeys remain unverified behind the protected Preview. Backup/restore, privacy/retention, mobile/accessibility and actual Figma comparison remain open. This evidence refresh does not authorise merging PR #25/#26, changing Production, bypassing SSO, provisioning paid resources or accepting real candidate data.
+
 ## Latest evidence refresh — 16 November 2026
 
 This snapshot supersedes the 14 November observations below. It records a bounded synthetic startup-regression test and a read-only Production/Preview refresh. It does not authorise a merge, Production deployment, rollback, credential change, migration or live-data test.
