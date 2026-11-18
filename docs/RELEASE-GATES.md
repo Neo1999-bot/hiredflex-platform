@@ -375,28 +375,56 @@ Read-only Vercel inventory and runtime-log refresh. This records observed config
 
 ## 18 November 2026 — exact-head verification refresh
 
-Read-only verification performed on 18 November 2026. This refresh supersedes the earlier 15 November observation where applicable; it does not authorize merging, production changes, migrations, live-data mutation, credentials, or release.
+Read-only checks on 18 November. No merge, Production change, migration,
+live-data mutation, credential access, or release was authorized.
 
-### Repository and pull-request evidence
+### Repository and CI
 
-- Main remains `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`; PR #25 remains open/unmerged, head `70ea3d87679aa52aad24810308460a33d7e40fbb`, 58 commits ahead and 0 behind main at this check. The current PR branch has no new runtime-code change since its prior regression increment; this refresh is documentation-only.
-- Exact-head GitHub Actions run [44031797358](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/44031797358), job `133865231621`, passed install, typecheck, build, packaged startup, lint, format, tests and `db:verify`. Inspected logs report 276 tests across 21 files and a disposable PostgreSQL 18.7 PASS line for migration, rollback/history-failure, isolation and lifecycle checks.
-- PR #26 remains open/unmerged at `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`. Its exact-head CI [42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357), job `127745773095`, passed all quality/startup checks and 284 tests across 21 files. Inspected logs show disposable PostgreSQL 18.6 PASS for signed Candidate onboarding and independent Employer/Recruiter company/vacancy isolation. This is synthetic SQL/JWT evidence, not live Clerk browser acceptance.
-- The open PR search returned #25, #26, #22, #21, #20, #14 and #18. PR #1 is merged; its prior open state in old handovers is stale. Existing parallel work remains untouched.
+- Main remains `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`.
+- PR #25 is open/unmerged at head `70ea3d87679aa52aad24810308460a33d7e40fbb`,
+  58 commits ahead and 0 behind main before this documentation refresh.
+- CI [44031797358](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/44031797358),
+  job `133865231621`, passed 276 tests (21 files), typecheck, build,
+  startup, lint, format, and disposable PostgreSQL 18.7 verification.
+- PR #26 is open/unmerged at head
+  `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`.
+- CI [42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357),
+  job `127745773095`, passed 284 tests (21 files), quality/startup checks,
+  and disposable PostgreSQL 18.6 signed-onboarding and independent
+  Employer/Recruiter isolation checks. Synthetic JWT/SQL, not live browser auth.
+- Open PRs: #25, #26, #22, #21, #20, #14 and #18. PR #1 is merged;
+  its old open status is stale.
 
-### Deployment and access
+### Deployments and Production
 
-- The latest Preview deployment `dpl_6Bq4bwLLUcNankWMc2x95jC1s9tG` is READY, sourced from PR #25 head `70ea3d8`, created 17 November 2026 at 06:31:01 UTC (08:31 SAST). Vercel project SSO protection remains enabled for all deployments except custom domains. Direct browser acceptance remains unavailable; READY is build/deployment state only.
-- The latest Production deployment in the fresh inventory is `dpl_4tGdASYAtWv2zWnZjzg4fmaZaZLp`, READY, main `aa8026e`, created 15 November 2026 at 07:30:17 UTC. No Production deploy, rollback, or configuration change was performed.
-- Vercel environment inventory was read with decryption disabled. It lists `CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` in Production scope; managed development keys are Preview-only; `CLERK_PROXY_URL` and `AUTH_ALLOWED_ORIGINS` are Production-scoped. Values were not decrypted or copied. The hidden Production variable count was 0 in the metadata response; this does not prove key values are valid.
-- Fresh runtime-error aggregation for the preceding 24h returned one `Invalid Clerk publishable key` cluster (1 occurrence, 1 user, route `/`), last observed 17 November 2026 at 08:04:51 SAST, on Production deployment `dpl_4tGd...`. Individual runtime logs for the last 30 minutes returned no records; this is not proof of health or absence of traffic. The direct public web reader could not access root or `/health/ready`. Production authentication remains NO-GO.
+- Preview `dpl_AZsspZajMTgCUweyJtSZmTBDpX8N` is READY for doc commit
+  `3fbf597`. SSO protection remains enabled; browser acceptance is blocked.
+- Production `dpl_4tGdASYAtWv2zWnZjzg4fmaZaZLp` is READY on main `aa8026e`.
+  No Production deployment or rollback was performed.
+- Environment inventory was read with decryption disabled. Live Clerk key
+  names are Production-scoped; managed development keys are Preview-only;
+  proxy/origin entries are Production-scoped. No values were read.
+- Runtime error aggregation for 24h returned one `Invalid Clerk publishable key`
+  group (1 occurrence, 1 user, route `/`), last seen 17 Nov 2026
+  08:04:51 SAST on `dpl_4tGd...`. The last-30-minute log query had
+  no records; this does not prove health or traffic. Public root/readiness
+  could not be accessed through the browser reader. Production remains NO-GO.
 
-### Figma inspection
+### Figma
 
-- The requested Make file `xNiwwAOZfsOz5tjWHEDmeK` was attempted via the Figma session tool; session creation returned “This tool is not supported for Make files” (supported types listed: Design, Figjam, Slides, Figspec). No session was created. The design-to-code skill was not available from the installed skill list, so `get_design_context` was not called without its required guidance. Zero screens, frames or interactions were inspected; zero design edits made. Visual parity and design discrepancies remain UNKNOWN. The existing route/API map in PHASE-6.md remains a comparison target, not a verified frame map. Preserve prototype Stages 1–2.
+- The Make file was opened in the embedded Figma view, but session creation
+  rejected Make as unsupported. Design-to-code guidance was unavailable;
+  `get_design_context` was not called without it. No screens/frames/interactions
+  were inspected and no designs were changed. Visual parity is UNKNOWN; the
+  existing route/API map is not a verified frame map. Preserve Stages 1–2.
 
 ### Remaining release gates
 
-Production key validity and live sign-in/session/sign-out; protected Preview browser acceptance with synthetic identities; independent live Candidate/Employer/Recruiter journeys; backup/restore (PR #20); privacy/retention approval and effective policy (PR #21/#22); mobile/accessibility acceptance; dependency advisory triage (9 moderate npm-ci findings remain unclassified, and `npm audit` was not run because this execution environment could not reach the registry); and Figma visual comparison. Phase 5 database/lifecycle verification remains historical engineering evidence and is not Phase 6 live release acceptance.
+Live sign-in/session/sign-out; protected Preview acceptance with synthetic users;
+independent live Candidate/Employer/Recruiter journeys; backup/restore (PR #20);
+privacy/retention effective-policy approval (PR #21/#22); mobile/accessibility;
+triage of 9 moderate npm-ci findings (no `npm audit` was run); and Figma
+visual comparison. Phase 5 database verification is historical evidence, not
+Phase 6 live acceptance.
 
 **Release verdict: NO-GO.**
