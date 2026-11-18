@@ -420,11 +420,11 @@ live-data mutation, credential access, or release was authorized.
 
 ### Remaining release gates
 
-Live sign-in/session/sign-out; protected Preview acceptance with synthetic users;
-independent live Candidate/Employer/Recruiter journeys; backup/restore (PR #20);
-privacy/retention effective-policy approval (PR #21/#22); mobile/accessibility;
-triage of 9 moderate npm-ci findings (no `npm audit` was run); and Figma
-visual comparison. Phase 5 database verification is historical evidence, not
+Live sign-in/session/sign-out; protected Preview acceptance with synthetic
+users; independent live Candidate/Employer/Recruiter journeys; backup/restore
+(PR #20); privacy/retention effective-policy approval (PR #21/#22);
+mobile/accessibility; triage of 9 moderate npm-ci findings (no `npm audit` was
+run); and Figma visual comparison. Phase 5 database verification is historical evidence, not
 Phase 6 live acceptance.
 
 **Release verdict: NO-GO.**
