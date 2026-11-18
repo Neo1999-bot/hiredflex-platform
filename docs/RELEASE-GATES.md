@@ -373,7 +373,6 @@ Read-only Vercel inventory and runtime-log refresh. This records observed config
 
 **Release verdict remains NO-GO.** The Production publishable key must be corrected securely and checked against the matching live secret key and configured proxy host. Any further Production redeploy requires a separate explicit owner approval. Live sign-in/session/sign-out, independent Candidate/Employer/Recruiter browser acceptance, backup/restore, privacy, mobile/accessibility and Figma visual acceptance remain open.
 
-
 ## 18 November 2026 — exact-head verification refresh
 
 Read-only verification performed on 18 November 2026. This refresh supersedes the earlier 15 November observation where applicable; it does not authorize merging, production changes, migrations, live-data mutation, credentials, or release.
