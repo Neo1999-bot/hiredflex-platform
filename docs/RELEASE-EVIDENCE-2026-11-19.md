@@ -113,3 +113,38 @@ deployment/environment-name and runtime-error inspections were completed.
 This report is committed on PR #25's development branch only. No application
 code, schema, migration, Production setting, real candidate data, Figma design
 or main branch was changed.
+
+
+## Verification follow-up — 20 November 2026
+
+- PR #25 remains open, unmerged and mergeable, based on main
+  `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`. Its exact head is
+  `bf04b91b1d1eeb4b1314b4c4bb3319c3d9e00c0a`.
+- Exact-head Actions run
+  [44473752149](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/44473752149)
+  completed successfully on 19 November. Job `135389200973` confirms
+  install, typecheck, build, packaged startup, lint, format, tests and
+  `db:verify` all completed successfully. The run's test count is not
+  inferred from the earlier 276-test run; this update records the verified
+  workflow stages only.
+- Exact-head Preview `dpl_FHDb52GYb4DnsL3RG4yDiAWozDVr` is READY at
+  `bf04b91`. A public web fetch of its URL returned inaccessible; protected
+  browser acceptance was not performed.
+- Main is unchanged. The Production deployment is READY at main
+  `aa8026e`, but READY is deployment metadata, not app readiness.
+- Fresh 24-hour runtime-error aggregation returned no groups. Fresh 7-day
+  aggregation still reports 22 Invalid Clerk publishable key occurrences
+  affecting 9 users (last observed 17 November) and 11 Incomplete Clerk
+  proxy configuration occurrences affecting 8 users (last observed
+  15 November). The quiet 24-hour window does not establish recovery.
+- Open PRs refreshed: #25 startup identity/incident evidence, #26 signed
+  onboarding, #22 synthetic retention review (stacked on #21 governance),
+  #21 governance reconciliation, #20 backup/restore, #18 publication races,
+  and #14 historical production incident. No branch was merged or rebased.
+- Figma Make remains uninspectable with the available authorized workflow:
+  the required design-to-code guidance is absent, and no rendered screen or
+  frame was obtained. No Figma edits were made; visual parity remains Unknown.
+
+No application code, schema, migration, Production configuration, candidate
+record, access grant, deployment promotion or Figma design changed in this
+follow-up.
