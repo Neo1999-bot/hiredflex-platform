@@ -114,7 +114,6 @@ This report is committed on PR #25's development branch only. No application
 code, schema, migration, Production setting, real candidate data, Figma design
 or main branch was changed.
 
-
 ## Verification follow-up — 20 November 2026
 
 - PR #25 remains open, unmerged and mergeable, based on main
@@ -148,3 +147,20 @@ or main branch was changed.
 No application code, schema, migration, Production configuration, candidate
 record, access grant, deployment promotion or Figma design changed in this
 follow-up.
+
+## Verification follow-up — 21 November 2026
+
+- Exact-head run
+  [44686679920](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/44686679920)
+  for commit `1715f4d5b610647464ca2c45b16d268de2598481` failed only at
+  `npm run format:check`. The workflow log identifies this file as the
+  formatting failure; typecheck, build, packaged startup and lint passed.
+  Tests and `db:verify` were skipped by the workflow after the formatting
+  failure. This is not a test or database-verification pass.
+- The failure was caused by excess blank lines in this evidence document.
+  This update normalizes blank lines and records the failure before a fresh
+  exact-head CI run.
+- Main remains `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`. PR #25 remains
+  open and unmerged. No application code, database schema, migration,
+  Production setting, candidate data, deployment promotion or Figma design
+  was changed.
