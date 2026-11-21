@@ -164,3 +164,56 @@ follow-up.
   open and unmerged. No application code, database schema, migration,
   Production setting, candidate data, deployment promotion or Figma design
   was changed.
+
+## Verification follow-up — 21 November 2026 (refreshed)
+
+- Formatting correction commit `dc4f20d5c1d6502af353bc5f3b1f40550aeb1c2b`
+  passed exact-head Actions run
+  [44874265656](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/44874265656).
+  All gates passed: install, typecheck, build, packaged startup, lint,
+  Prettier, 21 test files and PostgreSQL 18.7 `db:verify`. The verifier
+  logged fresh migrations/rerun, constraints/rollback, forced history-write
+  failure rollback and retry, active uniqueness, withdrawal/reapplication,
+  locking, concurrent submission, candidate/company isolation, closed-vacancy
+  refusal and the HTTP lifecycle workflow. This CI result applies to the
+  documentation commit, not a new runtime change.
+- The prior run
+  [44686679920](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/44686679920)
+  failed only at Prettier because of excess blank lines in this file.
+  Typecheck, build, packaged startup and lint passed; tests and `db:verify`
+  were skipped. The formatting defect is corrected and the fresh exact-head
+  run above passed.
+- Current PR #25 head is
+  `dc4f20d5c1d6502af353bc5f3b1f40550aeb1c2b`, based on unchanged main
+  `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`. PR #25 remains open,
+  unmerged and mergeable. Main branch metadata reports protection disabled;
+  no repository setting was changed.
+- Fresh Vercel read-only deployment listing reports Preview
+  `dpl_G9e9bSGQEGo1qQT7acm7SQD3xHtX` READY at this documentation commit.
+  Its URL is protected; a direct read-only fetch was inaccessible. No
+  protection bypass/share link was created.
+- Production remains on READY deployment
+  `dpl_4tGdASYAtWv2zWnZjzg4fmaZaZLp` at main `aa8026e`. Fresh 7-day
+  runtime errors: 25 Invalid Clerk publishable key occurrences affecting
+  10 users (last seen 21 November 2026 at 05:03:49 UTC), and 6 Incomplete
+  Clerk proxy configuration occurrences affecting 5 users (last seen
+  15 November). The 24-hour aggregate has 3 Invalid Clerk publishable key
+  occurrences affecting 1 user and no proxy-error group. This is active
+  evidence of the Production authentication blocker, not a recovery claim.
+  No environment values were decrypted or changed.
+- PR #1 and its `phase-5-postgres-verification` branch were refreshed:
+  PR #1 is closed and merged (merge commit `2eb6661`, 25 October).
+  The historical branch still points at `41ef602`; it is not an active
+  implementation task and is not duplicated.
+- The Figma Make file opened in the embedded Figma view, but session creation
+  rejected it as unsupported (Design, FigJam, Slides and Figspec are the
+  supported file types). No available skill guidance was returned. No
+  screen/frame, interaction or variable was inspected; no Figma edits were
+  made. Visual parity remains Unknown.
+- Saved Master Product Specification, Draft 0.3 retention policy and
+  18 October handover were reviewed. The broader specification remains
+  future scope; Draft 0.3 is not effective and authorizes neither intake nor
+  automated disposal.
+
+No application code, schema, migration, Production setting, candidate data,
+deployment promotion or Figma design changed in this follow-up.
