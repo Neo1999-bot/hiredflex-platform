@@ -7,8 +7,8 @@ live migrations, candidate intake, or business/legal decisions.
 ## Repository and review state
 
 - Main is unchanged at `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`.
-- PR #25 remains open, unmerged, and mergeable; its current head is
-  `cb98b3409ba84ad15d9addf1d3514d9bfc722db6`.
+- At the time this snapshot was refreshed, PR #25 was open, unmerged,
+  and mergeable at head `cb98b3409ba84ad15d9addf1d3514d9bfc722db6`.
 - PR #25 exact-head Actions run
   [44874424371](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/44874424371)
   passed. Inspected job `136755859390` completed install, typecheck, build,
@@ -116,3 +116,9 @@ deployment promotion, Figma design, or main branch was changed.
 The GitHub branch-protection endpoint returned 403
 `Resource not accessible by integration`; current protection state is UNKNOWN
 and was not changed.
+
+## Commit follow-up — 22 November 2026
+
+- This evidence file was committed as `02792b8fda2b0cc4dca9ce22703a4d6105190b20` on PR #25's development branch. PR #25 now points to that commit; it remains open and unmerged.
+- The commit workflow-run lookup returned no GitHub Actions run. The combined status currently has pending Vercel contexts; the Preview deployment `dpl_EKZEkpdhTr6uupidTM5swpgnLjYu` is QUEUED. CI and deployment for this evidence commit are not verified.
+- This is a documentation-only change. No local formatter/test suite was available in this run; the earlier exact-head run applies to `cb98b34`, not this new commit.
