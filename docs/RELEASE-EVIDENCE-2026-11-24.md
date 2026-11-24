@@ -69,3 +69,9 @@ Must-fix acceptance remains: live Clerk sign-in/session persistence and sign-out
 - Refreshed repository, branches, all open PRs, relevant source/diffs, CI runs/job logs, Phase 5/6/release documents, Vercel deployments/runtime-error windows/environment metadata, saved product documents and Figma access.
 - No application code, database schema, migration, Production configuration, credential, role or candidate record was changed.
 - No PR was merged, no Production deployment was triggered, no charge or paid resource was incurred, and no external communication was sent.
+
+
+## Repository access posture
+
+- GitHub repository metadata currently reports visibility **public**. No visibility change was made. Confirm this is intentional before storing or handling any real candidate information; this run did not perform a secret-history scan or inspect credential values.
+- The branch listing reports `main` as `protected:false`. The explicit branch-protection endpoint returned HTTP 403 to the connected integration, and the repository rulesets query returned an empty list. Therefore enforcement cannot be conclusively certified from this connection. No write to main was attempted; all changes remained on the existing PR #25 branch.
