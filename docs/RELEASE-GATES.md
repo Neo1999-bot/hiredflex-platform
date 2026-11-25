@@ -1,3 +1,52 @@
+## Latest evidence refresh — 25 November 2026
+
+This snapshot supersedes earlier status observations where it states a newer result. It records read-only repository, CI, Vercel, saved-project-document and Figma access checks. It does not authorise a merge, Production change, credential/configuration change, migration, live-data test, SSO bypass, paid resource or business/legal commitment.
+
+### Repository and review state
+
+- Repository `Neo1999-bot/hiredflex-platform` remains public. Main is `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`; no main-branch write was made.
+- The branch listing reports `main` as `protected:false`. The branch-protection read returned HTTP 403 through the connected integration and the rulesets query returned no rulesets. Enforcement therefore cannot be certified; no protection was bypassed or changed.
+- PR #25 remains open, unmerged and mergeable at `4ac574ccc2d7f548f1adbdc22dc167bbd4f8272c`. Its exact-head [CI run 45339562217](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/45339562217) passed: Node 24 install, typecheck, build, packaged startup verification, ESLint, Prettier, 276 tests across 21 files and disposable PostgreSQL 18.7 verification. The startup-identity validation and release-evidence updates remain on this PR branch, not main.
+- PR #26 remains open, unmerged and mergeable at `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`. Its exact-head [CI run 42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357) passed: 284 tests across 21 files plus disposable PostgreSQL 18 verification. It covers nullable Clerk email verification, verified-primary-email enforcement, provider-failure handling, synthetic signed onboarding and persisted Candidate/Employer/Recruiter company/assignment isolation. The corresponding nullable-verification defect remains present on main until an authorised review/integration.
+- No human review submission is recorded for PR #25 or #26. Vercel bot preview comments are not code reviews.
+- PR #1 is closed and merged; `phase-5-postgres-verification` remains a historical branch. Phase 5 is explicitly historical and Phase 6 is the current web/identity increment. The latest cross-document reconciliation and 24 November evidence are on PR #25, not yet on main.
+- PRs #14, #18, #20, #21 and #22 remain existing workstreams; do not duplicate their Production-acceptance, publication-race, backup/restore or retention-governance tasks. Vercel-generated PRs #27 and #28 are optional analytics/insights work, outside the approved MVP; PR #28's exact-head CI failed its formatting check and was not changed.
+
+### Vercel and Production observations
+
+- Latest Production deployment [dpl_FNynyLhkrr6QAVNtK3X7Y8MDdkj3](https://vercel.com/hired-flex1/hiredflex-platform/FNynyLhkrr6QAVNtK3X7Y8MDdkj3) reports READY from unchanged main `aa8026e`. It is not running the unmerged PR #25/#26 changes.
+- Latest PR #25 Preview [dpl_3QLo2KLH1fx4gGg4VAXJ98Kc7JJX](https://vercel.com/hired-flex1/hiredflex-platform/3QLo2KLH1fx4gGg4VAXJ98Kc7JJX) reports READY for `4ac574c`. This is Preview build metadata, not authenticated browser acceptance.
+- The Vercel project reports SSO protection enabled for all non-custom domains. No share link was created, no access control was weakened and no protected route was bypassed.
+- The fresh 24-hour Production runtime-error aggregate returned no error groups. A 30-minute Production query for warning/error/fatal logs returned no entries. This is a positive telemetry observation only: it does not prove that a real user signed in, that Clerk sessions refresh correctly, or that sign-out revokes access.
+- No environment values were decrypted or retrieved. No Production setting, secret, provider configuration, deployment, database, migration or role was changed.
+
+### Figma and design comparison
+
+- The supplied HiredFlex prototype is a Figma Make file. Opening the embedded Figma host view succeeded, but Figma session creation explicitly returned that Make files are unsupported. The metadata and screenshot endpoints also do not support `/make/` files.
+- The design-context tool requires `figma-design-to-code` guidance before use; the installed skill registry returned no available skills/skill URI. The public web reader also could not access the Make URL. The connected Figma account has a View seat on the Starter plan; no editing permission is assumed.
+- **Frames/screens inspected: 0. Interactions inspected: 0. Variables/tokens inspected: 0. Figma changes: 0.** Visual parity and design discrepancies remain Unknown. The Phase 6 route/API table is an application wiring map, not a verified Figma frame mapping or automatic synchronization.
+- Preserve accepted prototype Stages 1–2. No redesign, rebuild, publication or Figma modification was attempted.
+
+### Saved product decisions and scope
+
+- The saved Master Product Specification remains the product source of truth. Matching stays informational, vacancy search stays independent, and the approved application lifecycle remains intact.
+- Candidate Data Retention Policy Draft 0.3 remains not effective, has no effective date and does not certify POPIA compliance. The responsible-party/Information-Officer arrangement and legal scope still require owner/legal confirmation. It does not authorise real candidate intake or automated deletion.
+- Interviews, offers, CV/document uploads, notifications, billing, automated screening and optional redesign remain deferred.
+
+### Current must-fix release acceptance
+
+1. Review and integrate the existing PR #25 startup correction and PR #26 onboarding/provider correction through the normal owner-controlled workflow; neither is merged.
+2. Complete authenticated browser acceptance on an authorised protected Preview using synthetic accounts: sign-in, verified-primary-email onboarding, session persistence/refresh, sign-out, and independent Candidate, Employer and Recruiter journeys.
+3. Verify persisted company and recruiter-assignment isolation in those browser sessions; synthetic PostgreSQL CI is not a substitute for browser acceptance.
+4. Complete Production health/auth acceptance only after explicit owner approval for any Production recovery action. READY deployment metadata and an empty recent error aggregate are not sign-in evidence.
+5. Resolve privacy/retention ownership and provider/backup responsibilities before real candidate intake; complete backup/restore, mobile/accessibility and browser network/error acceptance.
+6. Complete the Figma screen/flow comparison when a supported Make-file inspection path and required design guidance are available.
+7. Confirm whether public repository visibility is intentional and establish an owner-verified branch protection/ruleset policy before treating repository governance as complete.
+
+**Release verdict: NO-GO.** Backend CI is strong, and the recent Production telemetry is quieter, but the PR fixes remain unmerged and live browser/authentication acceptance is still absent. No real candidate data, live migration, Production change or external communication was performed in this refresh.
+
+---
+
 ## Latest evidence refresh — 17 November 2026
 
 This snapshot supersedes the 16 November observations above. It records exact-head CI, current branch/deployment metadata and read-only runtime/configuration evidence. It does not authorise a merge, Production change, rollback, migration, live-data test or public release.
