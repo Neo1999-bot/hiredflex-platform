@@ -1,6 +1,6 @@
 ## Latest evidence refresh — 28 November 2026
 
-This snapshot supersedes only the observations it explicitly updates. It records fresh GitHub, CI, Vercel, runtime-telemetry, saved-project and Figma-access checks. The only write is this documentation update on the existing PR #25 development branch. No secrets were decrypted; no Vercel settings, production resources, live records, roles, migrations, repository protections or deployments were changed.
+This snapshot supersedes only the observations it explicitly updates. It records fresh GitHub, CI, Vercel, runtime-telemetry, saved-project and Figma-access checks. The only writes are documentation-only commits to `docs/RELEASE-GATES.md` on the existing PR #25 development branch. No secrets were decrypted; no Vercel settings, production resources, live records, roles, migrations or repository protections were changed. GitHub branch pushes triggered normal Preview builds; no Production deployment was promoted, rolled back or manually redeployed.
 
 ### Repository, active work and Phase 5/6 reconciliation
 
@@ -24,7 +24,7 @@ This snapshot supersedes only the observations it explicitly updates. It records
 - The separate `hiredflex-platform-ptor` project reports Node `26.x`, while repository `package.json` requires `>=24 <25`. Its latest Preview deployment `dpl_E1z9Vr9zC6UTjJw5qMqChUoR7WNX` reports READY, but its read-only environment inventory returned only Production-target Clerk entries; one variable name itself is publishable-key-shaped. No Preview-target Clerk pair was returned. Values were not decrypted. This project is not a valid authenticated acceptance environment until its owner reviews the configuration and Node-version mismatch.
 - Main-project environment inventory (decryption disabled) contains the expected Production names `CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, `CLERK_PROXY_URL`, `AUTH_ALLOWED_ORIGINS` and `DATABASE_URL`; Preview also has Clerk secret/publishable-key names. Names and targets do not prove values are valid or correspond to the intended Clerk instance.
 - The 7-day runtime-error aggregate reports 46 `Invalid Clerk publishable key` events across 21 users, first seen 15 November and last seen 24 November, on deployment `dpl_8DDz71DEgb6qzvF2xV9XCSUzMtWp`. The 24-hour aggregate currently returns no error groups. This does not prove the site is healthy: raw log retrieval beyond one hour is unavailable on the current Hobby retention window, and direct read-only requests to Production and the protected Preview readiness URLs were inaccessible through the available web path. No authenticated HTTP readiness or browser journey was established.
-- No environment values were decrypted, no Vercel variables were edited, no temporary share/bypass link was created, and no deployment was promoted, rolled back or redeployed by this update.
+- No environment values were decrypted, no Vercel variables were edited, and no temporary share/bypass link was created. Branch commits triggered Preview builds only; no Production promotion, rollback or manual redeployment occurred.
 
 ### Figma Make inspection status
 
