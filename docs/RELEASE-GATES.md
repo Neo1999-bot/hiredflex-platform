@@ -1,3 +1,45 @@
+## Latest evidence refresh — 28 November 2026
+
+This snapshot supersedes only the observations it explicitly updates. It records fresh GitHub, CI, Vercel, runtime-telemetry, saved-project and Figma-access checks. The only write is this documentation update on the existing PR #25 development branch. No secrets were decrypted; no Vercel settings, production resources, live records, roles, migrations, repository protections or deployments were changed.
+
+### Repository, active work and Phase 5/6 reconciliation
+
+- Main remains `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`; PR #1 is closed and merged at `2eb6661b15cbc31887b233250a7eb50dd33be22b`.
+- PR #25 remains open and unmerged on `fix/startup-identity-validation-2026-11-02`, head `4d7260d491839252ae64b5fa372fe02524025246`. It contains the startup-order correction and current release evidence. The correction reads Clerk identity configuration before constructing the database client in both `src/app.ts` and `src/server.ts`; main still constructs the database client first. It fails closed and does not repair an invalid live key or restore Production by itself.
+- PR #26 remains open and unmerged at `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`. Its signed synthetic PostgreSQL tests cover verified-primary-email onboarding, persisted Candidate creation, duplicate-email refusal/no linking, rollback, suspension/role denial, and independent Employer/Recruiter company and vacancy-assignment isolation. These are CI/SQL-backed synthetic results, not live Clerk/browser sessions.
+- PR #1 is historical and merged. The `phase-5-postgres-verification` branch still exists at `41ef602ef20ad15b5045cbe5c3cfaf9b59c340a0`; it is historical verification work, not the active Phase 6 branch.
+- Open PRs observed: #14, #18, #20, #21, #22, #25, #26, #27 and #28. PRs #18/#20/#21 have older-base integration issues; #22 is stacked on #21. PR #27 (Speed Insights) and #28 (Web Analytics) add optional instrumentation/dependencies and are not required by the approved MVP; leave them out of the release path pending a separate product/privacy decision.
+- Phase 5 documentation is partially reconciled on main: its introduction already identifies Phase 5 as historical, but its generic “Deployment sequence” heading remains. PR #25 makes the supersession explicit. Phase 6's route/API table is an application mapping, not verified Figma frame/node evidence. PR #25 and #26 both touch `docs/PHASE-6.md`; reconcile that shared document during review rather than duplicating it.
+
+### Automated verification — exact feature heads
+
+- PR #25 current documentation head `4d7260d` has successful GitHub Actions run [45951194444](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/45951194444), job `140347205689`. Inspected logs confirm 21 test files, TypeScript, build, packaged startup, lint, format and disposable PostgreSQL 18.7 verification passed. The startup verifier explicitly passed missing/incomplete proxy-key and malformed publishable-key cases without leaking synthetic markers. The PostgreSQL log records migration/rerun, constraint, rollback, isolation and application-lifecycle PASS. This is CI evidence for the PR head, not a live database or provider test.
+- PR #26 exact head `3ac6c647` has successful [run 42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357), job `127745773095`. Inspected logs confirm 284 tests across 21 files, PostgreSQL 18.6, signed synthetic onboarding, persisted account/role denial, Employer/Recruiter company-and-assignment isolation, and the retained lifecycle verification passed.
+- Non-failing maintenance warnings remain: an esbuild install script is outside the package allow-scripts list, and GitHub Actions v4 steps target Node 20 while the runner forces Node 24. They should be reviewed separately; they did not fail these runs.
+
+### Vercel, environment inventory and runtime evidence
+
+- Main Vercel project `hiredflex-platform` reports Node `24.x`. Its latest observed Production deployment is `dpl_FNynyLhkrr6QAVNtK3X7Y8MDdkj3`, target Production, READY, built from main `aa8026e`. READY is provider deployment metadata, not a successful readiness or authentication check.
+- A separate branch Preview in the main project is `dpl_7vk6TwmTDEAVCaznW89sY9wB1WG4`, READY at PR #25 head `4d7260d`, target null (Preview). The main project reports SSO protection for non-custom deployment URLs.
+- The separate `hiredflex-platform-ptor` project reports Node `26.x`, while repository `package.json` requires `>=24 <25`. Its latest Preview deployment `dpl_E1z9Vr9zC6UTjJw5qMqChUoR7WNX` reports READY, but its read-only environment inventory returned only Production-target Clerk entries; one variable name itself is publishable-key-shaped. No Preview-target Clerk pair was returned. Values were not decrypted. This project is not a valid authenticated acceptance environment until its owner reviews the configuration and Node-version mismatch.
+- Main-project environment inventory (decryption disabled) contains the expected Production names `CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, `CLERK_PROXY_URL`, `AUTH_ALLOWED_ORIGINS` and `DATABASE_URL`; Preview also has Clerk secret/publishable-key names. Names and targets do not prove values are valid or correspond to the intended Clerk instance.
+- The 7-day runtime-error aggregate reports 46 `Invalid Clerk publishable key` events across 21 users, first seen 15 November and last seen 24 November, on deployment `dpl_8DDz71DEgb6qzvF2xV9XCSUzMtWp`. The 24-hour aggregate currently returns no error groups. This does not prove the site is healthy: raw log retrieval beyond one hour is unavailable on the current Hobby retention window, and direct read-only requests to Production and the protected Preview readiness URLs were inaccessible through the available web path. No authenticated HTTP readiness or browser journey was established.
+- No environment values were decrypted, no Vercel variables were edited, no temporary share/bypass link was created, and no deployment was promoted, rolled back or redeployed by this update.
+
+### Figma Make inspection status
+
+- The Figma Make URL was opened in the embedded Figma host view. Figma session creation rejects Make files as unsupported; the design-context reader requires its design-to-code guidance, but the installed skill registry returned no available skills. The generic metadata/screenshot readers do not support Make files.
+- Therefore zero actual frames, screens, nodes, tokens or interactions were inspected; zero Figma designs were changed. The repository's route/API mapping remains application evidence only. Visual parity and design discrepancies remain UNKNOWN, not passed or failed. A supported Make-compatible read/export path or a standard Figma Design-file copy with accessible node references is required before visual comparison.
+
+### Release position
+
+- Synthetic CI evidence now covers persisted onboarding and cross-role/company/assignment isolation, but live Clerk sign-in, verified-email delivery, browser cookie/session persistence/refresh, sign-out and independent live Candidate/Employer/Recruiter journeys remain NOT VERIFIED.
+- The main Production deployment is READY metadata only; the invalid-publishable-key runtime evidence and inaccessible authenticated readiness keep the release NO-GO. PR #25's startup-order fix is useful but does not replace correct Production identity configuration and explicit deployment approval.
+- Backup/restore ownership and capacity acceptance, mobile/accessibility QA, privacy/support ownership and effective retention-policy approval remain separate launch gates. Draft 0.3 is not effective and does not authorise candidate intake or automated deletion.
+- Interviews, offers, CV uploads, notifications, billing, automated screening and optional redesign remain deferred. Matching remains informational; search remains independent; the application lifecycle and accepted prototype Stages 1–2 are preserved.
+
+---
+
 ## Latest evidence refresh — 27 November 2026
 
 This snapshot supersedes only the older repository, deployment, configuration and verification observations it explicitly updates. It records a fresh read-only review of main, open PRs, exact-head CI logs, Vercel deployment/project metadata, environment-variable names/targets with decryption disabled, runtime telemetry, saved HiredFlex decisions and the Figma Make access attempt. The only write in this run is this release-evidence update on the existing PR #25 branch. No environment values were decrypted; no Vercel settings, secrets, deployment targets, repository visibility/protection, live data or Production state were changed. No merge, migration, share link, SSO bypass, paid resource or external communication occurred.
