@@ -12,7 +12,7 @@ See [25 October audit](docs/AUDIT-2026-10-25.md) for the inspected main/PR/deplo
 
 ## Current release status
 
-The development branch contains the Phase 5/6 same-origin web workspaces and managed Clerk identity integration. Owner-reviewed PRs #3–6 have been consolidated into that branch; PR #1 to main remains open while release gates are unresolved. The sections below describe incremental phase deliveries; their original exclusions are historical stage boundaries. Use [Release gates](docs/RELEASE-GATES.md) for current verification evidence, access blockers and launch requirements. This is not a production-readiness claim.
+Main now contains the Phase 5/6 same-origin web workspaces and managed Clerk identity integration. The original MVP PR #1 was merged into main at `2eb6661`; its former open-PR status in older handovers is historical. The sections below describe incremental phase deliveries; their original exclusions are historical stage boundaries. Use [Release gates](docs/RELEASE-GATES.md) for current verification evidence, access blockers and launch requirements. This is not a production-readiness claim.
 
 ## Phase 3 engineering foundation
 
@@ -80,7 +80,7 @@ Schema updates require a matching reviewed SQL migration in `src/db/migrations` 
 
 The browser uses the typed transport in src/web/api-client.ts. The [integration contract](docs/INTEGRATION-CONTRACT.md) maps supported screens, API responses, failures and verification evidence for issue #2. Static Figma references and runtime acceptance are distinguished explicitly.
 
-Production authentication and deployment are not configured. Candidate profile fields beyond the current identity record and structured skills, and recommendation capabilities, are not implemented.
+A Production deployment exists, but live Clerk authentication and browser acceptance remain release gates; a successful build or READY deployment is not production acceptance. See [Release gates](docs/RELEASE-GATES.md) for dated evidence. Candidate profile fields beyond the current identity record and structured skills, and recommendation capabilities, are not implemented.
 
 ### Phase 4A: explainable requirement matching
 

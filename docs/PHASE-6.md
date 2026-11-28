@@ -36,9 +36,11 @@ Live provider sign-in and browser end-to-end checks remain required after Clerk 
 
 ## Figma-to-application flow map
 
+2 November availability override: [Production incident](PRODUCTION-INCIDENT-2026-11-02.md) records root/session/candidate/employer/recruiter initialization failures on main aa8026e with missing live proxy credentials. Existing route/API mappings below remain unchanged comparison targets. No rendered Make screens or source-link contents were inspected today and no designs changed; do not confuse this known functional startup failure with an inferred design mismatch or permission to rebuild completed prototype Stages 1–2.
+
 Reference: [HiredFlex prototype](https://www.figma.com/make/xNiwwAOZfsOz5tjWHEDmeK/HiredFlex-%E2%80%94-Stage-1-COMPLETE-%E2%80%94-26-Sep-2026).
 
-This map records application routes and API wiring inspected at commit `623bb092743075075ee63f8e0e78a6b8e49d848a` on 25 October 2026. Flow names identify comparison targets; they are not verified Figma frame names or node mappings. Figma returned source references for `src/App.tsx`, `src/operations.tsx`, `src/recruiter-workspace.tsx` and `src/index.css`, but each resource read failed with `Unknown resource`; the screenshot endpoint also reported that Make files are unsupported. No Figma screen interactions, visual fidelity, design tokens or components were verified, and no Figma content was changed. This is a traceability map, not automatic synchronization.
+This map records application routes and API wiring inspected at commit `623bb092743075075ee63f8e0e78a6b8e49d848a` on 25 October 2026. Flow names identify comparison targets; they are not verified Figma frame names or node mappings. The Make connector returned source references for `src/App.tsx`, `src/operations.tsx`, `src/recruiter-workspace.tsx` and `src/index.css`, but each resource read failed with `Unknown resource`; the screenshot endpoint also reported that Make files are unsupported. Separately, [`FIGMA-SCREEN-REVIEW-2026-10-25.md`](FIGMA-SCREEN-REVIEW-2026-10-25.md) records a visual review of 31 user-supplied mobile screenshots captured from the existing prototype on 25 October. Those static references support only the visible mobile states and route comparisons documented there; they do not establish current Make frame/node metadata, working prototype interactions, source design tokens/components, desktop behavior or live browser acceptance. No current Make screens or Figma content were inspected or changed in this run. This is a traceability map, not automatic synchronization.
 
 | Flow to compare                  | Application route                                  | API wiring in `src/web/client.ts`                                                                                                                                          | Remaining acceptance                                                                  |
 | -------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
@@ -54,6 +56,7 @@ Exact endpoint definitions remain authoritative in `src/routes.ts` and `src/stru
 
 ### Design comparison status
 
+- **9 November 2026 inspection attempt:** the Figma Make URL opened the embedded thread surface but returned no rendered page or frames. The available metadata/screenshot endpoints explicitly do not support Make files, and direct web retrieval was unavailable. Zero screens, interactions, variables or design tokens were inspected; zero Figma content was changed. Visual parity remains **Unknown** and the route/API table below remains a comparison target, not a frame mapping.
 - **Design discrepancies:** unknown until the referenced Make prototype can be rendered or its returned source resources can be read. Do not infer a visual mismatch or approval from the filename or source-link list.
 - **Functional release gaps:** fresh-account onboarding and independent-identity isolation, direct API edge cases, mobile/error/accessibility acceptance and production configuration remain tracked in [RELEASE-GATES.md](RELEASE-GATES.md). These are engineering gates, not inferred Figma defects.
 
@@ -61,6 +64,41 @@ Exact endpoint definitions remain authoritative in `src/routes.ts` and `src/stru
 
 Use an authorized disposable preview and synthetic test accounts. Sign in with a verified primary email, onboard, refresh the workspace, and sign out. Pass only when the same candidate account persists across refresh, protected access ends after sign-out and a second candidate cannot retrieve the first candidate's application details. Record the tested commit, preview origin, date, expected/actual results and evidence without tokens, passwords or personal candidate data. A simple successful login does not close the ownership check; if any prerequisite is unavailable, record it as blocked rather than passed.
 
+### Figma Make inspection update — 10 November 2026
+
+The Make file was opened in the embedded Figma thread, but session creation returned an explicit unsupported-file-type error for Make. The available Figma file-inspection tools require a supported Design/FigJam/Slides/Figspec file session; no installed Figma design-to-code skill was available, so no design-context call was made without its required guidance. No rendered screen, frame, interaction, source asset or design variable was inspected, and no Figma content was changed. The flow rows above remain application-route/API comparison targets, not verified frame-to-route mappings. Visual parity remains **Unknown**. Preserve completed prototype Stages 1–2; do not infer a redesign requirement from unavailable inspection. A supported export of the actual screens or a supported Design-file reference is required to finish visual comparison.
+
 ## Scope
 
 This release covers the approved application lifecycle. Interviews, offers, CV/document upload, WhatsApp/email notifications, billing and automated screening are not part of this release. The privacy page explains the actual stored fields and matching limitations; organisation-specific retention and support details need confirmation before inviting real candidates.
+
+### Figma Make inspection attempt — 12 November 2026
+
+The embedded Figma view opened, but the required file-session creation call rejected this `/make/` file as an unsupported file type. The available Figma skill list was empty; the design-context tool requires a session and design-to-code guidance, so it was not called without those prerequisites. No rendered page, frame, interaction, asset or variable was returned; zero actual screens were inspected and zero Figma content was changed. The 25 October screenshot review remains dated static reference evidence, not a fresh inspection of the live Make file. The route/API table remains an application-flow comparison target, not a verified frame mapping. Visual parity and design discrepancies remain **Unknown**. Preserve accepted prototype Stages 1–2.
+
+### Exact-head verification follow-up — 12 November 2026, 09:06 SAST
+
+The Phase 6 route/API map remains an application-wiring map, not a Figma frame map. Current engineering evidence is:
+
+- Main remains `aa8026e87c7537bcfb3a760f37cdf8f96132c0e9`; PR #25 remains open/unmerged at `b7299194a54da4526f6d7e31891f7654cd7c0604`. Exact-head CI [43172216302](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43172216302), job `131027953012`, passed 276 tests across 21 files, Node 24 quality/startup checks and disposable PostgreSQL 18 verification. Its exact-head Preview `dpl_B4HeHicvVwJxWE6iPSvyGGqrGBp5` is READY; this does not prove Production authentication.
+- PR #26 remains open/unmerged at `3ac6c64738f828a8bc884989f970bf8e1a2a8ae0`; CI [42173260357](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/42173260357) passed 284 tests across 21 files and synthetic signed onboarding/account/role/company-assignment isolation. Live Clerk browser journeys remain unverified.
+- Production configuration, runtime, SSO and launch blockers remain authoritative in [RELEASE-GATES.md](RELEASE-GATES.md); no live sign-in/session acceptance is inferred from these branch checks.
+- The 12 November Figma Make inspection attempt is unchanged: the embedded view opens, but Make session creation is rejected as unsupported; no screen/frame/interaction/token was returned and no design was changed. Preserve prototype Stages 1–2. Visual parity remains Unknown.
+
+### Documentation verification follow-up — 12 November 2026
+
+The code-bearing PR #25 revision `b7299194a54da4526f6d7e31891f7654cd7c0604` passed exact-head CI [43172216302](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43172216302). The subsequent documentation-only evidence commit `2a55c6baaddac4f2f40b43d1b491432eaab64b7e` is not yet a green release revision: its first CI [43173891200](https://github.com/Neo1999-bot/hiredflex-platform/actions/runs/43173891200) passed install/typecheck/build/startup/lint but failed Prettier on the four changed Markdown files, so tests and PostgreSQL verification were skipped. Its READY Preview is not a substitute for passing CI. A formatting-only correction follows and requires its own exact-head verification; no application code or lifecycle behavior is changed.
+
+### Application wiring verification — 15 November 2026
+
+The flow table above was checked against `src/web/client.ts` and the current server route-registration modules. Clerk sign-in, `GET /auth/session` and `POST /auth/onboard` are registered in `src/auth/identity.ts`. Public vacancy search/detail and the Candidate application lifecycle, Employer vacancy operations and Recruiter assigned-vacancy/review operations are registered in `src/routes.ts`. Candidate skills and Employer requirements are registered in `src/structured-data-routes.ts`; matching remains separate in `src/matching-routes.ts` and `src/vacancy-match-discovery-routes.ts`.
+
+The UI search flow calls `GET /vacancies` with query/location filters and does not call a matching endpoint. Candidate match data is fetched separately on the workspace/detail flows and labelled informational. Candidate apply/track/withdraw, Employer vacancy create/manage/open/close and Recruiter review/shortlist/reject actions remain wired. Interview and offer stages remain disabled; document verification and upload remain outside this release.
+
+This verifies application wiring, not browser acceptance. Protected Preview access still prevents live sign-in/session and independent role-journey verification. The supplied Figma Make file could not be rendered by the available Figma Design APIs: no frames or screens were inspected, no visual comparison was completed and no Figma edits were made. The table remains a route/API mapping, not a verified frame mapping. Preserve accepted prototype Stages 1–2.
+
+### Figma Make inspection capability check — 15 November 2026
+
+The supplied Make file opened in the embedded Figma view, but `create_session` explicitly rejected the `/make/` file as unsupported (supported session types returned: Design, FigJam, Slides and Figspec). The installed-skill registry returned no available skills. The Figma `get_design_context` tool contract does describe Make support using node `0:1`, but it requires the `figma-design-to-code` guidance first; no listed skill URI or resource-reading tool was available, so that call was not made without its required guidance. The separate metadata and screenshot tools explicitly do not support Make files.
+
+Result: zero screens/frames, interactions, assets or variables rendered; zero Figma edits. The flow table remains an application route/API mapping, not a verified frame mapping. Visual parity and design discrepancies remain **Unknown**. Preserve accepted prototype Stages 1–2.
